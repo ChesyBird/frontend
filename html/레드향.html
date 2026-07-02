@@ -11,6 +11,7 @@
     }
     </style>
 </head>
+
 <body>
 
     <!--
@@ -27,7 +28,7 @@
      src: 이미지 경로
      alt: 이미지 대체 문구
      😊경로 - 상대경로, 절대경로
-      절대경로:: /부터 차례대로 찾아가는 것. 탐색기의 위부터!
+      절대경로:: /(루트)부터 차례대로 찾아가는 것. 탐색기의 위부터!
     -->
     <img src="/html/img/tangerines.jpg" alt="맛있는 레드향 이미지">
 <h1>레드향</h1>
@@ -70,5 +71,109 @@
     <li>드레싱 재료를 믹서에 갈아줍니다.</li>
     <li>볼에 샐러드 채소와 썰어 둔 레드향, 아보카도, 토마토를 넣고 드레싱을 뿌리면 끝!</li>
 </ul>
+
+<table border="2px" width="100%">
+    <caption>선물용과 가정용 상품 구성</caption>
+    <thead>
+    <tr>
+        <th>용도</th>
+        <th>중량</th>
+        <th>갯수</th>
+        <th>가격</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td rowspan="2">선물용</td>
+        <td>3kg</td>
+        <td>11과</td>
+        <td>35,000원</td>
+    </tr>
+    <tr>
+        
+        <td>5kg</td>
+        <td>18과</td>
+        <td>52,000원</td>
+    </tr>
+    <tr>
+        <td rowspan="2">가정용</td>
+        <td>3kg</td>
+        <td>11과</td>
+        <td>30,000원</td>
+    </tr>
+    <tr>
+        
+        <td>5kg</td>
+        <td>18과</td>
+        <td>47,000원</td>
+    </tr>
+    </tbody>
+</table>
+
+<!--
+단위
+% : 가변길이.
+    웹브라우저의 창 크기를 기준으로 사이즈 결정
+px: 고정길이
+    픽셀의 크기만큼 컨텐츠를 표시
+width, height 중 하나만 지정해도 나머지 속성은 자동으로 비율이 맞추어짐
+-->
+<img src="/html/img/salad.jpg" alt="샐러드"
+    width="50%">
+<img src="/html/img/salad.jpg" alt="샐러드"
+    width="700px" height="200px">
+<img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F5246%2F2026%2F04%2F20%2F0000034924_001_20260420120006672.jpg&type=a340" 
+    alt="오렌지">
+<!--
+이미지: 웹에 있는 이미지의 웹주소를 사용할 수도 있다!
+-->
+
+<hr>
+<h1>링크</h1>
+<!--
+a : 다른 문서, 다른 사이트로 연결해주는 기능
+target: 어디에 문서를 출력할지 지정
+        기본값salf: 현재 페이지에서 보여줌.
+        blank: 새 창
+-->
+<a href="/html/수습 국원 모집.html" target="blank">레드향</a>
+<br>
+<a href="http://www.naver.com" target="blank">
+    <img src="/html/img/link.png" alt="풍경">
+</a>
+
+<hr>
+<h1>오디오와 비디오</h1>
+<!-- 브라우저의 버전이 낮으면 보이지 않는 경우도 있음... -->
+<audio src="/html/media/spring.mp3" controls></audio>
+<br>
+<video src="/html/media/salad.mp4" width="80%" controls></video>
+
+<hr>
+<h1>pdf파일 삽입하기</h1>
+<object data="/html/pdf/product.pdf" type="" width="700" height="500"></object>
+<hr>
+<h1>입력양식</h1>
+<form action="/html/수습 국원 모집.html">
+    <fieldset>
+        <legend>상품 선택</legend>
+        이름: <input type="text" name="name"><br>
+        비밀번호: <input type="password" name="name">
+    </fieldset>
+    <fieldset>
+        <legend>배송 정보</legend>
+        주소: <input type="text" name="name">
+        <br>
+        취미
+        <br>
+        <input type="checkbox" name="" id="">농구
+        <input type="checkbox" name="" id="">축구
+        <input type="checkbox" name="" id="">배구
+    </fieldset>
+    이름: <input type="text" name="name">
+    <input type="submit" value="전송">
+</form>
+
+
 </body>
 </html>
