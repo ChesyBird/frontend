@@ -4,33 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>입력양식과 테이블</title>
+    <style>
+        label{
+            display: inline-block;
+            width: 60px;
+        }
+    </style>
 </head>
 <body>
     <fieldset>
         <h1>예약정보</h1>
         <label for="name">이름</label>
         <input type="text" id="name"><br>
-        <label for="">전화</label>
-        <input type="tel"><br>
-        이메일 <input type="email"><br>
+        <label for="tel">전화</label>
+        <input type="tel" id="tel"><br>
+        <label for="mail">이메일</label>
+        <input type="email" id="mail">
+        <br>
+        <br>
         <input type="button" value="예약하기">
     </fieldset>
     <br>
+
 <hr>
+
     <br>
     <h1>프런트엔드 개발자 지원서</h1>
     HTML, CSS, Javascript에 대한 기술적 이해와 경험이 있는 분을 찾습니다. <br>
     <hr>
     <h3>개인정보</h3>
     <ul>
-        <li>이름 <input type="text"></li>
-        <li>연락처 <input type="text"></li>
+        <li><label for="name2">이름</label>
+            <input type="text" placeholder="공백 없이 입력하세요" id="name2"></li>
+        <li><label for="tel">연락처</label>
+            <input type="text" id="tel"></li>
     </ul>
     <h3>지원 분야</h3>
     <ul>
-        <li><input type="radio">웹 퍼블리싱</li>
-        <li><input type="radio">웹 애플리케이션 개발</li>
-        <li><input type="radio">개발 환경 개선</li>
+        <li><input type="radio" name="checkFor">웹 퍼블리싱</li>
+        <li><input type="radio" name="checkFor">웹 애플리케이션 개발</li>
+        <li><input type="radio" name="checkFor">개발 환경 개선</li>
     </ul>
     <h3>지원동기</h3>
     <textarea name="" id="" cols="50" rows="5" placeholder="본사 지원 동기를 간략히 써 주세요"></textarea>
@@ -45,15 +58,19 @@
         <legend>상품 선택</legend>
         <h2>주문할 상품을 선택해 주세요</h2>
         <ul>
-            <li><input type="checkbox" name="" id="">선물용 3kg <input type="text">개 (최대 5개) </li>
-            <li><input type="checkbox" name="" id="">선물용 5kg <input type="text">개 (최대 3개) </li>
-            <li><input type="checkbox" name="" id="">가정용 3kg <input type="text">개 (최대 5개) </li>
-            <li><input type="checkbox" name="" id="">가정용 5kg <input type="text">개 (최대 3개) </li>
+            <li><input type="checkbox" name="present" id="">선물용 3kg
+                <input type="text" size="5px" max="5">개 <small>(최대 5개)</small> </li>
+            <li><input type="checkbox" name="present" id="">선물용 5kg
+                <input type="text" size="5px" value="1" max="3">개 <small>(최대 3개)</small> </li>
+            <li><input type="checkbox" name="present" id="">가정용 3kg
+                <input type="text" size="5px" max="5">개 <small>(최대 5개)</small> </li>
+            <li><input type="checkbox" name="present" id="">가정용 5kg
+                <input type="text" size="5px" max="3">개 <small>(최대 3개)</small> </li>
         </ul>
         <h2>포장 선택</h2>
         <ul>
-            <li><input type="radio" name="" id="">선물 포장</li>
-            <li><input type="radio" name="" id="">선물 포장 안 함</li>
+            <li><input type="radio" name="packing" id="">선물 포장</li>
+            <li><input type="radio" name="packing" id="">선물 포장 안 함</li>
         </ul>
     </fieldset>
     <fieldset>
@@ -61,24 +78,24 @@
         <ul>
             <li>이름 <input type="text"></li>
             <li>배송 주소 <input type="text"></li>
-            <li>이메일 <input type="text"></li>
-            <li>연락처 <input type="text"></li>
+            <li>이메일 <input type="email"></li>
+            <li>연락처 <input type="tel"></li>
             <li>배송 지정 <input type="date" name="" id=""><small>(주문일로부터 최소 3일 이후)</small></li>
-            <li>메모 <textarea name="" id="" cols="50" rows="3"></textarea></li>
+            <li>메모 <textarea name="" id="" cols="50" rows="5"></textarea></li>
         </ul>
     </fieldset>
-    <input type="button" value="주문하기">
-    <input type="button" value="취소하기">
+    <input type="submit" value="주문하기">
+    <input type="reset" value="취소하기">
     <br>
 <hr>
     <br>
     <table border="1" width="100%" >
         <caption>이력서</caption>
         <colgroup>
-            <col width="25%" height="100px">
-            <col width="25%" height="100px">
-            <col width="25%" height="100px">
-            <col width="25%" height="100px">
+            <col width="25%" height="500px">
+            <col width="25%" height="500px">
+            <col width="25%" height="500px">
+            <col width="25%" height="500px">
         </colgroup>
         <tr>
             <td colspan="2" rowspan="2">
