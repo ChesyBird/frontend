@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>입력양식과 테이블</title>
     <style>
+        li{line-height: 40px;}
         label{
             display: inline-block;
             width: 60px;
+            line-height: 30px;
         }
     </style>
 </head>
@@ -41,9 +43,9 @@
     </ul>
     <h3>지원 분야</h3>
     <ul>
-        <li><input type="radio" name="checkFor">웹 퍼블리싱</li>
-        <li><input type="radio" name="checkFor">웹 애플리케이션 개발</li>
-        <li><input type="radio" name="checkFor">개발 환경 개선</li>
+        <li><input type="radio" name="checkFor" value="1">웹 퍼블리싱</li>
+        <li><input type="radio" name="checkFor" value="2">웹 애플리케이션 개발</li>
+        <li><input type="radio" name="checkFor" value="3">개발 환경 개선</li>
     </ul>
     <h3>지원동기</h3>
     <textarea name="" id="" cols="50" rows="5" placeholder="본사 지원 동기를 간략히 써 주세요"></textarea>
@@ -58,19 +60,19 @@
         <legend>상품 선택</legend>
         <h2>주문할 상품을 선택해 주세요</h2>
         <ul>
-            <li><input type="checkbox" name="present" id="">선물용 3kg
+            <li><input type="checkbox" name="present" id="" value="1">선물용 3kg
                 <input type="text" size="5px" max="5">개 <small>(최대 5개)</small> </li>
-            <li><input type="checkbox" name="present" id="">선물용 5kg
+            <li><input type="checkbox" name="present" id="" value="2">선물용 5kg
                 <input type="text" size="5px" value="1" max="3">개 <small>(최대 3개)</small> </li>
-            <li><input type="checkbox" name="present" id="">가정용 3kg
+            <li><input type="checkbox" name="present" id="" value="3">가정용 3kg
                 <input type="text" size="5px" max="5">개 <small>(최대 5개)</small> </li>
-            <li><input type="checkbox" name="present" id="">가정용 5kg
+            <li><input type="checkbox" name="present" id="" value="4">가정용 5kg
                 <input type="text" size="5px" max="3">개 <small>(최대 3개)</small> </li>
         </ul>
         <h2>포장 선택</h2>
         <ul>
-            <li><input type="radio" name="packing" id="">선물 포장</li>
-            <li><input type="radio" name="packing" id="">선물 포장 안 함</li>
+            <li><input type="radio" name="packing" id="" value="1">선물 포장</li>
+            <li><input type="radio" name="packing" id="" value="2">선물 포장 안 함</li>
         </ul>
     </fieldset>
     <fieldset>
