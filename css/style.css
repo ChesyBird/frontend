@@ -1,0 +1,57 @@
+/* 
+css 선택자
+
+요소를 선택하는 3가지 방법
+class : .
+id : #
+tag name : 태그이름
+
+*{ } : 전체선택
+
+선택자 {
+    스타일 속성을 적용
+    }
+    */
+    
+   
+    p{
+    background-color:rgb(161, 204, 190);
+    border: 1px solid#111;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 15px;
+}
+
+/* 
+class를 이용해서 요소에 스타일을 적용
+    class 속성에 값이 입력되면 적용: 사용 범위가 넓다
+1. 스타일 정의
+2. 요소의 class 속성에 값을 입력
+*/
+
+.blue{
+    color: rgb(16, 9, 119);
+}
+
+/* 아이디를 이용해서 요소를 선택 */
+#name2{
+    border-radius: 10px;
+    color: rgb(36, 82, 82);
+}
+
+ *{
+        margin: 0px;
+    }
+
+    /* 
+    스타일 우선순위 - 범위가 좁아질수록 우선순위가 높다
+        사용자 스타일 > 제작자 스타일 > 브라우저 스타일
+        !important > 인라인 스타일 > id 스타일 > 클래스 스타일 > 타입 스타일
+    */
+
+    /* 소스의 순서에 따라 - 아래에 작성된 스타일이 우선 */
+
+    p{
+        background-color: #fff;
+        margin: 10px
+    }
