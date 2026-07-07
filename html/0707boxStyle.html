@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>boxStyle</title>
+    <style>
+        .box1{
+            background-color: red;
+            border: 1px solid black;
+            width: 100px;
+            height: 100px;
+            padding: 0px 30px; /* 상하 좌우 */
+            margin: 10px 20px 30px 40px; /* 상 우 하 좌 */
+        }
+
+        .box2{
+            box-sizing: border-box;
+            width: 100px;
+            height: 100px;
+            background-color: #d4b7b7;
+            border: 2px solid #000;
+            border-radius: 50%;
+            box-shadow: 4px 4px 10px 6px #555;
+
+            text-align: center;
+            line-height: 100px;
+            /* height값과 line-height값을 맞춰주면 세로정렬 */
+        }
+
+        .circle{
+            border-radius: 50%;
+        }
+
+        .banner{
+            background-color: black;
+            display: flex;
+            /* 정렬을 속성으로! */
+            justify-content: space-between;
+        }
+
+        .boxItem{
+            width: 300px;
+            height: 200px;
+            background-color: #fff;
+            border: 1px solid red;
+
+            /* display: inline-block; */
+            border-radius: 20px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="box1">
+        a
+    </div>
+    <div class="box2">버튼</div>
+
+    <img class="circle box2" src="img/pf.jpg" alt="">
+    
+    <div class="banner"> 
+        <div class="boxItem"></div>
+        <div class="boxItem"></div>
+        <div class="boxItem"></div>
+        <div class="boxItem"></div>
+
+    </div>
+</body>
+</html>

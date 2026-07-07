@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>레이아웃</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <style>
+
+        *{
+            box-sizing: border-box;
+            margin: 0px;
+        }
+
+        .container{
+            width: 80%;
+            margin: 0 auto;    
+        }
+
+        header{
+            width: 100%;
+            height: 200px;
+            background-color: indigo;
+        }
+
+        main{
+            width: 100%;
+            /* vh: 창의 높이, vw: 창의 너비 */
+            height: 70vh;
+            background-color: rgb(148, 173, 184);
+        }
+
+        footer{
+            width: 100%;
+            height: 200px;
+            background-color: indigo;
+        }
+
+        .banner{
+            height: 60px;
+            line-height: 60px;
+            background-color: black;
+            color: ivory;
+            text-align: center;
+            /* rem: 기본 16px정도의 사이즈 */
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .flexbox{
+            display: flex;
+            justify-content: end;
+        }
+
+        .quick_item{
+            width: 70px;
+        }
+
+        ul{
+            list-style: none;
+            color: white;
+        }
+
+        a{
+            text-decoration: none;
+            color: white;
+            margin: 0px 10px;
+            font-size: small;
+        }
+
+        .logo_item{
+            text-align: right;
+            font-size: 1rem;
+            height: 100px;
+            line-height: 100px;
+        }
+
+        .logo_item i{
+            padding: 20px 10px;
+        }
+
+        .logo{
+            height: 100px;
+            background: url(https://comebello.com/web/upload/NNEditor/20251121/b4e735981bb5574778faf745e3416b9e.png) no-repeat center;
+            
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!--헤더: 로고 퀵메뉴 메뉴-->
+        <header>
+            <div class="banner">🚀당일 배송🚀</div>
+            <div class="top_quickmenu">
+                <!--a태그를 이용해도 ㅇㅋ-->
+                <div class="top_quickmenu flexbox">
+                    <a href="">로그인</a>
+                    <a href="">회원가입</a>
+                    <a href="">마이샵</a>
+                    <a href="">커뮤니티</a>
+                    <a href="">KR</a>
+                </div>
+                <!--<ul class="flexbox">
+                    <li class="quick_item">로그인</li>
+                    <li class="quick_item">회원가입</li>
+                    <li class="quick_item">마이샵</li>
+                    <li class="quick_item">커뮤니티</li>
+                    <li class="quick_item">KR</li>
+                </ul>-->
+            </div>
+
+            <div class="logo">
+                <div class="logo_item">
+                    <i class="bi bi-search"></i>
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    <i class="bi bi-bag-heart-fill"></i>
+                    <i class="bi bi-arrow-clockwise"></i>
+                </div>
+            </div>
+        </header>
+
+        <!--메인: 서비스 및 컨텐츠-->
+        <main>
+
+        </main>
+
+        <!--footer: 회사정보 및 연계된 사이트 등 추가정보-->
+        <footer>
+
+        </footer>
+
+    </div>
+
+</body>
+</html>
