@@ -1,0 +1,162 @@
+/* 
+    position: 속성
+        static; 기본값. 문서의 흐름대로. 위치 적용 안됨
+        relative; 부모상자. 위치값을 가질 수 있음
+        absolute; 부모를 기준으로 배치됨.(부모가 없다면 바디를 기준)
+        fixed; 고정배치.
+*/
+    body{
+        height: 200vh;
+    }
+
+    .badge{
+        position: relative; /*기준이 되는 부모상자*/
+        top: 5px;
+        left: 10px;
+
+        border: none;
+        padding: 10px 20px;
+    }
+
+    .badge_img{
+        background-color: orangered;
+        border-radius: 50%;
+        padding: 5px;
+        position: absolute; /*부모상자로부터 위치를 잡음*/
+        top: -10px;
+        right: -10px;
+        /* bottom: ; */
+        /* left: ; */
+    }
+
+    .fixedbox{
+        position: fixed; /*위치 고정!*/
+        top: 10px;
+        right: 10px;
+        background-color: blue;
+        z-index: 999; /* 위치를 조정할 수 있는 요소만. */
+    }
+
+
+/* MENU */
+
+    *{
+        box-sizing: border-box;        
+    }
+
+    ul{
+        list-style: none;
+        padding: 0px;
+    }
+
+    a{
+        text-decoration: none;
+        color: #222;
+    }
+
+    .menu{
+        display: flex;
+        position: relative;
+    }
+
+    .menu_item{
+        /* background-color: rgb(151, 218, 195); */
+        /* border: 1px solid seagreen; */
+        padding: 0px 10px;
+        height: 40px;
+        line-height: 40px;
+        position: relative;
+    }
+
+    .menu_item:hover{ /* 요소에 커서를 올리면 */
+        background-color: bisque;
+    }
+
+    
+    .sub{
+        z-index: 999;
+        position: absolute;
+        top: 45px;
+        left: 0px;
+        /* 화면에서 요소를 제거하는 방법 */
+        display: none; /* display: block; */
+        /* visibility: hidden; visible; */
+    }
+    
+    .sub li{
+        padding: 10px 19px;
+        background-color: sandybrown;
+    }
+    
+    .menu_item:hover .sub{
+        display: block;
+    }
+
+    .submenu{
+        z-index: 999;
+        position: absolute;
+        top: 40px;
+        background-color: bisque;
+        left: 0px;
+        width: 100px;
+        padding-left: 10px;
+        display: none;
+    }
+
+    /* 요소를 여러개 선택할 때는 ,를 사용 */
+    .menu_item:hover > .submenu, .menu_item:hover{
+        background-color: yellowgreen;
+        display: block;
+    }
+
+    /* 
+    carousel
+    */
+
+    .carousel{
+        position: relative;
+        width: 100%;
+        height: 150px;
+        /* overflow: hidden; */
+    }
+
+    .carousel img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .carousel button:first-of-type{
+        position: absolute;
+        top: 0px;
+        left: 0px;
+    }
+
+    .carousel button:last-of-type{
+        position: absolute;
+        top: 0px;
+        right: 0px;
+    }
+
+    .carousel button{
+        border: none;
+        /* 투명도: 0~1 */
+        opacity: 0.5;
+        height: 100%;
+        font-weight: 800;
+        color: #555;
+    }
+
+    p{
+        text-align: center;
+    }
+
+    .text{
+        position: absolute;
+        bottom: 0px;
+        left: 210px;
+        font-weight: 500;
+        line-height: 5px;
+    }
+    
+    
