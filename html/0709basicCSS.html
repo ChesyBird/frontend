@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="/css/basic.css">
+    <style>
+        :root{
+            --text-color: navy;
+            --bg-color: #fff;
+        }
+        body{
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        /* [속성이름=속성값] */
+        [dark-theme="dark"]{
+            background-color: var(--text-color);
+            color: var(--bg-color);
+        }
+
+    </style>
+
+</head>
+<body dark-theme="">
+    test
+    <div class="d-flex flex-col p-4 bg-dark text-white rounded-lg w-25 ">
+        <span class="fs-xl fw-bold">제목</span>
+        <button>버튼</button>
+
+    </div>
+
+
+    <!--
+    document.querySelector("body").setAttribute("dark-theme", "dark") 
+
+    f12에서 console을 사용해 확인해보기.
+    >document에서 "body"를 선택하여 "dark-theme"속성의 속성값을 "dark"로 바꿔라.
+    -->
+</body>
+</html>

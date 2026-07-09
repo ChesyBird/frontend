@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>basic.css 사용 가이드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- 실제 배포할 basic.css를 그대로 불러옵니다 (같은 폴더에 두세요) -->
+<link rel="stylesheet" href="/css/basic.css">
+<style>
+  :root{
+    --paper:#EDF1F3;
+    --paper-2:#FFFFFF;
+    --ink:#131B29;
+    --ink-soft:#5B6675;
+    --line:#CBD3DB;
+    --structure:#2F49E8;
+    --structure-dim:#E3E7FD;
+    --motion:#FF5A36;
+    --motion-dim:#FFE4DA;
+    --teal:#0EA5A0;
+    --teal-dim:#D9F4F2;
+    --mono:'JetBrains Mono', monospace;
+    --display:'Space Grotesk', sans-serif;
+    --gbody:'Inter', sans-serif;
+  }
+  /* 가이드 페이지 자체의 스타일 (basic.css의 리셋과 충돌하지 않도록 별도 이름공간처럼 사용) */
+  html{scroll-behavior:smooth;}
+  body{ background:var(--paper); color:var(--ink); font-family:var(--gbody); line-height:1.6; }
+
+  .frame{ max-width:1000px; margin:0 auto; padding:56px 28px; position:relative; }
+  .frame + .frame{ border-top:1px solid var(--line); }
+  .frame-num{
+    position:absolute; left:0; top:56px;
+    font-family:var(--mono); font-size:12px; color:var(--ink-soft); letter-spacing:0.08em;
+  }
+  @media (min-width:1140px){ .frame-num{ left:-56px; } }
+
+  .hero{
+    max-width:1000px; margin:0 auto; padding:72px 28px 48px;
+    display:grid; grid-template-columns:1.1fr 0.9fr; gap:40px; align-items:center;
+  }
+  @media (max-width:760px){ .hero{ grid-template-columns:1fr; } }
+  .eyebrow{ font-family:var(--mono); font-size:12px; letter-spacing:0.14em; color:var(--structure); text-transform:uppercase; margin:0 0 14px; }
+  .g-h1{ font-family:var(--display); font-size:38px; line-height:1.16; margin:0 0 16px; letter-spacing:-0.01em; }
+  .g-h1 span{ color:var(--structure); }
+  .hero p{ color:var(--ink-soft); font-size:16px; max-width:48ch; }
+  .hero-stage{ background:var(--ink); border-radius:18px; height:220px; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .hero-code{ font-family:var(--mono); font-size:13px; color:#EAF0FF; line-height:1.9; }
+  .hero-code .cls{ color:#8FD9FF; }
+
+  .g-h2{ font-family:var(--display); font-size:24px; margin:0 0 6px; letter-spacing:-0.01em; color:var(--ink); }
+  .section-sub{ color:var(--ink-soft); font-size:14px; margin:0 0 24px; font-family:var(--mono); }
+  .g-p{ margin:0 0 14px; color:var(--ink); }
+  .g-code{
+    background:var(--ink); color:#EAF0FF; font-family:var(--mono); font-size:13.5px;
+    padding:16px 18px; border-radius:10px; overflow-x:auto; line-height:1.6; white-space:pre; margin:0 0 16px;
+  }
+  .g-code .cls{ color:#8FD9FF; }
+  .g-code .comment{ color:#6B7688; }
+
+  /* ---------- swatch demo blocks ---------- */
+  .swatch-row{ display:flex; flex-direction:column; gap:10px; margin:18px 0; }
+  .swatch{
+    display:flex; align-items:center; gap:14px;
+    background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:12px 16px;
+  }
+  .swatch-tag{
+    font-family:var(--mono); font-size:12px; color:var(--structure); background:var(--structure-dim);
+    padding:4px 8px; border-radius:5px; min-width:96px; text-align:center; flex-shrink:0;
+  }
+  .swatch-vis{ flex:1; overflow:hidden; }
+  .bar{ height:22px; background:var(--structure); border-radius:4px; }
+
+  .demo-box{
+    background:var(--paper-2); border:1px solid var(--line); border-radius:14px; padding:20px; margin:18px 0;
+  }
+  .chip{
+    background:var(--teal); color:#fff; font-family:var(--mono); font-size:11px;
+    padding:8px 10px; border-radius:6px; white-space:nowrap;
+  }
+  .chip.alt{ background:var(--motion); }
+  .chip.alt2{ background:var(--structure); }
+  .ghost-box{
+    background:#fff; border:1.5px dashed var(--line); border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:11px; color:var(--ink-soft);
+    min-height:44px;
+  }
+
+  /* ---------- lookup table ---------- */
+  .search-box{
+    width:100%; padding:12px 16px; border-radius:10px; border:1.5px solid var(--line);
+    font-family:var(--mono); font-size:14px; margin-bottom:16px; outline:none;
+  }
+  .search-box:focus{ border-color:var(--structure); }
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  th,td{ text-align:left; padding:9px 12px; border-bottom:1px solid var(--line); }
+  th{ font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft); }
+  td code{ font-family:var(--mono); background:var(--structure-dim); color:var(--structure); padding:2px 6px; border-radius:4px; font-size:12px; }
+  tr.hide{ display:none; }
+  .cat-badge{
+    font-family:var(--mono); font-size:10px; color:var(--ink-soft); background:var(--paper);
+    padding:2px 7px; border-radius:10px;
+  }
+
+  footer{ max-width:1000px; margin:0 auto; padding:36px 28px 70px; color:var(--ink-soft); font-size:13px; font-family:var(--mono); }
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <div>
+      <p class="eyebrow">스타일 가이드</p>
+      <h1 class="g-h1"><span>basic.css</span> 사용 가이드</h1>
+      <p>너비, 높이, flex, 여백처럼 매 프로젝트마다 반복해서 쓰는 스타일을 클래스 하나로 바로 쓸 수 있게 모아둔 유틸리티 스타일시트입니다. 이 페이지의 모든 예시는 실제 <code>basic.css</code> 클래스를 그대로 사용해 렌더링됩니다.</p>
+    </div>
+    <div class="hero-stage">
+      <div class="hero-code">&lt;div class="<span class="cls">d-flex items-center<br>&nbsp;&nbsp;justify-between gap-3</span>"&gt;<br>&nbsp;&nbsp;...<br>&lt;/div&gt;</div>
+    </div>
+  </div>
+
+  <div class="frame" id="usage">
+    <div class="frame-num">01</div>
+    <h2 class="g-h2">사용법</h2>
+    <p class="section-sub">파일 하나만 프로젝트 폴더에 넣고 링크하면 끝</p>
+    <p class="g-p"><code>basic.css</code> 파일을 프로젝트 폴더에 넣고, HTML의 <code>&lt;head&gt;</code>에 아래 한 줄을 추가하세요.</p>
+    <div class="g-code">&lt;head&gt;
+  &lt;link rel="stylesheet" href="basic.css"&gt;
+&lt;/head&gt;</div>
+    <p class="g-p">그 다음부터는 클래스 이름만 조합해서 스타일을 바로 적용할 수 있습니다.</p>
+    <div class="g-code">&lt;div class="<span class="cls">d-flex justify-between items-center p-4 bg-white rounded shadow</span>"&gt;
+  &lt;span class="<span class="cls">fw-bold fs-lg</span>"&gt;제목&lt;/span&gt;
+  &lt;button class="<span class="cls">bg-primary text-white rounded-full px-4 py-2</span>"&gt;버튼&lt;/button&gt;
+&lt;/div&gt;</div>
+  </div>
+
+  <div class="frame" id="width-height">
+    <div class="frame-num">02</div>
+    <h2 class="g-h2">너비 (width)</h2>
+    <p class="section-sub">w-25 / w-50 / w-75 / w-100, 그리고 고정 픽셀값</p>
+    <div class="demo-box">
+      <div class="swatch-row">
+        <div class="swatch"><span class="swatch-tag">w-25</span><div class="swatch-vis"><div class="bar w-25"></div></div></div>
+        <div class="swatch"><span class="swatch-tag">w-50</span><div class="swatch-vis"><div class="bar w-50"></div></div></div>
+        <div class="swatch"><span class="swatch-tag">w-75</span><div class="swatch-vis"><div class="bar w-75"></div></div></div>
+        <div class="swatch"><span class="swatch-tag">w-100</span><div class="swatch-vis"><div class="bar w-100"></div></div></div>
+        <div class="swatch"><span class="swatch-tag">w-150px</span><div class="swatch-vis"><div class="bar w-150px"></div></div></div>
+        <div class="swatch"><span class="swatch-tag">w-300px</span><div class="swatch-vis"><div class="bar w-300px"></div></div></div>
+      </div>
+    </div>
+
+    <h2 class="g-h2" style="margin-top:32px;">높이 (height)</h2>
+    <p class="section-sub">h-100px ~ h-300px, 화면 전체는 h-screen</p>
+    <div class="demo-box">
+      <div style="display:flex; gap:12px; align-items:flex-end;">
+        <div class="ghost-box h-100px w-100px">h-100px</div>
+        <div class="ghost-box h-150px w-100px">h-150px</div>
+        <div class="ghost-box h-200px w-100px">h-200px</div>
+        <div class="ghost-box h-300px w-100px">h-300px</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame" id="flexbox">
+    <div class="frame-num">03</div>
+    <h2 class="g-h2">display &amp; flexbox</h2>
+    <p class="section-sub">가장 많이 쓰게 될 조합입니다</p>
+
+    <p class="g-p"><code>justify-*</code> — 가로 정렬 (flex-direction:row 기준)</p>
+    <div class="demo-box">
+      <div class="d-flex justify-start gap-2 mb-3 p-2 border rounded"><div class="chip">start</div><div class="chip alt">start</div></div>
+      <div class="d-flex justify-center gap-2 mb-3 p-2 border rounded"><div class="chip">center</div><div class="chip alt">center</div></div>
+      <div class="d-flex justify-between mb-3 p-2 border rounded"><div class="chip">between</div><div class="chip alt">between</div></div>
+      <div class="d-flex justify-around p-2 border rounded"><div class="chip">around</div><div class="chip alt">around</div></div>
+    </div>
+
+    <p class="g-p"><code>items-*</code> — 세로 정렬</p>
+    <div class="demo-box">
+      <div class="d-flex items-start gap-2 mb-3 p-2 border rounded h-100px"><div class="chip">start</div><div class="chip alt">start</div></div>
+      <div class="d-flex items-center gap-2 mb-3 p-2 border rounded h-100px"><div class="chip">center</div><div class="chip alt">center</div></div>
+      <div class="d-flex items-end gap-2 p-2 border rounded h-100px"><div class="chip">end</div><div class="chip alt">end</div></div>
+    </div>
+
+    <p class="g-p"><code>gap-*</code> — 자식 요소 사이 간격</p>
+    <div class="demo-box">
+      <div class="d-flex gap-1 mb-2"><div class="chip">gap-1</div><div class="chip alt">4px</div></div>
+      <div class="d-flex gap-3 mb-2"><div class="chip">gap-3</div><div class="chip alt">12px</div></div>
+      <div class="d-flex gap-6"><div class="chip">gap-6</div><div class="chip alt">32px</div></div>
+    </div>
+
+    <p class="g-p"><code>flex-col</code> — 세로로 쌓기, <code>shrink-0</code> — 가로 스크롤 카드에 필수</p>
+    <div class="demo-box">
+      <div class="d-flex flex-col gap-2" style="max-width:200px;">
+        <div class="chip alt2">flex-col</div>
+        <div class="chip alt2">세로로</div>
+        <div class="chip alt2">쌓입니다</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame" id="spacing">
+    <div class="frame-num">04</div>
+    <h2 class="g-h2">여백 (margin / padding)</h2>
+    <p class="section-sub">스케일: 0=0, 1=4px, 2=8px, 3=12px, 4=16px, 5=24px, 6=32px, 7=48px</p>
+    <div class="demo-box">
+      <div class="swatch-row">
+        <div class="swatch"><span class="swatch-tag">p-1</span><div class="ghost-box p-1">padding 4px</div></div>
+        <div class="swatch"><span class="swatch-tag">p-3</span><div class="ghost-box p-3">padding 12px</div></div>
+        <div class="swatch"><span class="swatch-tag">p-5</span><div class="ghost-box p-5">padding 24px</div></div>
+      </div>
+    </div>
+    <p class="g-p" style="margin-top:16px;">방향별로도 쓸 수 있습니다: <code>mt-*</code> <code>mb-*</code> <code>ml-*</code> <code>mr-*</code> <code>mx-*</code>(좌우) <code>my-*</code>(상하), padding도 동일하게 <code>pt/pb/pl/pr/px/py</code></p>
+    <div class="g-code"><span class="comment">/* 자주 쓰는 패턴: 카드 안쪽 여백 + 카드 사이 아래쪽 여백 */</span>
+&lt;div class="<span class="cls">p-4 mb-3 bg-white rounded shadow</span>"&gt;카드&lt;/div&gt;</div>
+  </div>
+
+  <div class="frame" id="text-color">
+    <div class="frame-num">05</div>
+    <h2 class="g-h2">텍스트 &amp; 색상</h2>
+    <p class="section-sub">fs-*(크기) · fw-*(굵기) · text-*(글자색) · bg-*(배경색)</p>
+    <div class="demo-box">
+      <p class="fs-xs mb-2">fs-xs — 12px 텍스트입니다</p>
+      <p class="fs-base mb-2">fs-base — 16px 텍스트입니다</p>
+      <p class="fs-xl fw-bold mb-2">fs-xl fw-bold — 24px 굵은 텍스트입니다</p>
+      <p class="fs-2xl fw-bold text-primary">fs-2xl text-primary — 32px 파란 텍스트입니다</p>
+    </div>
+    <div class="demo-box d-flex gap-2 flex-wrap">
+      <span class="px-3 py-2 rounded bg-primary text-white fs-xs">bg-primary</span>
+      <span class="px-3 py-2 rounded bg-secondary text-white fs-xs">bg-secondary</span>
+      <span class="px-3 py-2 rounded bg-accent text-white fs-xs">bg-accent</span>
+      <span class="px-3 py-2 rounded bg-dark text-white fs-xs">bg-dark</span>
+      <span class="px-3 py-2 rounded bg-light text-dark fs-xs border">bg-light</span>
+      <span class="px-3 py-2 rounded bg-success text-white fs-xs">bg-success</span>
+      <span class="px-3 py-2 rounded bg-danger text-white fs-xs">bg-danger</span>
+    </div>
+  </div>
+
+  <div class="frame" id="border-shadow">
+    <div class="frame-num">06</div>
+    <h2 class="g-h2">테두리 / 둥글기 / 그림자</h2>
+    <p class="section-sub">rounded-* · shadow-*</p>
+    <div class="demo-box d-flex gap-3 flex-wrap items-center">
+      <div class="ghost-box square-80 rounded-none">rounded-none</div>
+      <div class="ghost-box square-80 rounded-sm">rounded-sm</div>
+      <div class="ghost-box square-80 rounded">rounded</div>
+      <div class="ghost-box square-80 rounded-lg">rounded-lg</div>
+      <div class="ghost-box square-80 rounded-full">rounded-full</div>
+    </div>
+    <div class="demo-box d-flex gap-4 flex-wrap items-center">
+      <div class="bg-white square-80 rounded shadow-sm d-flex items-center justify-center fs-xs">shadow-sm</div>
+      <div class="bg-white square-80 rounded shadow d-flex items-center justify-center fs-xs">shadow</div>
+      <div class="bg-white square-80 rounded shadow-lg d-flex items-center justify-center fs-xs">shadow-lg</div>
+    </div>
+  </div>
+
+  <div class="frame" id="lookup">
+    <div class="frame-num">07</div>
+    <h2 class="g-h2">전체 클래스 찾아보기</h2>
+    <p class="section-sub">클래스 이름이나 설명으로 검색해보세요</p>
+    <input type="text" class="search-box" id="search" placeholder="예: gap, rounded, flex...">
+    <table id="lookup-table">
+      <thead>
+        <tr><th>클래스</th><th>효과</th><th>분류</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>w-25 / w-50 / w-75 / w-100</code></td><td>너비 25%/50%/75%/100%</td><td><span class="cat-badge">width</span></td></tr>
+        <tr><td><code>w-150px / w-300px / w-500px</code></td><td>고정 너비 150px/300px/500px</td><td><span class="cat-badge">width</span></td></tr>
+        <tr><td><code>max-w-sm / md / lg / xl</code></td><td>최대 너비 400/700/1000/1280px</td><td><span class="cat-badge">width</span></td></tr>
+        <tr><td><code>h-100px ~ h-300px</code></td><td>고정 높이</td><td><span class="cat-badge">height</span></td></tr>
+        <tr><td><code>h-screen</code></td><td>화면 전체 높이 (100vh)</td><td><span class="cat-badge">height</span></td></tr>
+        <tr><td><code>square-40/60/80/120</code></td><td>정사각형 크기 (아이콘, 아바타 등)</td><td><span class="cat-badge">width/height</span></td></tr>
+        <tr><td><code>d-flex / d-grid / d-none</code></td><td>display 속성</td><td><span class="cat-badge">display</span></td></tr>
+        <tr><td><code>flex-row / flex-col</code></td><td>flex 방향</td><td><span class="cat-badge">flex</span></td></tr>
+        <tr><td><code>flex-wrap</code></td><td>넘치면 다음 줄로 줄바꿈</td><td><span class="cat-badge">flex</span></td></tr>
+        <tr><td><code>flex-1</code></td><td>남는 공간을 균등하게 차지</td><td><span class="cat-badge">flex</span></td></tr>
+        <tr><td><code>shrink-0</code></td><td>자식이 찌그러지지 않게 고정 (가로 스크롤 카드 필수)</td><td><span class="cat-badge">flex</span></td></tr>
+        <tr><td><code>justify-start/center/end/between/around</code></td><td>가로 정렬</td><td><span class="cat-badge">flex</span></td></tr>
+        <tr><td><code>items-start/center/end/stretch</code></td><td>세로 정렬</td><td><span class="cat-badge">flex</span></td></tr>
+        <tr><td><code>center-all</code></td><td>가로+세로 동시에 정중앙 정렬</td><td><span class="cat-badge">flex</span></td></tr>
+        <tr><td><code>gap-0 ~ gap-6</code></td><td>자식 요소 사이 간격 (0~32px)</td><td><span class="cat-badge">flex</span></td></tr>
+        <tr><td><code>grid-cols-1/2/3/4/6</code></td><td>그리드 열 개수</td><td><span class="cat-badge">grid</span></td></tr>
+        <tr><td><code>col-span-2/3</code></td><td>그리드에서 여러 칸 차지</td><td><span class="cat-badge">grid</span></td></tr>
+        <tr><td><code>m-0 ~ m-7</code></td><td>margin 전체 (0~48px)</td><td><span class="cat-badge">spacing</span></td></tr>
+        <tr><td><code>mt/mb/ml/mr-*</code></td><td>margin 방향별</td><td><span class="cat-badge">spacing</span></td></tr>
+        <tr><td><code>mx-auto</code></td><td>가로 중앙 정렬 (블록 요소)</td><td><span class="cat-badge">spacing</span></td></tr>
+        <tr><td><code>ml-auto</code></td><td>flex 안에서 오른쪽으로 밀어내기</td><td><span class="cat-badge">spacing</span></td></tr>
+        <tr><td><code>p-0 ~ p-7</code></td><td>padding 전체 (0~48px)</td><td><span class="cat-badge">spacing</span></td></tr>
+        <tr><td><code>pt/pb/pl/pr/px/py-*</code></td><td>padding 방향별</td><td><span class="cat-badge">spacing</span></td></tr>
+        <tr><td><code>text-left/center/right</code></td><td>텍스트 정렬</td><td><span class="cat-badge">text</span></td></tr>
+        <tr><td><code>fw-normal/medium/bold</code></td><td>글자 굵기</td><td><span class="cat-badge">text</span></td></tr>
+        <tr><td><code>fs-xs ~ fs-3xl</code></td><td>글자 크기 (12px~40px)</td><td><span class="cat-badge">text</span></td></tr>
+        <tr><td><code>truncate</code></td><td>한 줄로 자르고 ... 표시</td><td><span class="cat-badge">text</span></td></tr>
+        <tr><td><code>line-clamp-2</code></td><td>두 줄까지만 보이고 잘라내기</td><td><span class="cat-badge">text</span></td></tr>
+        <tr><td><code>text-primary/secondary/accent/dark/gray/white</code></td><td>글자색</td><td><span class="cat-badge">color</span></td></tr>
+        <tr><td><code>bg-primary/secondary/accent/dark/light/white</code></td><td>배경색</td><td><span class="cat-badge">color</span></td></tr>
+        <tr><td><code>border / border-0 / border-t / border-b</code></td><td>테두리</td><td><span class="cat-badge">border</span></td></tr>
+        <tr><td><code>rounded-sm/base/lg/xl/full</code></td><td>모서리 둥글기</td><td><span class="cat-badge">border</span></td></tr>
+        <tr><td><code>pos-relative/absolute/fixed/sticky</code></td><td>position 속성</td><td><span class="cat-badge">position</span></td></tr>
+        <tr><td><code>inset-0</code></td><td>top/right/bottom/left 모두 0</td><td><span class="cat-badge">position</span></td></tr>
+        <tr><td><code>z-10 ~ z-100</code></td><td>쌓임 순서(z-index)</td><td><span class="cat-badge">position</span></td></tr>
+        <tr><td><code>shadow-sm/base/lg</code></td><td>그림자 진하기</td><td><span class="cat-badge">effect</span></td></tr>
+        <tr><td><code>overflow-hidden/auto/scroll</code></td><td>넘치는 콘텐츠 처리</td><td><span class="cat-badge">effect</span></td></tr>
+        <tr><td><code>cursor-pointer</code></td><td>마우스를 올리면 손가락 커서로</td><td><span class="cat-badge">effect</span></td></tr>
+        <tr><td><code>transition / transition-fast/slow</code></td><td>hover 등 상태 변화를 부드럽게</td><td><span class="cat-badge">effect</span></td></tr>
+        <tr><td><code>object-cover / object-contain</code></td><td>이미지/영상 비율 유지 방식</td><td><span class="cat-badge">effect</span></td></tr>
+        <tr><td><code>sr-only</code></td><td>화면엔 안 보이지만 스크린리더는 읽음 (접근성)</td><td><span class="cat-badge">effect</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    basic.css 사용 가이드 — 이 페이지는 basic.css를 직접 불러와 렌더링합니다
+  </footer>
+
+<script>
+  const search = document.getElementById('search');
+  const rows = document.querySelectorAll('#lookup-table tbody tr');
+  search.addEventListener('input', () => {
+    const q = search.value.trim().toLowerCase();
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.classList.toggle('hide', q !== '' && !text.includes(q));
+    });
+  });
+</script>
+</body>
+</html>

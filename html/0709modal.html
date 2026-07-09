@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal</title>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hahmlet:wght@100..900&family=Noto+Sans+KR:wght@100..900&display=swap');
+
+        /* 부모창 */
+        .modal-backdrop{
+            display: flex;
+            /* 주축에 대한 정렬 */
+            justify-content: center;
+            /* align-items의 기본값은 stretch: 창이 길게 늘어난다. */
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.521);
+            inset: 0;
+            position: fixed;
+        }
+
+        .modal-box{
+            background-color: white;
+            width: 300px;
+            padding: 40px;
+            position: relative;
+
+            border-radius: 20px;
+        }
+
+        .modal-box input{
+            width: 100%;
+            height: 25px;
+            font-size: 1.2rem;
+            padding-left: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            margin: 10px 0px;
+        }
+
+        .modal-close{
+            position: absolute;
+            right: 20px;
+            top: 20px;
+
+            border: none;
+            background-color: #fff;
+            font-size: 2rem;
+            color: #444;
+        }
+
+        .btn{
+            border: none;
+            width: 100%;
+            padding: 10px;
+            border-radius: 20px;
+            margin: 30px 0px 0px 0px;
+            background-color: var(--selestB);
+            font-size: medium;
+            font-weight: 400;
+            cursor: pointer;
+        }
+
+        #modalTitle{
+            font-family: "Hahmlet", serif;
+            font-optical-sizing: auto;
+            font-weight: 700;
+            font-size: x-large;
+        }
+
+        #modalContent{
+            color: #666;
+            font-family: "Noto Sans KR", sans-serif;
+            font-optical-sizing: auto;
+        }
+
+        /* 세로 마진이 중첩되는 경우, 큰 쪽으로 표현된다 */
+        .modal-box h6, .modal-box h3{
+            margin: 0;
+        }
+
+        /* 미리 적용하고싶은 수치를 잡아두고 class값으로 사용하면 편함! */
+        .mt-20{
+            margin-top: 20px;
+        }
+        
+        #loginForm label,#loginForm button{
+            font-family: "Noto Sans KR", sans-serif;
+            font-optical-sizing: auto;
+        }
+
+        /*
+            변수 선언(등록)
+            --변수명 = 값;
+        */
+        /* : 가상 클래스 */
+        :root{
+            --selestB : rgb(86, 83, 230);
+        }
+
+    </style>
+</head>
+<body>
+    <!-- 모달을 여는 버튼 -->
+<button id="loginTrigger">로그인</button>
+
+<!-- 평소엔 숨겨져 있는 백드롭 + 모달 -->
+<div class="modal-backdrop show" id="modalBackdrop">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" id="modalClose" aria-label="닫기">&times;</button>
+    <h3 id="modalTitle">로그인</h3>
+    <h6 id="modalContent">이메일과 비밀번호를 입력하세요</h6>
+    <form id="loginForm" class="mt-20">
+        <!--인라인 속성을 가지고있는 요소는 마진/패딩 값을 가질 수 없다.-->
+      <label for="email">이메일</label>
+      <input type="email" id="email" required>
+
+      <label for="password">비밀번호</label>
+      <input type="password" id="password" required>
+
+      <button type="submit" class="btn">로그인</button>
+    </form>
+  </div>
+</div> 
+
+
+    
+</body>
+</html>
