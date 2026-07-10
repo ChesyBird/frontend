@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS 모션 스터디 — transition-duration & transform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDF1F3;
+    --paper-2:#FFFFFF;
+    --ink:#131B29;
+    --ink-soft:#5B6675;
+    --line:#CBD3DB;
+    --motion:#FF5A36;
+    --motion-dim:#FFE4DA;
+    --structure:#2F49E8;
+    --structure-dim:#E3E7FD;
+    --mono:'JetBrains Mono', monospace;
+    --display:'Space Grotesk', sans-serif;
+    --body:'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.6;
+  }
+  a{color:var(--structure);}
+
+  /* ---------- layout shell ---------- */
+  .frame{
+    max-width:980px;
+    margin:0 auto;
+    padding:64px 28px;
+    position:relative;
+  }
+  .frame + .frame{
+    border-top:1px solid var(--line);
+  }
+  .frame-num{
+    position:absolute;
+    left:0;
+    top:64px;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--ink-soft);
+    letter-spacing:0.08em;
+  }
+  @media (min-width:1120px){
+    .frame-num{ left:-56px; }
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    max-width:980px;
+    margin:0 auto;
+    padding:80px 28px 56px;
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:40px;
+    align-items:center;
+  }
+  @media (max-width:760px){
+    .hero{ grid-template-columns:1fr; }
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.14em;
+    color:var(--motion);
+    text-transform:uppercase;
+    margin:0 0 14px;
+  }
+  h1{
+    font-family:var(--display);
+    font-size:44px;
+    line-height:1.12;
+    margin:0 0 16px;
+    letter-spacing:-0.01em;
+  }
+  h1 span{color:var(--motion);}
+  .hero p{
+    color:var(--ink-soft);
+    font-size:16px;
+    max-width:46ch;
+  }
+  .hero-stage{
+    background:var(--ink);
+    border-radius:18px;
+    height:260px;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .hero-box{
+    width:64px;
+    height:64px;
+    border-radius:12px;
+    background:var(--motion);
+    animation:hero-move 2.6s cubic-bezier(.65,0,.35,1) infinite alternate;
+  }
+  @keyframes hero-move{
+    0%{ transform:translateX(-140px) rotate(0deg) scale(1); background:var(--motion); }
+    50%{ transform:translateX(0) rotate(180deg) scale(1.4); background:#FFB199; }
+    100%{ transform:translateX(140px) rotate(360deg) scale(1); background:var(--motion); }
+  }
+  .hero-caption{
+    position:absolute;
+    bottom:14px;
+    left:0; right:0;
+    text-align:center;
+    font-family:var(--mono);
+    font-size:11px;
+    color:#8FA0B5;
+    letter-spacing:0.06em;
+  }
+
+  /* ---------- typography ---------- */
+  h2{
+    font-family:var(--display);
+    font-size:28px;
+    margin:0 0 6px;
+    letter-spacing:-0.01em;
+  }
+  .section-sub{
+    color:var(--ink-soft);
+    font-size:14px;
+    margin:0 0 28px;
+    font-family:var(--mono);
+  }
+  h3{
+    font-family:var(--display);
+    font-size:18px;
+    margin:32px 0 10px;
+  }
+  p{ margin:0 0 14px; }
+
+  /* ---------- code blocks ---------- */
+  .code{
+    background:var(--ink);
+    color:#EAF0FF;
+    font-family:var(--mono);
+    font-size:13.5px;
+    padding:18px 20px;
+    border-radius:10px;
+    overflow-x:auto;
+    line-height:1.65;
+    white-space:pre;
+  }
+  .code .prop{ color:#8FD9FF; }
+  .code .val{ color:#FFC48A; }
+  .code .comment{ color:#6B7688; }
+
+  /* ---------- property table ---------- */
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin:18px 0 8px;
+    font-size:14px;
+  }
+  th,td{
+    text-align:left;
+    padding:10px 12px;
+    border-bottom:1px solid var(--line);
+    vertical-align:top;
+  }
+  th{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  td code{
+    font-family:var(--mono);
+    background:var(--structure-dim);
+    color:var(--structure);
+    padding:2px 6px;
+    border-radius:4px;
+    font-size:12.5px;
+  }
+
+  /* ---------- demo card ---------- */
+  .demo{
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    border-radius:14px;
+    margin:22px 0 8px;
+    overflow:hidden;
+  }
+  .demo-label{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    padding:14px 20px 0;
+  }
+  .stage{
+    min-height:180px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:30px 20px;
+    background:
+      linear-gradient(90deg, transparent 39px, rgba(0,0,0,0.04) 40px),
+      linear-gradient(rgba(0,0,0,0.04) 39px, transparent 40px);
+    background-size:40px 40px;
+  }
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:18px;
+    padding:16px 20px 20px;
+    border-top:1px solid var(--line);
+    background:#F7F9FA;
+  }
+  .control{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    min-width:150px;
+    flex:1;
+  }
+  .control label{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--ink-soft);
+    display:flex;
+    justify-content:space-between;
+  }
+  .control label b{ color:var(--motion); font-weight:600; }
+  input[type=range]{
+    -webkit-appearance:none;
+    width:100%;
+    height:4px;
+    border-radius:2px;
+    background:var(--line);
+    outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:16px; height:16px;
+    border-radius:50%;
+    background:var(--motion);
+    cursor:pointer;
+    border:2px solid #fff;
+    box-shadow:0 0 0 1px var(--motion);
+  }
+  .live-code{
+    margin:0;
+    border-radius:0;
+    font-size:12.5px;
+  }
+
+  /* ---------- practice / playground ---------- */
+  .playground{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0;
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+    margin:18px 0;
+  }
+  @media (max-width:700px){
+    .playground{ grid-template-columns:1fr; }
+  }
+  .pg-editor{
+    background:var(--ink);
+    display:flex;
+    flex-direction:column;
+  }
+  .pg-editor-label{
+    font-family:var(--mono);
+    font-size:11px;
+    color:#8FA0B5;
+    padding:12px 16px;
+    border-bottom:1px solid #263141;
+  }
+  textarea{
+    flex:1;
+    background:var(--ink);
+    color:#EAF0FF;
+    font-family:var(--mono);
+    font-size:13px;
+    border:none;
+    outline:none;
+    resize:none;
+    padding:16px;
+    min-height:220px;
+    line-height:1.6;
+  }
+  .pg-stage{
+    background:var(--paper-2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+  }
+  .pg-target{
+    width:72px;
+    height:72px;
+    background:var(--structure);
+    border-radius:10px;
+  }
+  .pg-hint{
+    position:absolute;
+    top:12px; left:14px;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--ink-soft);
+  }
+
+  /* ---------- exercises ---------- */
+  .exercise{
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:20px 22px;
+    margin:18px 0;
+    background:var(--paper-2);
+  }
+  .exercise-tag{
+    display:inline-block;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--motion);
+    background:var(--motion-dim);
+    padding:3px 9px;
+    border-radius:5px;
+    margin-bottom:10px;
+  }
+  details{
+    margin-top:12px;
+  }
+  summary{
+    cursor:pointer;
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--structure);
+    outline:none;
+  }
+  details .code{ margin-top:10px; }
+
+  /* ---------- footer ---------- */
+  footer{
+    max-width:980px;
+    margin:0 auto;
+    padding:40px 28px 80px;
+    color:var(--ink-soft);
+    font-size:13px;
+    font-family:var(--mono);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .hero-box{ animation:none; }
+  }
+
+  
+</style>
+</head>
+<body>
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <p class="eyebrow">CSS 학습자료 · 모션 편</p>
+      <h1>화면 속 움직임을 설계하는 두 가지 도구,<br><span>transition</span>과 <span>transform</span></h1>
+      <p>속도(duration)와 모양 변화(transform)를 함께 이해하면, 정지된 화면이 살아있는 인터페이스로 바뀝니다. 아래에서 값을 직접 바꿔보며 눈으로 확인해보세요.</p>
+    </div>
+    <div class="hero-stage">
+      <div class="hero-box"></div>
+      <div class="hero-caption">transition-duration: 2.6s · transform: translate + rotate + scale</div>
+    </div>
+  </div>
+
+  <!-- FRAME 01 : transition-duration -->
+  <div class="frame" id="transition">
+    <div class="frame-num">FRAME 01</div>
+    <h2>transition-duration</h2>
+    <p class="section-sub">상태 변화에 걸리는 "시간"을 정하는 속성</p>
+
+    <p><b>transition</b>은 어떤 CSS 속성값이 바뀔 때(예: 색이 바뀌거나 크기가 커질 때), 그 변화를 순간적으로 처리하지 않고 <b>부드럽게 이어지도록</b> 만드는 속성입니다. 그중 <code style="font-family:var(--mono);background:var(--structure-dim);color:var(--structure);padding:2px 6px;border-radius:4px;">transition-duration</code>은 그 변화가 몇 초에 걸쳐 일어날지를 정합니다.</p>
+
+    <div class="code"><span class="comment">/* 기본 문법 */</span>
+.box {
+  <span class="prop">transition-property</span>: background-color;
+  <span class="prop">transition-duration</span>: <span class="val">0.4s</span>;
+  <span class="prop">transition-timing-function</span>: ease;
+  <span class="prop">transition-delay</span>: 0s;
+}
+
+<span class="comment">/* 한 줄로 줄여쓰기 (shorthand) */</span>
+.box {
+  <span class="prop">transition</span>: background-color <span class="val">0.4s</span> ease;
+}</div>
+
+    <h3>transition 관련 4가지 속성</h3>
+    <table>
+      <tr><th>속성</th><th>역할</th><th>예시</th></tr>
+      <tr><td><code>transition-property</code></td><td>어떤 속성을 애니메이션 할지 지정</td><td><code>all</code>, <code>background-color</code>, <code>transform</code></td></tr>
+      <tr><td><code>transition-duration</code></td><td>변화에 걸리는 시간</td><td><code>0.3s</code>, <code>500ms</code></td></tr>
+      <tr><td><code>transition-timing-function</code></td><td>속도의 완급 곡선</td><td><code>ease</code>, <code>linear</code>, <code>ease-in-out</code></td></tr>
+      <tr><td><code>transition-delay</code></td><td>변화가 시작되기까지 대기 시간</td><td><code>0.2s</code></td></tr>
+    </table>
+
+    <section class="m-center max-w-lg py-4">
+  <h2 class="fs-xl mb-3">transition-timing-function 종류</h2>
+  <table class="w-100" style="border-collapse: separate; border-spacing: 0;">
+    <thead>
+      <tr class="bg-dark text-white">
+        <th class="p-2 text-left">값</th>
+        <th class="p-2 text-left">설명</th>
+        <th class="p-2 text-left">움직임 느낌</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="border-b">
+        <td class="p-2 fw-bold">linear</td>
+        <td class="p-2">처음부터 끝까지 일정한 속도</td>
+        <td class="p-2 text-gray">균일하게 쭉</td>
+      </tr>
+      <tr class="border-b">
+        <td class="p-2 fw-bold">ease</td>
+        <td class="p-2">기본값. 천천히 시작 → 빨라짐 → 천천히 끝남</td>
+        <td class="p-2 text-gray">가장 자연스러움</td>
+      </tr>
+      <tr class="border-b">
+        <td class="p-2 fw-bold">ease-in</td>
+        <td class="p-2">천천히 시작해서 점점 빨라짐</td>
+        <td class="p-2 text-gray">끝이 갑작스러움</td>
+      </tr>
+      <tr class="border-b">
+        <td class="p-2 fw-bold">ease-out</td>
+        <td class="p-2">빠르게 시작해서 점점 느려짐</td>
+        <td class="p-2 text-gray">끝이 부드러움</td>
+      </tr>
+      <tr class="border-b">
+        <td class="p-2 fw-bold">ease-in-out</td>
+        <td class="p-2">시작도 끝도 부드러움</td>
+        <td class="p-2 text-gray">양쪽 다 완만함</td>
+      </tr>
+      <tr class="border-b">
+        <td class="p-2 fw-bold">cubic-bezier(x1,y1,x2,y2)</td>
+        <td class="p-2">4개 숫자로 곡선을 직접 지정 (커스텀)</td>
+        <td class="p-2 text-gray">튕기는 효과 등 자유 설정</td>
+      </tr>
+      <tr>
+        <td class="p-2 fw-bold">steps(n)</td>
+        <td class="p-2">n개의 구간으로 뚝뚝 끊어서 전환</td>
+        <td class="p-2 text-gray">계단식 (스프라이트 애니메이션)</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+    <h3>실습 데모 — 슬라이더로 duration 바꿔보기</h3>
+    <div class="demo">
+      <div class="demo-label">박스에 마우스를 올려보세요 (hover)</div>
+      <div class="stage">
+        <div id="t-box" style="width:80px;height:80px;border-radius:14px;background:#2F49E8;"></div>
+      </div>
+      <div class="controls">
+        <div class="control">
+          <label>transition-duration <b id="t-duration-val">0.4s</b></label>
+          <input type="range" id="t-duration" min="0" max="30" value="4" step="1">
+        </div>
+        <div class="control">
+          <label>timing-function</label>
+          <select id="t-timing" style="font-family:var(--mono);font-size:13px;padding:6px 8px;border-radius:6px;border:1px solid var(--line);">
+            <option value="ease">ease</option>
+            <option value="linear">linear</option>
+            <option value="ease-in">ease-in</option>
+            <option value="ease-out">ease-out</option>
+            <option value="ease-in-out">ease-in-out</option>
+          </select>
+        </div>
+      </div>
+      <pre class="code live-code" id="t-code"></pre>
+    </div>
+  </div>
+
+  <!-- FRAME 02 : transform -->
+  <div class="frame" id="transform">
+    <div class="frame-num">FRAME 02</div>
+    <h2>transform</h2>
+    <p class="section-sub">요소의 위치·각도·크기를 바꾸는 "모양 변화" 속성</p>
+
+    <p><b>transform</b>은 요소를 이동시키거나(translate), 회전시키거나(rotate), 크기를 바꾸거나(scale), 기울이는(skew) 데 사용합니다. transform 자체는 순간적으로 적용되지만, <b>transition</b>과 함께 쓰면 그 변화가 부드럽게 보이게 됩니다.</p>
+
+    <div class="code"><span class="comment">/* 자주 쓰는 transform 함수 */</span>
+.box {
+  <span class="prop">transform</span>: <span class="val">translateX(40px)</span>;   <span class="comment">/* 이동 */</span>
+  <span class="prop">transform</span>: <span class="val">rotate(45deg)</span>;      <span class="comment">/* 회전 */</span>
+  <span class="prop">transform</span>: <span class="val">scale(1.5)</span>;        <span class="comment">/* 확대/축소 */</span>
+  <span class="prop">transform</span>: <span class="val">skewX(15deg)</span>;      <span class="comment">/* 기울이기 */</span>
+
+  <span class="comment">/* 여러 개를 동시에, 공백으로 연결 */</span>
+  <span class="prop">transform</span>: <span class="val">translateX(40px) rotate(45deg) scale(1.2)</span>;
+}</div>
+
+    <table>
+      <tr><th>함수</th><th>변화</th><th>예시</th></tr>
+      <tr><td><code>translate(x, y)</code></td><td>위치 이동</td><td><code>translateX(50px)</code></td></tr>
+      <tr><td><code>rotate(deg)</code></td><td>회전</td><td><code>rotate(180deg)</code></td></tr>
+      <tr><td><code>scale(n)</code></td><td>크기 확대/축소</td><td><code>scale(0.5)</code></td></tr>
+      <tr><td><code>skew(x, y)</code></td><td>기울이기</td><td><code>skewX(20deg)</code></td></tr>
+    </table>
+
+    <h3>실습 데모 — 4개의 슬라이더를 동시에 조절해보기</h3>
+    <div class="demo">
+      <div class="demo-label">아래 값을 바꾸면 박스가 실시간으로 변합니다</div>
+      <div class="stage">
+        <div id="f-box" style="width:70px;height:70px;border-radius:12px;background:#FF5A36;transition:transform 0.15s ease;"></div>
+      </div>
+      <div class="controls">
+        <div class="control">
+          <label>translateX <b id="f-tx-val">0px</b></label>
+          <input type="range" id="f-tx" min="-100" max="100" value="0">
+        </div>
+        <div class="control">
+          <label>rotate <b id="f-rot-val">0deg</b></label>
+          <input type="range" id="f-rot" min="0" max="360" value="0">
+        </div>
+        <div class="control">
+          <label>scale <b id="f-scale-val">1.0</b></label>
+          <input type="range" id="f-scale" min="50" max="200" value="100">
+        </div>
+        <div class="control">
+          <label>skewX <b id="f-skew-val">0deg</b></label>
+          <input type="range" id="f-skew" min="-45" max="45" value="0">
+        </div>
+      </div>
+      <pre class="code live-code" id="f-code"></pre>
+    </div>
+
+    <h3>transition + transform 함께 쓰기</h3>
+    <p>실제 UI에서는 두 속성을 같이 사용하는 경우가 대부분입니다. transform으로 "어떻게 변할지"를 정하고, transition으로 "얼마나 부드럽게 변할지"를 정합니다.</p>
+    <div class="demo">
+      <div class="demo-label">카드에 마우스를 올려보세요</div>
+      <div class="stage">
+        <div style="width:160px;height:100px;border-radius:12px;background:#fff;border:1px solid var(--line);box-shadow:0 2px 6px rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--ink-soft);transition:transform 0.25s ease, box-shadow 0.25s ease;cursor:pointer;"
+             onmouseover="this.style.transform='translateY(-8px) scale(1.04)';this.style.boxShadow='0 14px 24px rgba(0,0,0,0.14)';"
+             onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 6px rgba(0,0,0,0.06)';">
+          hover card
+        </div>
+      </div>
+      <div class="code">.card {
+  <span class="prop">transition</span>: <span class="val">transform 0.25s ease, box-shadow 0.25s ease</span>;
+}
+.card:hover {
+  <span class="prop">transform</span>: <span class="val">translateY(-8px) scale(1.04)</span>;
+  <span class="prop">box-shadow</span>: <span class="val">0 14px 24px rgba(0,0,0,0.14)</span>;
+}</div>
+    </div>
+  </div>
+
+  
+  <!-- FRAME 04 : exercises -->
+  <div class="frame" id="exercises">
+    <div class="frame-num">FRAME 04</div>
+    <h2>연습문제</h2>
+    <p class="section-sub">코드를 먼저 작성해보고, 막히면 정답을 펼쳐보세요</p>
+
+    <div class="exercise">
+      <span class="exercise-tag">EXERCISE 1</span>
+      <p><b>박스에 마우스를 올리면 0.5초에 걸쳐 배경색이 주황색(#FF5A36)으로 바뀌도록</b> 만들어보세요.</p>
+      <details>
+        <summary>정답 보기</summary>
+        <div class="code">.box {
+  <span class="prop">background</span>: <span class="val">#2F49E8</span>;
+  <span class="prop">transition</span>: <span class="val">background-color 0.5s ease</span>;
+}
+.box:hover {
+  <span class="prop">background-color</span>: <span class="val">#FF5A36</span>;
+}</div>
+      </details>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-tag">EXERCISE 2</span>
+      <p><b>박스에 마우스를 올리면 오른쪽으로 100px 이동하면서 동시에 45도 회전</b>하도록 만들어보세요. 변화는 0.3초 동안 일어나야 합니다.</p>
+      <details>
+        <summary>정답 보기</summary>
+        <div class="code">.box {
+  <span class="prop">transition</span>: <span class="val">transform 0.3s ease</span>;
+}
+.box:hover {
+  <span class="prop">transform</span>: <span class="val">translateX(100px) rotate(45deg)</span>;
+}</div>
+      </details>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-tag">EXERCISE 3 · 응용</span>
+      <p>버튼에 마우스를 올리면 <b>1.1배 커지고, 위로 4px 떠오르고, 그림자가 진해지는</b> 효과를 0.2초 동안 만들어보세요. (힌트: transform과 box-shadow를 동시에 transition 하려면 쉼표로 구분합니다)</p>
+      <details>
+        <summary>정답 보기</summary>
+        <div class="code">.button {
+  <span class="prop">transition</span>: <span class="val">transform 0.2s ease, box-shadow 0.2s ease</span>;
+}
+.button:hover {
+  <span class="prop">transform</span>: <span class="val">translateY(-4px) scale(1.1)</span>;
+  <span class="prop">box-shadow</span>: <span class="val">0 10px 20px rgba(0,0,0,0.2)</span>;
+}</div>
+      </details>
+    </div>
+  </div>
+
+  <footer>
+    CSS 모션 스터디 — transition-duration & transform 학습자료
+  </footer>
+
+<script>
+  // ---- Frame 01: transition-duration demo ----
+  const tBox = document.getElementById('t-box');
+  const tDuration = document.getElementById('t-duration');
+  const tDurationVal = document.getElementById('t-duration-val');
+  const tTiming = document.getElementById('t-timing');
+  const tCode = document.getElementById('t-code');
+
+  function updateTransitionDemo(){
+    const d = (tDuration.value / 10).toFixed(1);
+    tDurationVal.textContent = d + 's';
+    tBox.style.transition = `background-color ${d}s ${tTiming.value}, transform ${d}s ${tTiming.value}`;
+    tCode.innerHTML = `.box {\n  <span class="prop">transition-property</span>: background-color, transform;\n  <span class="prop">transition-duration</span>: <span class="val">${d}s</span>;\n  <span class="prop">transition-timing-function</span>: <span class="val">${tTiming.value}</span>;\n}\n.box:hover {\n  <span class="prop">background-color</span>: <span class="val">#FF5A36</span>;\n  <span class="prop">transform</span>: <span class="val">scale(1.15)</span>;\n}`;
+  }
+  tBox.addEventListener('mouseenter', () => {
+    tBox.style.backgroundColor = '#FF5A36';
+    tBox.style.transform = 'scale(1.15)';
+  });
+  tBox.addEventListener('mouseleave', () => {
+    tBox.style.backgroundColor = '#2F49E8';
+    tBox.style.transform = 'scale(1)';
+  });
+  tDuration.addEventListener('input', updateTransitionDemo);
+  tTiming.addEventListener('change', updateTransitionDemo);
+  updateTransitionDemo();
+
+  // ---- Frame 02: transform demo ----
+  const fBox = document.getElementById('f-box');
+  const fTx = document.getElementById('f-tx');
+  const fRot = document.getElementById('f-rot');
+  const fScale = document.getElementById('f-scale');
+  const fSkew = document.getElementById('f-skew');
+  const fCode = document.getElementById('f-code');
+
+  function updateTransformDemo(){
+    const tx = fTx.value;
+    const rot = fRot.value;
+    const scale = (fScale.value / 100).toFixed(2);
+    const skew = fSkew.value;
+
+    document.getElementById('f-tx-val').textContent = tx + 'px';
+    document.getElementById('f-rot-val').textContent = rot + 'deg';
+    document.getElementById('f-scale-val').textContent = scale;
+    document.getElementById('f-skew-val').textContent = skew + 'deg';
+
+    const transformStr = `translateX(${tx}px) rotate(${rot}deg) scale(${scale}) skewX(${skew}deg)`;
+    fBox.style.transform = transformStr;
+    fCode.innerHTML = `.box {\n  <span class="prop">transform</span>: <span class="val">${transformStr}</span>;\n}`;
+  }
+  [fTx, fRot, fScale, fSkew].forEach(el => el.addEventListener('input', updateTransformDemo));
+  updateTransformDemo();
+
+  // ---- Frame 03: playground ----
+  const pgCss = document.getElementById('pg-css');
+  const pgTarget = document.getElementById('pg-target');
+  function updatePlayground(){
+    pgTarget.style.cssText = pgCss.value;
+  }
+  pgCss.addEventListener('input', updatePlayground);
+  updatePlayground();
+</script>
+</body>
+</html>

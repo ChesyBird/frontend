@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS 고급 선택자 </title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDF1F3;
+    --paper-2:#FFFFFF;
+    --ink:#131B29;
+    --ink-soft:#5B6675;
+    --line:#CBD3DB;
+    --structure:#2F49E8;
+    --structure-dim:#E3E7FD;
+    --motion:#FF5A36;
+    --motion-dim:#FFE4DA;
+    --teal:#0EA5A0;
+    --teal-dim:#D9F4F2;
+    --ok:#1E9E5A;
+    --ok-dim:#DFF5E7;
+    --mono:'JetBrains Mono', monospace;
+    --display:'Space Grotesk', sans-serif;
+    --body:'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{ margin:0; background:var(--paper); color:var(--ink); font-family:var(--body); line-height:1.6; }
+
+  .frame{ max-width:1000px; margin:0 auto; padding:60px 28px; position:relative; }
+  .frame + .frame{ border-top:1px solid var(--line); }
+  .frame-num{
+    position:absolute; left:0; top:60px;
+    font-family:var(--mono); font-size:12px; color:var(--ink-soft); letter-spacing:0.08em;
+  }
+  @media (min-width:1140px){ .frame-num{ left:-56px; } }
+
+  .hero{
+    max-width:1000px; margin:0 auto; padding:76px 28px 52px;
+    display:grid; grid-template-columns:1.05fr 0.95fr; gap:40px; align-items:center;
+  }
+  @media (max-width:760px){ .hero{ grid-template-columns:1fr; } }
+  .eyebrow{ font-family:var(--mono); font-size:12px; letter-spacing:0.14em; color:var(--structure); text-transform:uppercase; margin:0 0 14px; }
+  h1{ font-family:var(--display); font-size:40px; line-height:1.16; margin:0 0 16px; letter-spacing:-0.01em; }
+  h1 span{ color:var(--structure); }
+  .hero p{ color:var(--ink-soft); font-size:16px; max-width:48ch; }
+  .hero-stage{ background:var(--ink); border-radius:18px; height:260px; display:flex; align-items:center; justify-content:center; padding:24px; }
+  .hero-code{ font-family:var(--mono); font-size:13px; color:#EAF0FF; line-height:1.9; }
+  .hero-code .prop{ color:#8FD9FF; }
+  .hero-code .val{ color:#FFC48A; }
+  .hero-code .hl{ background:var(--structure); color:#fff; padding:1px 4px; border-radius:3px; }
+
+  h2{ font-family:var(--display); font-size:26px; margin:0 0 6px; letter-spacing:-0.01em; }
+  .section-sub{ color:var(--ink-soft); font-size:14px; margin:0 0 24px; font-family:var(--mono); }
+  h3{ font-family:var(--display); font-size:16px; margin:28px 0 10px; }
+  p{ margin:0 0 14px; }
+  .inline-code{ font-family:var(--mono); background:var(--structure-dim); color:var(--structure); padding:2px 6px; border-radius:4px; font-size:0.92em; }
+
+  .code{
+    background:var(--ink); color:#EAF0FF; font-family:var(--mono); font-size:13.5px;
+    padding:18px 20px; border-radius:10px; overflow-x:auto; line-height:1.65; white-space:pre;
+  }
+  .code .prop{ color:#8FD9FF; }
+  .code .val{ color:#FFC48A; }
+  .code .comment{ color:#6B7688; }
+
+  .tip{ border-left:3px solid var(--teal); background:var(--teal-dim); padding:14px 16px; border-radius:0 8px 8px 0; font-size:14px; margin:16px 0; }
+  .tip b{ color:var(--teal); }
+
+  table{ width:100%; border-collapse:collapse; margin:18px 0 8px; font-size:14px; }
+  th,td{ text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th{ font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft); }
+  td code{ font-family:var(--mono); background:var(--structure-dim); color:var(--structure); padding:2px 6px; border-radius:4px; font-size:12.5px; }
+
+  /* ---------- selector tree (used by tester demos) ---------- */
+  .demo{ background:var(--paper-2); border:1px solid var(--line); border-radius:14px; margin:22px 0 8px; overflow:hidden; }
+  .demo-label{ font-family:var(--mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-soft); padding:14px 20px 0; }
+
+  .sel-tree{ padding:28px 24px 20px; display:flex; flex-direction:column; gap:12px; }
+  .sel-el{
+    position:relative;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    padding:16px 12px 12px;
+    background:#fff;
+    min-height:20px;
+    transition: outline-color .15s ease, background-color .15s ease;
+  }
+  /* 자식 요소는 부모 .sel-el 안에 실제 DOM 자식으로 직접 두고,
+     들여쓰기는 감싸는 div 없이 이 규칙으로만 표현한다.
+     감싸는 div(.sel-children)를 쓰면 예를 들어 ".nav > .item" 같은
+     자식 결합자 선택자가 실제로는 손자(grandchild)를 가리키게 되어
+     매칭이 0개가 되는 문제가 있었다 — 이 방식은 그 문제를 근본적으로 없앤다. */
+  .sel-el > .sel-el{
+    margin:10px 0 0 18px;
+    border-left:2px dashed var(--line);
+    border-top-left-radius:0;
+    border-bottom-left-radius:0;
+  }
+  .sel-el::before{
+    content: attr(data-sig);
+    position:absolute; top:-10px; left:8px;
+    background:var(--ink); color:#EAF0FF;
+    font-family:var(--mono); font-size:9.5px;
+    padding:2px 6px; border-radius:4px;
+    white-space:nowrap;
+  }
+  .sel-el.match{
+    outline:3px solid var(--structure);
+    outline-offset:1px;
+    background:var(--structure-dim);
+  }
+
+  .tester{ border-top:1px solid var(--line); background:#F7F9FA; padding:16px 20px 20px; }
+  .tester-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .tester-row input[type=text]{
+    flex:1; min-width:200px;
+    font-family:var(--mono); font-size:13px;
+    padding:9px 12px; border-radius:8px;
+    border:1.5px solid var(--line); outline:none;
+    background:#fff; color:var(--ink);
+  }
+  .tester-row input[type=text]:focus{ border-color:var(--structure); }
+  .tester-msg{ font-family:var(--mono); font-size:12px; color:var(--ink-soft); margin-top:8px; }
+  .tester-msg.ok{ color:var(--ok); font-weight:600; }
+  .tester-msg.err{ color:var(--motion); font-weight:600; }
+  .preset-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .preset-btn{
+    font-family:var(--mono); font-size:11.5px;
+    background:#fff; border:1.5px solid var(--line); color:var(--structure);
+    padding:6px 10px; border-radius:6px; cursor:pointer;
+  }
+  .preset-btn:hover{ border-color:var(--structure); background:var(--structure-dim); }
+
+  /* ---------- pseudo-element mini demos ---------- */
+  .pe-demo{
+    display:flex; gap:20px; flex-wrap:wrap; padding:24px 20px;
+    align-items:flex-start;
+  }
+  .pe-card{ flex:1; min-width:200px; }
+  .pe-card-label{ font-family:var(--mono); font-size:11px; color:var(--ink-soft); margin-bottom:8px; }
+
+  .quote{
+    position:relative;
+    background:#fff; border:1px solid var(--line); border-radius:10px;
+    padding:16px 18px; font-size:14px; color:var(--ink-soft);
+  }
+  .quote::before{
+    content:"“"; font-family:var(--display); font-size:32px; color:var(--structure);
+    position:absolute; top:-6px; left:10px;
+  }
+  .quote{ padding-left:34px; }
+
+  .cnt-badge{
+    position:relative; display:inline-flex; align-items:center; justify-content:center;
+    width:44px; height:44px; border-radius:50%; background:var(--ink); color:#fff;
+    font-family:var(--mono); font-size:18px;
+  }
+  .cnt-badge::after{
+    content:"3"; position:absolute; top:-6px; right:-6px;
+    width:20px; height:20px; border-radius:50%;
+    background:var(--motion); color:#fff; font-size:11px;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  .pe-input{
+    width:100%; padding:10px 12px; border-radius:8px; border:1.5px solid var(--line);
+    font-family:var(--body); font-size:13px; outline:none;
+  }
+  .pe-input::placeholder{ color:var(--teal); font-style:italic; }
+
+  .pe-para::first-line{ font-weight:700; color:var(--structure); }
+  .pe-para{ font-size:13.5px; color:var(--ink-soft); }
+
+  /* ---------- specificity calculator ---------- */
+  .spec-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0; }
+  @media (max-width:700px){ .spec-row{ grid-template-columns:1fr; } }
+  .spec-box{ background:#fff; border:1.5px solid var(--line); border-radius:10px; padding:16px; }
+  .spec-box input{
+    width:100%; font-family:var(--mono); font-size:13px;
+    padding:9px 12px; border-radius:8px; border:1.5px solid var(--line); outline:none; margin-bottom:12px;
+  }
+  .spec-bars{ display:flex; flex-direction:column; gap:6px; }
+  .spec-bar-row{ display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; color:var(--ink-soft); }
+  .spec-bar-track{ flex:1; height:8px; background:var(--paper); border-radius:4px; overflow:hidden; }
+  .spec-bar-fill{ height:100%; background:var(--structure); width:0%; transition:width .2s ease; }
+  .spec-winner{
+    text-align:center; font-family:var(--mono); font-size:13px; font-weight:600;
+    padding:10px; margin-top:6px; border-radius:8px; background:var(--paper);
+  }
+  .spec-winner.win{ background:var(--ok-dim); color:var(--ok); }
+
+  /* ---------- exercises ---------- */
+  .exercise{ border:1px solid var(--line); border-radius:12px; padding:20px 22px; margin:18px 0; background:var(--paper-2); }
+  .exercise-tag{ display:inline-block; font-family:var(--mono); font-size:11px; color:var(--structure); background:var(--structure-dim); padding:3px 9px; border-radius:5px; margin-bottom:10px; }
+  details{ margin-top:6px; }
+  summary{ cursor:pointer; font-family:var(--mono); font-size:12.5px; color:var(--structure); outline:none; }
+  details .code{ margin-top:10px; }
+  .check-row{ display:flex; align-items:center; gap:12px; padding:10px 16px; background:#F7F9FA; border-top:1px solid var(--line); font-family:var(--mono); font-size:12px; }
+  .check-btn{ font-family:var(--mono); font-size:12px; background:var(--structure); color:#fff; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; }
+  .check-btn:hover{ opacity:.9; }
+  .check-result{ font-size:12px; color:var(--ink-soft); }
+  .check-result.pass{ color:var(--ok); font-weight:600; }
+  .check-result.fail{ color:var(--motion); font-weight:600; }
+
+  /* ---------- cautions ---------- */
+  .caution-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:18px 0; }
+  @media (max-width:700px){ .caution-grid{ grid-template-columns:1fr; } }
+  .caution-col{ border-radius:12px; padding:18px 20px; }
+  .caution-col.do{ background:var(--ok-dim); }
+  .caution-col.dont{ background:var(--motion-dim); }
+  .caution-col-title{
+    font-family:var(--mono); font-size:12px; font-weight:700; letter-spacing:0.05em;
+    margin-bottom:12px; text-transform:uppercase;
+  }
+  .caution-col.do .caution-col-title{ color:var(--ok); }
+  .caution-col.dont .caution-col-title{ color:var(--motion); }
+  .caution-list{ list-style:none; padding:0; margin:0; }
+  .caution-list li{ display:flex; gap:8px; padding:8px 0; font-size:13.5px; border-bottom:1px solid rgba(0,0,0,0.06); }
+  .caution-list li:last-child{ border-bottom:none; }
+  .caution-list li::before{ flex-shrink:0; font-weight:700; }
+  .caution-col.do .caution-list li::before{ content:"✓"; color:var(--ok); }
+  .caution-col.dont .caution-list li::before{ content:"✕"; color:var(--motion); }
+
+  footer{ max-width:1000px; margin:0 auto; padding:40px 28px 80px; color:var(--ink-soft); font-size:13px; font-family:var(--mono); }
+</style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <p class="eyebrow">CSS 교안 · 선택자 편</p>
+      <h1>어떤 요소를<br>스타일링할지 <span>정확히 짚어내는 법</span></h1>
+      <p>기본 선택자부터 결합자, 속성 선택자, 가상 클래스/요소, 그리고 우선순위(명시도)까지 — 실습으로 직접 확인하며 단계별로 익힙니다.</p>
+    </div>
+    <div class="hero-stage">
+      <div class="hero-code">.card <span class="hl">></span> p.title {<br>&nbsp;&nbsp;<span class="prop">color</span>: <span class="val">#2F49E8</span>;<br>}<br><br>li<span class="hl">:nth-child(2n)</span> {<br>&nbsp;&nbsp;<span class="prop">background</span>: <span class="val">#eee</span>;<br>}</div>
+    </div>
+  </div>
+
+  <!-- FRAME 01 : overview -->
+  <div class="frame" id="overview">
+    <div class="frame-num">FRAME 01</div>
+    <h2>선택자란?</h2>
+    <p class="section-sub">CSS 규칙을 "어떤 요소에" 적용할지 지정하는 문법</p>
+    <p>선택자(selector)는 HTML 문서 안에서 스타일을 적용할 대상을 찾아내는 규칙입니다. 크게 다섯 카테고리로 나눠서 이해하면 전체 그림이 잡힙니다.</p>
+    <table>
+      <tr><th>카테고리</th><th>예시</th><th>의미</th></tr>
+      <tr><td>기본 선택자</td><td><code>*</code>, <code>div</code>, <code>.card</code>, <code>#header</code></td><td>태그/클래스/id로 직접 지정</td></tr>
+      <tr><td>결합자</td><td><code>A B</code>, <code>A > B</code>, <code>A + B</code>, <code>A ~ B</code></td><td>요소 사이의 관계로 지정</td></tr>
+      <tr><td>속성 선택자</td><td><code>[type="text"]</code>, <code>[href^="https"]</code></td><td>HTML 속성값으로 지정</td></tr>
+      <tr><td>가상 클래스</td><td><code>:hover</code>, <code>:nth-child(2)</code>, <code>:not()</code></td><td>상태나 순서로 지정</td></tr>
+      <tr><td>가상 요소</td><td><code>::before</code>, <code>::after</code>, <code>::placeholder</code></td><td>요소의 특정 부분/가상의 콘텐츠 지정</td></tr>
+    </table>
+    <p style="font-size:13.5px;color:var(--ink-soft);">이 교안에는 곳곳에 <b>선택자 테스터</b>가 있어요. 입력창에 선택자를 직접 타이핑하면 아래 트리에서 매칭되는 요소가 파란색으로 강조됩니다.</p>
+  </div>
+
+  <!-- FRAME 02 : basic selectors -->
+  <div class="frame" id="basic">
+    <div class="frame-num">FRAME 02</div>
+    <h2>기본 선택자</h2>
+    <p class="section-sub">전체(*) · 태그 · 클래스(.) · id(#)</p>
+
+    <table>
+      <tr><th>선택자</th><th>선택 대상</th></tr>
+      <tr><td><code>*</code></td><td>문서의 모든 요소</td></tr>
+      <tr><td><code>div</code></td><td>모든 <code>&lt;div&gt;</code> 태그</td></tr>
+      <tr><td><code>.card</code></td><td><code>class="card"</code>를 가진 모든 요소</td></tr>
+      <tr><td><code>#header</code></td><td><code>id="header"</code>를 가진 요소 (문서에 유일해야 함)</td></tr>
+    </table>
+    <div class="tip"><b>Tip.</b> 클래스는 여러 요소에 반복해서 붙일 수 있지만, id는 문서 전체에서 딱 하나의 요소만 가리켜야 합니다. 그래서 재사용 가능한 스타일은 클래스로, 고유한 지점(앵커, JS 훅)은 id로 쓰는 것이 관례입니다.</div>
+
+    <h3>선택자 테스터</h3>
+    <div class="demo">
+      <div class="demo-label">아래 입력창에 선택자를 입력하거나 버튼을 눌러보세요</div>
+      <div class="sel-tree" id="tree-basic">
+        <div class="sel-el" id="basic-header"></div>
+        <div class="sel-el card" id="basic-card1">
+          <p class="sel-el title"></p>
+          <span class="sel-el badge"></span>
+        </div>
+        <div class="sel-el card featured" id="basic-card2">
+          <p class="sel-el title"></p>
+        </div>
+      </div>
+      <div class="tester">
+        <div class="tester-row">
+          <input type="text" id="basic-input" value=".card">
+        </div>
+        <div class="preset-row">
+          <button class="preset-btn" data-tree="tree-basic" data-input="basic-input" data-sel="*">*</button>
+          <button class="preset-btn" data-tree="tree-basic" data-input="basic-input" data-sel="p">p</button>
+          <button class="preset-btn" data-tree="tree-basic" data-input="basic-input" data-sel=".card">.card</button>
+          <button class="preset-btn" data-tree="tree-basic" data-input="basic-input" data-sel=".card.featured">.card.featured</button>
+          <button class="preset-btn" data-tree="tree-basic" data-input="basic-input" data-sel="#basic-header">#basic-header</button>
+        </div>
+        <div class="tester-msg" id="basic-msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRAME 03 : combinators -->
+  <div class="frame" id="combinators">
+    <div class="frame-num">FRAME 03</div>
+    <h2>결합자 (Combinator)</h2>
+    <p class="section-sub">요소 사이의 "관계"로 대상을 지정</p>
+
+    <table>
+      <tr><th>선택자</th><th>기호</th><th>의미</th></tr>
+      <tr><td>하위 결합자</td><td><code>A B</code> (공백)</td><td>A 안에 있는 모든 하위 B (몇 단계든 상관없이)</td></tr>
+      <tr><td>자식 결합자</td><td><code>A &gt; B</code></td><td>A의 <b>바로 한 단계 아래</b> 자식인 B만</td></tr>
+      <tr><td>인접 형제 결합자</td><td><code>A + B</code></td><td>A 바로 다음에 오는 형제 B 하나</td></tr>
+      <tr><td>일반 형제 결합자</td><td><code>A ~ B</code></td><td>A 뒤에 오는 모든 형제 B</td></tr>
+    </table>
+    <div class="tip"><b>Tip.</b> 공백(하위 결합자)과 <code>&gt;</code>(자식 결합자)를 가장 많이 헷갈립니다. 공백은 "몇 단계든 상관없이 안에 있으면 다 선택"이고, <code>&gt;</code>는 "딱 한 단계 아래만" 선택합니다.</div>
+
+    <h3>선택자 테스터</h3>
+    <div class="demo">
+      <div class="demo-label">nav 안에 중첩된 목록 구조입니다 — 공백과 &gt;의 차이를 비교해보세요</div>
+      <div class="sel-tree" id="tree-combinator">
+        <div class="sel-el nav" id="comb-nav">
+          <div class="sel-el item" id="comb-item1">
+            <div class="sel-el sub item" id="comb-sub1"></div>
+            <div class="sel-el sub" id="comb-sub2"></div>
+          </div>
+          <div class="sel-el item" id="comb-item2"></div>
+          <div class="sel-el item" id="comb-item3"></div>
+        </div>
+      </div>
+      <div class="tester">
+        <div class="tester-row">
+          <input type="text" id="comb-input" value=".nav .item">
+        </div>
+        <div class="preset-row">
+          <button class="preset-btn" data-tree="tree-combinator" data-input="comb-input" data-sel=".nav .item">.nav .item (하위)</button>
+          <button class="preset-btn" data-tree="tree-combinator" data-input="comb-input" data-sel=".nav > .item">.nav &gt; .item (자식)</button>
+          <button class="preset-btn" data-tree="tree-combinator" data-input="comb-input" data-sel="#comb-item1 + .item">#comb-item1 + .item (인접형제)</button>
+          <button class="preset-btn" data-tree="tree-combinator" data-input="comb-input" data-sel="#comb-item1 ~ .item">#comb-item1 ~ .item (일반형제)</button>
+        </div>
+        <div class="tester-msg" id="comb-msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRAME 04 : attribute selectors -->
+  <div class="frame" id="attribute">
+    <div class="frame-num">FRAME 04</div>
+    <h2>속성 선택자</h2>
+    <p class="section-sub">HTML 속성값을 기준으로 지정</p>
+
+    <table>
+      <tr><th>선택자</th><th>의미</th></tr>
+      <tr><td><code>[attr]</code></td><td>해당 속성을 가진 요소 (값 무관)</td></tr>
+      <tr><td><code>[attr="value"]</code></td><td>속성값이 정확히 일치</td></tr>
+      <tr><td><code>[attr^="value"]</code></td><td>속성값이 value로 <b>시작</b></td></tr>
+      <tr><td><code>[attr$="value"]</code></td><td>속성값이 value로 <b>끝남</b></td></tr>
+      <tr><td><code>[attr*="value"]</code></td><td>속성값에 value가 <b>포함</b></td></tr>
+    </table>
+
+    <h3>선택자 테스터</h3>
+    <div class="demo">
+      <div class="demo-label">각 요소가 가진 속성이 다릅니다</div>
+      <div class="sel-tree" id="tree-attr">
+        <div class="sel-el" id="attr-a" data-el-type="link" href="https://example.com"></div>
+        <div class="sel-el" id="attr-b" data-el-type="link" href="https://naver.com"></div>
+        <div class="sel-el" id="attr-c" data-el-type="input" data-required="true"></div>
+        <div class="sel-el" id="attr-d" data-el-type="input"></div>
+        <div class="sel-el" id="attr-e" data-el-type="image" data-src="photo-card.jpg"></div>
+      </div>
+      <div class="tester">
+        <div class="tester-row">
+          <input type="text" id="attr-input" value="[data-required]">
+        </div>
+        <div class="preset-row">
+          <button class="preset-btn" data-tree="tree-attr" data-input="attr-input" data-sel="[data-el-type]">[data-el-type]</button>
+          <button class="preset-btn" data-tree="tree-attr" data-input="attr-input" data-sel='[data-el-type="link"]'>[data-el-type="link"]</button>
+          <button class="preset-btn" data-tree="tree-attr" data-input="attr-input" data-sel='[href^="https://example"]'>[href^="https://example"]</button>
+          <button class="preset-btn" data-tree="tree-attr" data-input="attr-input" data-sel='[data-src$=".jpg"]'>[data-src$=".jpg"]</button>
+          <button class="preset-btn" data-tree="tree-attr" data-input="attr-input" data-sel='[data-src*="card"]'>[data-src*="card"]</button>
+        </div>
+        <div class="tester-msg" id="attr-msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRAME 05 : pseudo-classes -->
+  <div class="frame" id="pseudo-class">
+    <div class="frame-num">FRAME 05</div>
+    <h2>가상 클래스 (Pseudo-class)</h2>
+    <p class="section-sub">상태나 순서를 기준으로 지정</p>
+
+    <table>
+      <tr><th>선택자</th><th>의미</th></tr>
+      <tr><td><code>:hover</code></td><td>마우스를 올린 상태</td></tr>
+      <tr><td><code>:focus</code></td><td>키보드/클릭으로 포커스된 상태</td></tr>
+      <tr><td><code>:first-child</code> / <code>:last-child</code></td><td>부모의 첫 번째 / 마지막 자식</td></tr>
+      <tr><td><code>:nth-child(n)</code></td><td>부모 기준 n번째 자식 (공식 사용 가능: 2n, 2n+1 등)</td></tr>
+      <tr><td><code>:not(선택자)</code></td><td>괄호 안 선택자에 해당하지 <b>않는</b> 요소</td></tr>
+    </table>
+
+    <h3>:hover 직접 확인하기</h3>
+    <div class="demo">
+      <div class="demo-label">마우스를 올려보세요</div>
+      <div class="pe-demo">
+        <div style="width:120px;height:70px;border-radius:10px;background:var(--structure);display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--mono);font-size:12px;transition:background .15s ease;"
+             onmouseover="this.style.background='var(--motion)';" onmouseout="this.style.background='var(--structure)';">
+          :hover
+        </div>
+      </div>
+      <div class="code" style="margin:0;border-radius:0;">.box:hover { <span class="prop">background</span>: <span class="val">orange</span>; }</div>
+    </div>
+
+    <h3>:nth-child 등 선택자 테스터</h3>
+    <div class="demo">
+      <div class="demo-label">목록(li) 6개 — 공식이나 키워드를 넣어보세요</div>
+      <div class="sel-tree" id="tree-pseudo">
+        <div class="sel-el list" id="pseudo-list">
+          <div class="sel-el li" id="pseudo-li1"></div>
+          <div class="sel-el li active" id="pseudo-li2"></div>
+          <div class="sel-el li" id="pseudo-li3"></div>
+          <div class="sel-el li" id="pseudo-li4"></div>
+          <div class="sel-el li" id="pseudo-li5"></div>
+          <div class="sel-el li" id="pseudo-li6"></div>
+        </div>
+      </div>
+      <div class="tester">
+        <div class="tester-row">
+          <input type="text" id="pseudo-input" value=".li:nth-child(2n)">
+        </div>
+        <div class="preset-row">
+          <button class="preset-btn" data-tree="tree-pseudo" data-input="pseudo-input" data-sel=".li:first-child">:first-child</button>
+          <button class="preset-btn" data-tree="tree-pseudo" data-input="pseudo-input" data-sel=".li:last-child">:last-child</button>
+          <button class="preset-btn" data-tree="tree-pseudo" data-input="pseudo-input" data-sel=".li:nth-child(2n)">:nth-child(2n)</button>
+          <button class="preset-btn" data-tree="tree-pseudo" data-input="pseudo-input" data-sel=".li:nth-child(2n+1)">:nth-child(2n+1)</button>
+          <button class="preset-btn" data-tree="tree-pseudo" data-input="pseudo-input" data-sel=".li:not(.active)">:not(.active)</button>
+        </div>
+        <div class="tester-msg" id="pseudo-msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRAME 06 : pseudo-elements -->
+  <div class="frame" id="pseudo-element">
+    <div class="frame-num">FRAME 06</div>
+    <h2>가상 요소 (Pseudo-element)</h2>
+    <p class="section-sub">요소의 특정 부분이나, 존재하지 않던 콘텐츠를 만들어 스타일링</p>
+
+    <table>
+      <tr><th>선택자</th><th>의미</th></tr>
+      <tr><td><code>::before</code></td><td>요소의 콘텐츠 <b>앞에</b> 가상의 콘텐츠 삽입</td></tr>
+      <tr><td><code>::after</code></td><td>요소의 콘텐츠 <b>뒤에</b> 가상의 콘텐츠 삽입</td></tr>
+      <tr><td><code>::placeholder</code></td><td>입력창의 안내 문구(placeholder) 스타일링</td></tr>
+      <tr><td><code>::first-line</code></td><td>문단의 첫 번째 줄만 스타일링</td></tr>
+    </table>
+    <div class="tip"><b>Tip.</b> 콜론 하나(<code>:hover</code>)는 가상 <b>클래스</b>(상태), 콜론 두 개(<code>::before</code>)는 가상 <b>요소</b>(콘텐츠/부분)입니다. <code>::before</code>/<code>::after</code>는 반드시 <code>content</code> 속성이 있어야 화면에 나타납니다.</div>
+
+    <div class="demo">
+      <div class="pe-demo">
+        <div class="pe-card">
+          <div class="pe-card-label">::before로 따옴표 추가</div>
+          <div class="quote">가장 좋은 코드는 설명이 필요 없는 코드다</div>
+        </div>
+        <div class="pe-card">
+          <div class="pe-card-label">::after로 알림 개수 배지</div>
+          <div class="cnt-badge">🔔</div>
+        </div>
+        <div class="pe-card">
+          <div class="pe-card-label">::placeholder 스타일링</div>
+          <input class="pe-input" placeholder="이메일을 입력하세요">
+        </div>
+        <div class="pe-card">
+          <div class="pe-card-label">::first-line만 강조</div>
+          <p class="pe-para">이 문단의 첫 줄만 진하고 파란색으로 보이고, 그 다음 줄부터는 원래 스타일로 이어집니다. 문단이 길어져서 줄이 바뀌는 지점까지가 첫 줄로 인식됩니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="code">.quote::before { <span class="prop">content</span>: <span class="val">"“"</span>; }
+.badge::after { <span class="prop">content</span>: <span class="val">"3"</span>; <span class="prop">position</span>: <span class="val">absolute</span>; }
+input::placeholder { <span class="prop">color</span>: <span class="val">teal</span>; <span class="prop">font-style</span>: <span class="val">italic</span>; }
+p::first-line { <span class="prop">font-weight</span>: <span class="val">700</span>; }</div>
+  </div>
+
+  <!-- FRAME 07 : specificity -->
+  <div class="frame" id="specificity">
+    <div class="frame-num">FRAME 07</div>
+    <h2>우선순위 (명시도, Specificity)</h2>
+    <p class="section-sub">같은 요소에 여러 선택자가 겹치면, 어떤 스타일이 이길까?</p>
+
+    <p>여러 선택자가 같은 요소를 가리킬 때, 브라우저는 <b>명시도(specificity)</b>가 더 높은 선택자를 우선 적용합니다. 명시도는 세 단계 점수로 계산됩니다.</p>
+
+    <table>
+      <tr><th>단계</th><th>포함되는 것</th><th>점수 단위</th></tr>
+      <tr><td>1단계</td><td>id 선택자 (<code>#header</code>)</td><td>가장 높음</td></tr>
+      <tr><td>2단계</td><td>클래스, 속성, 가상 클래스 (<code>.card</code>, <code>[type]</code>, <code>:hover</code>)</td><td>중간</td></tr>
+      <tr><td>3단계</td><td>태그, 가상 요소 (<code>div</code>, <code>::before</code>)</td><td>가장 낮음</td></tr>
+    </table>
+    <div class="tip"><b>Tip.</b> 개수 비교는 <b>자릿수 비교</b>와 같습니다. id가 1개라도 있으면, 클래스나 태그가 아무리 많아도 절대 못 이깁니다 (인라인 스타일과 <code>!important</code>는 이 규칙 밖에서 더 강하게 작동합니다).</div>
+
+    <h3>명시도 계산기 — 두 선택자를 비교해보세요</h3>
+    <div class="spec-row">
+      <div class="spec-box">
+        <input type="text" id="spec-a" value="#header .nav a">
+        <div class="spec-bars" id="spec-a-bars"></div>
+      </div>
+      <div class="spec-box">
+        <input type="text" id="spec-b" value="nav ul li a.active">
+        <div class="spec-bars" id="spec-b-bars"></div>
+      </div>
+    </div>
+    <div class="spec-winner" id="spec-winner"></div>
+  </div>
+
+  <!-- FRAME 08 : free playground -->
+  <div class="frame" id="playground">
+    <div class="frame-num">FRAME 08</div>
+    <h2>자유 실습</h2>
+    <p class="section-sub">아래는 조금 더 복잡한 트리입니다. 배운 선택자를 자유롭게 조합해보세요</p>
+
+    <div class="demo">
+      <div class="sel-tree" id="tree-play">
+        <div class="sel-el" id="play-header"></div>
+        <div class="sel-el nav" id="play-nav">
+          <div class="sel-el link" id="play-link1"></div>
+          <div class="sel-el link active" id="play-link2"></div>
+          <div class="sel-el link" id="play-link3"></div>
+        </div>
+        <div class="sel-el section" id="play-section">
+          <div class="sel-el card" id="play-card1" data-featured="true">
+            <p class="sel-el title" id="play-title1"></p>
+          </div>
+          <div class="sel-el card" id="play-card2">
+            <p class="sel-el title" id="play-title2"></p>
+          </div>
+          <div class="sel-el card" id="play-card3">
+            <p class="sel-el title" id="play-title3"></p>
+          </div>
+        </div>
+      </div>
+      <div class="tester">
+        <div class="tester-row">
+          <input type="text" id="play-input" value=".card[data-featured] .title">
+        </div>
+        <div class="preset-row">
+          <button class="preset-btn" data-tree="tree-play" data-input="play-input" data-sel=".nav .link">.nav .link</button>
+          <button class="preset-btn" data-tree="tree-play" data-input="play-input" data-sel=".nav > .link:not(.active)">.nav &gt; .link:not(.active)</button>
+          <button class="preset-btn" data-tree="tree-play" data-input="play-input" data-sel=".card:nth-child(2)">.card:nth-child(2)</button>
+          <button class="preset-btn" data-tree="tree-play" data-input="play-input" data-sel='.card[data-featured] .title'>.card[data-featured] .title</button>
+        </div>
+        <div class="tester-msg" id="play-msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRAME 09 : exercises -->
+  <div class="frame" id="exercises">
+    <div class="frame-num">FRAME 09</div>
+    <h2>연습문제</h2>
+    <p class="section-sub">각 트리에서 조건에 맞는 요소만 정확히 선택하는 선택자를 작성해보세요</p>
+
+    <!-- Exercise 1 -->
+    <div class="exercise">
+      <span class="exercise-tag">EXERCISE 1 · 클래스</span>
+      <p>아래 목록에서 <b>class="active"인 항목만</b> 선택하는 선택자를 작성하세요.</p>
+      <div class="sel-tree" id="ex1-tree" style="background:#fff;border:1px solid var(--line);border-radius:10px;">
+        <div class="sel-el li" id="ex1-a"></div>
+        <div class="sel-el li active" id="ex1-b"></div>
+        <div class="sel-el li" id="ex1-c"></div>
+      </div>
+      <div class="tester" style="border-top:none;background:transparent;padding:14px 0 0;">
+        <div class="tester-row">
+          <input type="text" id="ex1-input" value="">
+        </div>
+      </div>
+      <div class="check-row">
+        <button class="check-btn" onclick="checkExercise(1)">정답 확인</button>
+        <span class="check-result" id="ex1-result">아직 확인 전이에요</span>
+      </div>
+      <details>
+        <summary>정답 보기</summary>
+        <div class="code">.active</div>
+      </details>
+    </div>
+
+    <!-- Exercise 2 -->
+    <div class="exercise">
+      <span class="exercise-tag">EXERCISE 2 · 자식 결합자</span>
+      <p><code>#ex2-list</code> 바로 아래의 <b>1단계 항목만</b> 선택하고, 안에 중첩된 하위 항목은 선택되지 않도록 만들어보세요.</p>
+      <div class="sel-tree" id="ex2-tree" style="background:#fff;border:1px solid var(--line);border-radius:10px;">
+        <div class="sel-el list" id="ex2-list">
+          <div class="sel-el item" id="ex2-item1">
+            <div class="sel-el sub" id="ex2-sub1"></div>
+            <div class="sel-el sub" id="ex2-sub2"></div>
+          </div>
+          <div class="sel-el item" id="ex2-item2"></div>
+          <div class="sel-el item" id="ex2-item3"></div>
+        </div>
+      </div>
+      <div class="tester" style="border-top:none;background:transparent;padding:14px 0 0;">
+        <div class="tester-row">
+          <input type="text" id="ex2-input" value="">
+        </div>
+      </div>
+      <div class="check-row">
+        <button class="check-btn" onclick="checkExercise(2)">정답 확인</button>
+        <span class="check-result" id="ex2-result">아직 확인 전이에요</span>
+      </div>
+      <details>
+        <summary>정답 보기</summary>
+        <div class="code">#ex2-list > .item</div>
+      </details>
+    </div>
+
+    <!-- Exercise 3 -->
+    <div class="exercise">
+      <span class="exercise-tag">EXERCISE 3 · 속성 선택자</span>
+      <p>아래 입력창들 중에서 <b>data-required 속성이 있는 것만</b> 선택하는 선택자를 작성하세요.</p>
+      <div class="sel-tree" id="ex3-tree" style="background:#fff;border:1px solid var(--line);border-radius:10px;">
+        <div class="sel-el input" id="ex3-a"></div>
+        <div class="sel-el input" id="ex3-b" data-required="true"></div>
+        <div class="sel-el input" id="ex3-c" data-required="true"></div>
+      </div>
+      <div class="tester" style="border-top:none;background:transparent;padding:14px 0 0;">
+        <div class="tester-row">
+          <input type="text" id="ex3-input" value="">
+        </div>
+      </div>
+      <div class="check-row">
+        <button class="check-btn" onclick="checkExercise(3)">정답 확인</button>
+        <span class="check-result" id="ex3-result">아직 확인 전이에요</span>
+      </div>
+      <details>
+        <summary>정답 보기</summary>
+        <div class="code">[data-required]</div>
+      </details>
+    </div>
+  </div>
+
+  <!-- FRAME 10 : cautions -->
+  <div class="frame" id="cautions">
+    <div class="frame-num">FRAME 10</div>
+    <h2>실습 시 주의사항</h2>
+    <p class="section-sub">선택자를 쓸 때 자주 하는 실수와 좋은 습관</p>
+
+    <div class="caution-grid">
+      <div class="caution-col do">
+        <div class="caution-col-title">이렇게 하세요</div>
+        <ul class="caution-list">
+          <li>스타일링은 클래스 위주로, id는 JS 훅이나 페이지 내 앵커용으로 아껴두기</li>
+          <li>개발자 도구(F12)의 Elements/Styles 탭에서 실제로 어떤 규칙이 적용되고, 어떤 규칙이 취소선으로 밀려났는지 확인하는 습관 들이기</li>
+          <li><code>:hover</code>뿐 아니라 <code>:focus</code>도 함께 스타일링해서 키보드 사용자를 배려하기</li>
+          <li>선택자는 가능한 한 짧고 단순하게 — <code>.card</code>처럼 클래스 하나로 끝나는 게 이상적</li>
+        </ul>
+      </div>
+      <div class="caution-col dont">
+        <div class="caution-col-title">이건 피하세요</div>
+        <ul class="caution-list">
+          <li>선택자를 5단계 이상 깊게 중첩하기 — <code>div .wrap ul.list li a</code>처럼 쓰면 HTML 구조가 조금만 바뀌어도 스타일이 깨짐</li>
+          <li><code>!important</code> 남용 — 한 번 쓰기 시작하면 이후 모든 오버라이드가 <code>!important</code> 전쟁이 됨</li>
+          <li><code>div.card</code>처럼 태그+클래스를 함께 쓰는 과잉 한정 — 특별한 이유가 없다면 <code>.card</code>만으로 충분</li>
+          <li>id 선택자로 스타일링하기 — 명시도가 지나치게 높아져서 나중에 다른 스타일로 덮어쓰기 어려워짐</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip"><b>Tip.</b> 명시도가 헷갈릴 땐 "가장 단순한 선택자로도 원하는 요소를 정확히 짚어낼 수 있는가"를 먼저 고민해보세요. 복잡한 선택자가 필요하다면, 오히려 HTML에 클래스를 하나 더 추가하는 게 장기적으로 더 안전한 경우가 많습니다.</div>
+  </div>
+
+  <footer>
+    CSS 선택자 교안 — 기본부터 고급까지
+  </footer>
+
+<script>
+  /* ============================================================
+     공통 유틸: 트리 안의 각 .sel-el에 data-sig(라벨)를 자동으로 채워줌
+     예: class="card" id="basic-card1"인 div → "div.card#basic-card1"
+     ============================================================ */
+  function labelTree(container){
+    container.querySelectorAll('.sel-el').forEach(el => {
+      let sig = el.tagName.toLowerCase();
+      if(el.id) sig += '#' + el.id;
+      const classes = Array.from(el.classList).filter(c => c !== 'sel-el' && c !== 'match');
+      if(classes.length) sig += '.' + classes.join('.');
+      el.setAttribute('data-sig', sig);
+    });
+  }
+  document.querySelectorAll('.sel-tree').forEach(labelTree);
+
+  /* ============================================================
+     공통 유틸: 특정 트리 안에서 입력된 선택자로 querySelectorAll을 실행하고
+     매칭된 요소에 .match 클래스를 붙여 강조 표시
+     ============================================================ */
+  function runSelectorTest(treeId, inputId, msgId){
+    const tree = document.getElementById(treeId);
+    const input = document.getElementById(inputId);
+    const msg = document.getElementById(msgId);
+    tree.querySelectorAll('.match').forEach(el => el.classList.remove('match'));
+
+    const sel = input.value.trim();
+    if(!sel){ msg.textContent = ''; msg.className = 'tester-msg'; return; }
+
+    try{
+      const matches = tree.querySelectorAll(sel);
+      matches.forEach(el => el.classList.add('match'));
+      msg.textContent = matches.length + '개 요소가 선택됐어요';
+      msg.className = 'tester-msg ' + (matches.length > 0 ? 'ok' : '');
+    }catch(e){
+      msg.textContent = '올바르지 않은 선택자 문법이에요';
+      msg.className = 'tester-msg err';
+    }
+  }
+
+  // 모든 tester의 텍스트 입력창에 input 이벤트 바인딩
+  document.querySelectorAll('.tester-row input[type=text]').forEach(input => {
+    const id = input.id;
+    const prefix = id.replace('-input', '');
+    // input 옆에 대응하는 tree/msg id 규칙: {prefix}-input, {prefix}-msg, tree id는 버튼의 data-tree 참고
+  });
+
+  // 프리셋 버튼: 클릭하면 입력창 값을 바꾸고 테스트 즉시 실행
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const treeId = btn.dataset.tree;
+      const inputId = btn.dataset.input;
+      const msgId = inputId.replace('-input', '-msg');
+      document.getElementById(inputId).value = btn.dataset.sel;
+      runSelectorTest(treeId, inputId, msgId);
+    });
+  });
+
+  // 각 tester 인스턴스를 명시적으로 초기화 (input 이벤트 바인딩 + 최초 1회 실행)
+  const testers = [
+    { tree:'tree-basic', input:'basic-input', msg:'basic-msg' },
+    { tree:'tree-combinator', input:'comb-input', msg:'comb-msg' },
+    { tree:'tree-attr', input:'attr-input', msg:'attr-msg' },
+    { tree:'tree-pseudo', input:'pseudo-input', msg:'pseudo-msg' },
+    { tree:'tree-play', input:'play-input', msg:'play-msg' },
+  ];
+  testers.forEach(t => {
+    const input = document.getElementById(t.input);
+    input.addEventListener('input', () => runSelectorTest(t.tree, t.input, t.msg));
+    runSelectorTest(t.tree, t.input, t.msg);
+  });
+
+  /* ============================================================
+     FRAME 07 : 명시도 계산기
+     - 정규식으로 선택자 문자열에서 id / class·속성·가상클래스 / 태그·가상요소 개수를 근사 계산
+     ============================================================ */
+  function calcSpecificity(selector){
+    let s = selector;
+    // 가상 요소(::before 등)는 태그와 같은 낮은 가중치이므로 태그 카운트에 포함, 먼저 추출
+    const pseudoElements = (s.match(/::[\w-]+/g) || []).length;
+    s = s.replace(/::[\w-]+/g, ' ');
+
+    const ids = (s.match(/#[\w-]+/g) || []).length;
+    s = s.replace(/#[\w-]+/g, ' ');
+
+    const classes = (s.match(/\.[\w-]+/g) || []).length;
+    s = s.replace(/\.[\w-]+/g, ' ');
+
+    const attrs = (s.match(/\[[^\]]+\]/g) || []).length;
+    s = s.replace(/\[[^\]]+\]/g, ' ');
+
+    // 남은 : 로 시작하는 것은 가상 클래스 (괄호 포함 nth-child(2n) 등)
+    const pseudoClasses = (s.match(/:[\w-]+(\([^)]*\))?/g) || []).length;
+    s = s.replace(/:[\w-]+(\([^)]*\))?/g, ' ');
+
+    // 나머지 알파벳으로 시작하는 토큰은 태그 선택자로 간주 (콤비네이터 >,+,~ 는 제외)
+    const tags = (s.match(/[a-zA-Z][\w-]*/g) || []).length;
+
+    return {
+      id: ids,
+      cls: classes + attrs + pseudoClasses,
+      tag: tags + pseudoElements
+    };
+  }
+
+  function renderSpecBars(containerId, spec){
+    const el = document.getElementById(containerId);
+    const max = 5; // 막대 길이 정규화 기준
+    el.innerHTML = `
+      <div class="spec-bar-row"><span>id</span><div class="spec-bar-track"><div class="spec-bar-fill" style="width:${Math.min(spec.id/max*100,100)}%; background:var(--motion);"></div></div><span>${spec.id}</span></div>
+      <div class="spec-bar-row"><span>class</span><div class="spec-bar-track"><div class="spec-bar-fill" style="width:${Math.min(spec.cls/max*100,100)}%;"></div></div><span>${spec.cls}</span></div>
+      <div class="spec-bar-row"><span>tag</span><div class="spec-bar-track"><div class="spec-bar-fill" style="width:${Math.min(spec.tag/max*100,100)}%; background:var(--teal);"></div></div><span>${spec.tag}</span></div>
+    `;
+  }
+
+  function compareSpecificity(){
+    const aSel = document.getElementById('spec-a').value.trim();
+    const bSel = document.getElementById('spec-b').value.trim();
+    const a = calcSpecificity(aSel);
+    const b = calcSpecificity(bSel);
+    renderSpecBars('spec-a-bars', a);
+    renderSpecBars('spec-b-bars', b);
+
+    const winnerEl = document.getElementById('spec-winner');
+    // (id, class, tag) 튜플을 자릿수 비교하듯 순서대로 비교
+    function cmp(x, y){
+      if(x.id !== y.id) return x.id - y.id;
+      if(x.cls !== y.cls) return x.cls - y.cls;
+      return x.tag - y.tag;
+    }
+    const result = cmp(a, b);
+    if(result > 0){
+      winnerEl.textContent = `왼쪽 선택자가 이깁니다 (${a.id},${a.cls},${a.tag}) > (${b.id},${b.cls},${b.tag})`;
+      winnerEl.className = 'spec-winner win';
+    } else if(result < 0){
+      winnerEl.textContent = `오른쪽 선택자가 이깁니다 (${b.id},${b.cls},${b.tag}) > (${a.id},${a.cls},${a.tag})`;
+      winnerEl.className = 'spec-winner win';
+    } else {
+      winnerEl.textContent = `명시도가 같습니다 (${a.id},${a.cls},${a.tag}) — 이 경우 CSS에서 더 나중에 작성된 규칙이 이깁니다`;
+      winnerEl.className = 'spec-winner';
+    }
+  }
+  document.getElementById('spec-a').addEventListener('input', compareSpecificity);
+  document.getElementById('spec-b').addEventListener('input', compareSpecificity);
+  compareSpecificity();
+
+  /* ============================================================
+     FRAME 09 : 연습문제 채점
+     - 각 트리에서 "정답으로 인정되는 요소 id 목록"을 미리 정의해두고
+       학생이 입력한 선택자의 매칭 결과와 정확히 일치하는지 비교
+     ============================================================ */
+  const exerciseConfig = {
+    1: { tree:'ex1-tree', input:'ex1-input', result:'ex1-result', expected:['ex1-b'] },
+    2: { tree:'ex2-tree', input:'ex2-input', result:'ex2-result', expected:['ex2-item1','ex2-item2','ex2-item3'] },
+    3: { tree:'ex3-tree', input:'ex3-input', result:'ex3-result', expected:['ex3-b','ex3-c'] },
+  };
+
+  function checkExercise(n){
+    const cfg = exerciseConfig[n];
+    const tree = document.getElementById(cfg.tree);
+    const sel = document.getElementById(cfg.input).value.trim();
+    const resultEl = document.getElementById(cfg.result);
+
+    tree.querySelectorAll('.match').forEach(el => el.classList.remove('match'));
+
+    let matchedIds = [];
+    try{
+      const matches = tree.querySelectorAll(sel);
+      matches.forEach(el => { el.classList.add('match'); matchedIds.push(el.id); });
+    }catch(e){
+      resultEl.textContent = '올바르지 않은 선택자 문법이에요';
+      resultEl.className = 'check-result fail';
+      return;
+    }
+
+    const expectedSet = new Set(cfg.expected);
+    const matchedSet = new Set(matchedIds);
+    const same = expectedSet.size === matchedSet.size && [...expectedSet].every(id => matchedSet.has(id));
+
+    resultEl.textContent = same ? '정답이에요! 🎉' : `아직이에요 — 현재 ${matchedIds.length}개 선택됨 (정확히 ${cfg.expected.length}개여야 해요)`;
+    resultEl.className = 'check-result ' + (same ? 'pass' : 'fail');
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flexbox 반응형 카드 레이아웃 — 수업자료</title>
+<style>
+  :root{
+    --bg: #14171c;
+    --panel: #1c2028;
+    --panel-2: #20242d;
+    --line: #2c313b;
+    --text: #e8eaed;
+    --text-dim: #9aa1ac;
+    --accent: #ffb648;
+    --accent-2: #5fc9c0;
+    --danger: #ff6b6b;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --sans: 'Pretendard', -apple-system, 'Malgun Gothic', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    padding-bottom:80px;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:0 28px;}
+
+  /* HERO */
+  .hero{
+    padding:64px 0 40px;
+    border-bottom:1px solid var(--line);
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.14em;
+    color:var(--accent);
+    text-transform:uppercase;
+    margin:0 0 14px;
+  }
+  .hero h1{
+    font-size:clamp(28px,4vw,44px);
+    margin:0 0 14px;
+    letter-spacing:-0.01em;
+  }
+  .hero p{
+    color:var(--text-dim);
+    font-size:16px;
+    max-width:620px;
+    margin:0;
+  }
+  .qbox{
+    margin-top:28px;
+    padding:18px 20px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:3px solid var(--accent);
+    border-radius:4px;
+    font-size:15px;
+  }
+  .qbox b{color:var(--accent);}
+
+  section.lesson{
+    padding:48px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .tag{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-dim);
+    margin-bottom:10px;
+  }
+  .tag .num{
+    color:var(--bg);
+    background:var(--accent-2);
+    width:20px;height:20px;
+    border-radius:50%;
+    display:inline-flex;
+    align-items:center;justify-content:center;
+    font-weight:700;
+  }
+  h2.title{
+    font-size:24px;
+    margin:0 0 6px;
+  }
+  .sub{
+    color:var(--text-dim);
+    font-size:14px;
+    margin:0 0 22px;
+  }
+
+  /* demo frame */
+  .demo-frame{
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    background:var(--panel);
+  }
+  .demo-toolbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 14px;
+    background:var(--panel-2);
+    border-bottom:1px solid var(--line);
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-dim);
+  }
+  .demo-toolbar .hint{display:flex;align-items:center;gap:6px;}
+  .resize-handle-icon{
+    display:inline-block;width:12px;height:12px;
+    background:repeating-linear-gradient(135deg,var(--accent) 0 2px,transparent 2px 4px);
+  }
+
+  .resizable{
+    resize:horizontal;
+    overflow:auto;
+    min-width:220px;
+    max-width:100%;
+    width:100%;
+    padding:22px;
+    background:#f4f5f7;
+  }
+  .movie-row{
+    display:flex;
+    gap:14px;
+  }
+  .movie-row.wrap{flex-wrap:wrap;}
+
+  .card{
+    background:#fff;
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:0 1px 3px rgba(0,0,0,.15);
+    color:#1a1a1a;
+  }
+  .card img{
+    display:block;
+    width:100%;
+    aspect-ratio:2/3;
+    object-fit:cover;
+    background:#ddd;
+  }
+  .card .body{padding:10px 12px 14px;}
+  .card h3{font-size:14px;margin:0 0 4px;}
+  .card p{font-size:12px;color:#777;margin:0;}
+
+  /* variant sizing rules — scoped per demo */
+  .demo-a .card{flex:1 1 200px;}
+  .demo-b .card{flex:0 0 190px;}
+  .demo-c .card{flex:1 1 190px; max-width:240px;}
+
+  /* code block */
+  .code{
+    margin-top:16px;
+    background:#0d0f13;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:16px 18px;
+    font-family:var(--mono);
+    font-size:13px;
+    color:#c9d1d9;
+    overflow-x:auto;
+  }
+  .code .c1{color:#5fc9c0;}
+  .code .c2{color:#ffb648;}
+  .code .c3{color:#9aa1ac;}
+
+  .verdict{
+    margin-top:18px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .pill{
+    font-size:12px;
+    font-family:var(--mono);
+    padding:6px 12px;
+    border-radius:999px;
+    border:1px solid var(--line);
+  }
+  .pill.good{color:var(--accent-2);border-color:var(--accent-2);}
+  .pill.bad{color:var(--danger);border-color:var(--danger);}
+
+  /* comparison table */
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14px;
+    margin-top:8px;
+  }
+  th,td{
+    text-align:left;
+    padding:12px 14px;
+    border-bottom:1px solid var(--line);
+    vertical-align:top;
+  }
+  th{color:var(--text-dim);font-weight:600;font-size:12px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.05em;}
+  tr.highlight td{background:rgba(255,182,72,.06);}
+  tr.highlight td:first-child{border-left:2px solid var(--accent);}
+
+  /* recommended box */
+  .final{
+    background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    border:1px solid var(--accent);
+    border-radius:10px;
+    padding:28px 30px;
+  }
+  .final .tag .num{background:var(--accent);}
+  .final h2{margin-top:0;}
+
+  /* exercise */
+  .exercise{
+    background:var(--panel);
+    border:1px dashed var(--line);
+    border-radius:8px;
+    padding:20px 22px;
+    margin-top:18px;
+  }
+  .exercise h4{margin:0 0 10px;font-size:14px;color:var(--accent-2);}
+  .exercise ol{margin:0;padding-left:20px;font-size:14px;color:var(--text-dim);}
+  .exercise li{margin-bottom:6px;}
+
+  /* PLAYGROUND — flex-grow / flex-shrink / flex-basis practice */
+  .concept-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    margin-bottom:26px;
+  }
+  .concept-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:16px 18px;
+  }
+  .concept-card .k{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--accent-2);
+    display:block;
+    margin-bottom:6px;
+  }
+  .concept-card p{
+    font-size:13px;
+    color:var(--text-dim);
+    margin:0;
+  }
+
+  .pg-frame{
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    background:var(--panel);
+  }
+  .pg-stage{
+    resize:horizontal;
+    overflow:auto;
+    min-width:260px;
+    max-width:100%;
+    width:100%;
+    padding:20px;
+    background:#f4f5f7;
+    display:flex;
+    gap:10px;
+  }
+  .pg-box{
+    height:110px;
+    border-radius:6px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:20px;
+    flex-shrink:1;
+    transition:background .15s;
+  }
+  .pg-box small{
+    font-size:11px;
+    font-weight:400;
+    opacity:.85;
+    margin-top:4px;
+  }
+  .pg-box.box-a{background:#5b8def;}
+  .pg-box.box-b{background:#e9967a;}
+  .pg-box.box-c{background:#8e7cc3;}
+
+  .pg-controls{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    padding:18px 20px;
+    background:var(--panel-2);
+    border-top:1px solid var(--line);
+  }
+  .pg-col h5{
+    margin:0 0 10px;
+    font-size:13px;
+    font-family:var(--mono);
+  }
+  .pg-col.col-a h5{color:#5b8def;}
+  .pg-col.col-b h5{color:#e9967a;}
+  .pg-col.col-c h5{color:#8e7cc3;}
+  .pg-row{
+    margin-bottom:10px;
+  }
+  .pg-row label{
+    display:flex;
+    justify-content:space-between;
+    font-size:11px;
+    color:var(--text-dim);
+    font-family:var(--mono);
+    margin-bottom:4px;
+  }
+  .pg-row label span{color:var(--text);}
+  .pg-row input[type=range]{
+    width:100%;
+    accent-color:var(--accent);
+  }
+  .pg-code{
+    grid-column:1/-1;
+    margin-top:4px;
+    background:#0d0f13;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:10px 14px;
+    font-family:var(--mono);
+    font-size:12px;
+    color:#c9d1d9;
+    display:flex;
+    gap:22px;
+    flex-wrap:wrap;
+  }
+  .pg-code span b{font-weight:400;}
+
+  .pg-note{
+    margin-top:16px;
+    font-size:13px;
+    color:var(--text-dim);
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:12px 16px;
+  }
+  .pg-note b{color:var(--accent-2);}
+
+  /* aspect-ratio section */
+  .ratio-demo{
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+    margin:18px 0 20px;
+  }
+  .ratio-item{text-align:center;}
+  .ratio-item .box{
+    width:110px;
+    background:linear-gradient(135deg,#5fc9c0,#5b8def);
+    border-radius:6px;
+    margin-bottom:8px;
+  }
+  .ratio-item span{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-dim);
+  }
+  .r-1-1{aspect-ratio:1/1;}
+  .r-16-9{aspect-ratio:16/9;}
+  .r-2-3{aspect-ratio:2/3;}
+  .r-4-3{aspect-ratio:4/3;}
+
+  .ratio-table{margin-top:4px;}
+
+  footer{
+    text-align:center;
+    color:var(--text-dim);
+    font-size:12px;
+    font-family:var(--mono);
+    padding:36px 0 0;
+  }
+
+  @media (max-width:640px){
+    .hero{padding:44px 0 30px;}
+    .wrap{padding:0 18px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <p class="eyebrow">CSS Flexbox · Responsive Layout Lesson</p>
+    <h1>카드가 늘어날까, 늘려야 할까?</h1>
+    <p>영화 추천 카드 리스트를 예제로, flexbox 반응형 레이아웃에서 <b>이미지가 커지는 방식</b>과 <b>개수가 늘어나는 방식</b>의 차이를 직접 비교합니다. 아래 데모 박스 오른쪽 아래 모서리를 드래그해서 너비를 직접 늘려보세요.</p>
+    <div class="qbox">
+      <b>수업 질문 —</b> 화면(부모 요소)의 너비가 커질 때, 자식 카드는 어떻게 반응해야 할까요?
+      <br>① 카드 자체가 커진다 &nbsp;&nbsp;② 카드 개수가 늘어난다 &nbsp;&nbsp;③ 섞어서 쓴다
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 0: PLAYGROUND -->
+<section class="lesson">
+  <div class="wrap">
+    <span class="tag"><span class="num">1</span>카드 만들기 전에</span>
+    <h2 class="title">flex 한 줄에 들어가는 3형제 — grow / shrink / basis</h2>
+    <p class="sub"><code>flex: 1 1 200px</code>처럼 축약해서 쓰지만, 사실은 세 가지 값이 각각 다른 일을 합니다. 카드를 만들기 전에 이 세 속성을 먼저 손으로 만져보며 이해해요.</p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <span class="k">① flex-grow</span>
+        <p>남는 공간을 <b>얼마나 나눠 가질지</b> 정하는 비율. 0이면 안 늘어나고, 숫자가 클수록 더 많이 늘어남.</p>
+      </div>
+      <div class="concept-card">
+        <span class="k">② flex-shrink</span>
+        <p>공간이 부족할 때 <b>얼마나 줄어들지</b> 정하는 비율. 0이면 절대 줄어들지 않음 (넘쳐도 유지).</p>
+      </div>
+      <div class="concept-card">
+        <span class="k">③ flex-basis</span>
+        <p>시작크기(grow·shrink가 적용되기 <b>전의 기본 크기</b>). width의 대체 역할을 하는 시작점.</p>
+      </div>
+    </div>
+
+    <div class="pg-frame">
+      <div class="demo-toolbar">
+        <span class="hint"><span class="resize-handle-icon"></span> 우측 하단을 드래그해서 컨테이너 너비 변경</span>
+        <span>playground</span>
+      </div>
+      <div class="pg-stage" id="pgStage">
+        <div class="pg-box box-a" id="boxA">A<small id="labelA">1 / 1 / 120px</small></div>
+        <div class="pg-box box-b" id="boxB">B<small id="labelB">1 / 1 / 120px</small></div>
+        <div class="pg-box box-c" id="boxC">C<small id="labelC">1 / 1 / 120px</small></div>
+      </div>
+      <div class="pg-controls">
+        <div class="pg-col col-a">
+          <h5>A 박스</h5>
+          <div class="pg-row"><label>flex-grow <span id="valGrowA">1</span></label><input type="range" min="0" max="5" step="1" value="1" id="growA"></div>
+          <div class="pg-row"><label>flex-shrink <span id="valShrinkA">1</span></label><input type="range" min="0" max="5" step="1" value="1" id="shrinkA"></div>
+          <div class="pg-row"><label>flex-basis <span id="valBasisA">120px</span></label><input type="range" min="40" max="320" step="10" value="120" id="basisA"></div>
+        </div>
+        <div class="pg-col col-b">
+          <h5>B 박스</h5>
+          <div class="pg-row"><label>flex-grow <span id="valGrowB">1</span></label><input type="range" min="0" max="5" step="1" value="1" id="growB"></div>
+          <div class="pg-row"><label>flex-shrink <span id="valShrinkB">1</span></label><input type="range" min="0" max="5" step="1" value="1" id="shrinkB"></div>
+          <div class="pg-row"><label>flex-basis <span id="valBasisB">120px</span></label><input type="range" min="40" max="320" step="10" value="120" id="basisB"></div>
+        </div>
+        <div class="pg-col col-c">
+          <h5>C 박스</h5>
+          <div class="pg-row"><label>flex-grow <span id="valGrowC">1</span></label><input type="range" min="0" max="5" step="1" value="1" id="growC"></div>
+          <div class="pg-row"><label>flex-shrink <span id="valShrinkC">1</span></label><input type="range" min="0" max="5" step="1" value="1" id="shrinkC"></div>
+          <div class="pg-row"><label>flex-basis <span id="valBasisC">120px</span></label><input type="range" min="40" max="320" step="10" value="120" id="basisC"></div>
+        </div>
+        <div class="pg-code">
+          <span>.box-a { <b id="codeA">flex: 1 1 120px;</b> }</span>
+          <span>.box-b { <b id="codeB">flex: 1 1 120px;</b> }</span>
+          <span>.box-c { <b id="codeC">flex: 1 1 120px;</b> }</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pg-note">
+      <b>연습해보기 —</b> ① 세 박스의 grow를 각각 <code>1 / 2 / 1</code>로 바꿔서 B가 더 빨리 커지는지 확인 → ② 컨테이너를 좁혀서 shrink가 0인 박스는 줄어들지 않고 다른 박스만 줄어드는 걸 관찰 → ③ basis를 다르게 주고 grow를 0으로 맞춰서 "고정 크기 카드"가 되는 원리를 확인해보세요.
+    </div>
+  </div>
+</section>
+
+<!-- SECTION A -->
+<section class="lesson">
+  <div class="wrap">
+    <span class="tag"><span class="num">2</span>flex: 1 1 200px — 너비가 커지는 방식</span>
+    <h2 class="title">카드 크기 자체가 늘어난다</h2>
+    <p class="sub">grow 값을 1로 주면 남는 공간을 카드가 나눠 가지며 커집니다. 박스를 넓혀보면 카드가 무한정 커지는 걸 확인하세요.</p>
+
+    <div class="demo-frame">
+      <div class="demo-toolbar">
+        <span class="hint"><span class="resize-handle-icon"></span> 우측 하단을 드래그해서 너비 변경</span>
+        <span>demo-a</span>
+      </div>
+      <div class="resizable demo-a">
+        <div class="movie-row">
+          <article class="card"><img src="https://picsum.photos/seed/movie1/300/450" alt=""><div class="body"><h3>스텔라 오디세이</h3><p>SF · 액션</p></div></article>
+          <article class="card"><img src="https://picsum.photos/seed/movie2/300/450" alt=""><div class="body"><h3>도시의 밤</h3><p>스릴러 · 드라마</p></div></article>
+          <article class="card"><img src="https://picsum.photos/seed/movie3/300/450" alt=""><div class="body"><h3>여름의 문</h3><p>로맨스</p></div></article>
+        </div>
+      </div>
+    </div>
+
+    <div class="code">.card { <span class="c1">flex</span>: <span class="c2">1 1 200px</span>; }<br><span class="c3">/* grow: 1 → 남는 공간을 나눠 가지며 계속 커짐 */</span></div>
+
+    <div class="verdict">
+      <span class="pill good">구현 단순</span>
+      <span class="pill good">카드 수 적을 때 여백 안 남음</span>
+      <span class="pill bad">와이드 화면에서 이미지 비율 과도하게 확대</span>
+      <span class="pill bad">넓은 화면인데도 정보량은 그대로</span>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION B -->
+<section class="lesson">
+  <div class="wrap">
+    <span class="tag"><span class="num">3</span>flex: 0 0 190px + flex-wrap — 개수가 늘어나는 방식</span>
+    <h2 class="title">카드 크기는 고정, 줄바꿈으로 개수만 늘어난다</h2>
+    <p class="sub">grow를 0으로 고정하면 카드는 항상 같은 크기를 유지하고, 남는 공간에는 다음 카드가 줄바꿈되어 채워집니다.</p>
+
+    <div class="demo-frame">
+      <div class="demo-toolbar">
+        <span class="hint"><span class="resize-handle-icon"></span> 우측 하단을 드래그해서 너비 변경</span>
+        <span>demo-b</span>
+      </div>
+      <div class="resizable demo-b">
+        <div class="movie-row wrap">
+          <article class="card"><img src="https://picsum.photos/seed/movie1/300/450" alt=""><div class="body"><h3>스텔라 오디세이</h3><p>SF · 액션</p></div></article>
+          <article class="card"><img src="https://picsum.photos/seed/movie2/300/450" alt=""><div class="body"><h3>도시의 밤</h3><p>스릴러 · 드라마</p></div></article>
+          <article class="card"><img src="https://picsum.photos/seed/movie3/300/450" alt=""><div class="body"><h3>여름의 문</h3><p>로맨스</p></div></article>
+          <article class="card"><img src="https://picsum.photos/seed/movie4/300/450" alt=""><div class="body"><h3>마지막 항해</h3><p>모험 · SF</p></div></article>
+          <article class="card"><img src="https://picsum.photos/seed/movie5/300/450" alt=""><div class="body"><h3>붉은 골목</h3><p>미스터리</p></div></article>
+          <article class="card"><img src="https://picsum.photos/seed/movie6/300/450" alt=""><div class="body"><h3>파랑의 계절</h3><p>드라마</p></div></article>
+        </div>
+      </div>
+    </div>
+
+    <div class="code">.movie-row { <span class="c1">flex-wrap</span>: <span class="c2">wrap</span>; }<br>.card { <span class="c1">flex</span>: <span class="c2">0 0 190px</span>; }<br><span class="c3">/* grow: 0 → 크기 고정, 넘치면 다음 줄로 */</span></div>
+
+    <div class="verdict">
+      <span class="pill good">이미지 비율 항상 일정</span>
+      <span class="pill good">넷플릭스·왓챠 등 실무 카드 UI와 동일한 방식</span>
+      <span class="pill bad">카드 수가 적으면 왼쪽에 쏠려 보임</span>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION C: RECOMMENDED -->
+<section class="lesson">
+  <div class="wrap">
+    <div class="final">
+      <span class="tag"><span class="num">4</span>flex: 1 1 220px + max-width — 하이브리드 (추천)</span>
+      <h2 class="title">기본은 개수가 늘어나되, 남는 공간만 소폭 확장</h2>
+      <p class="sub">grow를 1로 주되 max-width로 상한선을 걸면, 화면이 넓어질 때 먼저 개수가 늘고 남는 자투리 공간만 카드가 나눠 갖습니다.</p>
+
+      <div class="demo-frame">
+        <div class="demo-toolbar">
+          <span class="hint"><span class="resize-handle-icon"></span> 우측 하단을 드래그해서 너비 변경</span>
+          <span>demo-c</span>
+        </div>
+        <div class="resizable demo-c">
+          <div class="movie-row wrap">
+            <article class="card"><img src="https://picsum.photos/seed/movie1/300/450" alt=""><div class="body"><h3>스텔라 오디세이</h3><p>SF · 액션</p></div></article>
+            <article class="card"><img src="https://picsum.photos/seed/movie2/300/450" alt=""><div class="body"><h3>도시의 밤</h3><p>스릴러 · 드라마</p></div></article>
+            <article class="card"><img src="https://picsum.photos/seed/movie3/300/450" alt=""><div class="body"><h3>여름의 문</h3><p>로맨스</p></div></article>
+            <article class="card"><img src="https://picsum.photos/seed/movie4/300/450" alt=""><div class="body"><h3>마지막 항해</h3><p>모험 · SF</p></div></article>
+            <article class="card"><img src="https://picsum.photos/seed/movie5/300/450" alt=""><div class="body"><h3>붉은 골목</h3><p>미스터리</p></div></article>
+            <article class="card"><img src="https://picsum.photos/seed/movie6/300/450" alt=""><div class="body"><h3>파랑의 계절</h3><p>드라마</p></div></article>
+          </div>
+        </div>
+      </div>
+
+      <div class="code">.movie-row { <span class="c1">flex-wrap</span>: <span class="c2">wrap</span>; }<br>.card {<br>&nbsp;&nbsp;<span class="c1">flex</span>: <span class="c2">1 1 220px</span>; &nbsp;<span class="c3">/* 기본 220px, 필요시 확장 */</span><br>&nbsp;&nbsp;<span class="c1">max-width</span>: <span class="c2">280px</span>; &nbsp;<span class="c3">/* 과도한 확장 방지 */</span><br>}</div>
+
+      <div class="verdict">
+        <span class="pill good">이미지 왜곡 최소화</span>
+        <span class="pill good">넓은 화면 여백도 자연스럽게 채움</span>
+        <span class="pill good">실무에서 가장 무난하게 쓰이는 패턴</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON TABLE -->
+<section class="lesson">
+  <div class="wrap">
+    <span class="tag"><span class="num">5</span>정리</span>
+    <h2 class="title">세 가지 방식 비교</h2>
+    <table>
+      <thead>
+        <tr><th>방식</th><th>CSS 핵심</th><th>화면이 넓어지면</th><th>이미지 왜곡</th><th>적합한 상황</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>① 너비 확장</td>
+          <td><code>flex: 1 1 200px</code></td>
+          <td>카드가 계속 커짐</td>
+          <td>큼 (비율 이미지에 불리)</td>
+          <td>카드 수가 고정적이고 적을 때</td>
+        </tr>
+        <tr>
+          <td>② 개수 확장</td>
+          <td><code>flex: 0 0 190px</code> + wrap</td>
+          <td>카드 개수만 늘어남</td>
+          <td>없음</td>
+          <td>포스터·썸네일처럼 비율이 중요한 콘텐츠</td>
+        </tr>
+        <tr class="highlight">
+          <td>③ 하이브리드 (추천)</td>
+          <td><code>flex: 1 1 220px; max-width: 280px</code></td>
+          <td>개수 먼저 늘고, 여백만 소폭 확장</td>
+          <td>거의 없음</td>
+          <td>대부분의 카드 리스트형 UI</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- EXERCISE -->
+<section class="lesson">
+  <div class="wrap">
+    <span class="tag"><span class="num">6</span>실습</span>
+    <h2 class="title">학생 실습 과제</h2>
+    <div class="exercise">
+      <h4>진행 순서</h4>
+      <ol>
+        <li>원본 예제의 <code>.card-item</code>에 <code>flex: 1 1 200px</code>만 적용하고 브라우저 창을 최대화해서 이미지가 어떻게 늘어나는지 관찰한다.</li>
+        <li>같은 요소에 <code>flex: 0 0 190px</code> + 부모에 <code>flex-wrap: wrap</code>을 적용해 차이를 비교한다.</li>
+        <li><code>max-width</code>를 추가했을 때와 뺐을 때의 차이를 각각 캡처해서 왜 실무에서 카드 크기를 제한하는지 서술한다.</li>
+        <li><b>심화</b>: <code>gap</code> 값을 바꿔가며 카드 사이 간격이 줄바꿈 위치에 어떤 영향을 주는지 실험한다.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ASPECT-RATIO -->
+<section class="lesson" style="border-bottom:none;">
+  <div class="wrap">
+    <span class="tag"><span class="num">7</span>보너스</span>
+    <h2 class="title">aspect-ratio — 이미지 비율이 깨지는 걸 막는 속성</h2>
+    <p class="sub">카드에 서로 다른 원본 비율의 이미지가 섞이면 카드 높이가 들쭉날쭉해집니다. <code>aspect-ratio</code>는 요소의 가로세로 비율을 고정해서 이 문제를 해결합니다.</p>
+
+    <div class="code">img {<br>&nbsp;&nbsp;<span class="c1">width</span>: <span class="c2">100%</span>;<br>&nbsp;&nbsp;<span class="c1">aspect-ratio</span>: <span class="c2">2 / 3</span>; &nbsp;<span class="c3">/* 가로 2 : 세로 3 비율로 고정 */</span><br>&nbsp;&nbsp;<span class="c1">object-fit</span>: <span class="c2">cover</span>; &nbsp;<span class="c3">/* 비율 유지하며 넘치는 부분은 잘라냄 */</span><br>}</div>
+
+    <p class="sub" style="margin-top:20px;">width 값 하나만 정해줘도 height는 비율에 맞춰 자동으로 계산됩니다. 자주 쓰는 비율은 아래와 같아요.</p>
+
+    <div class="ratio-demo">
+      <div class="ratio-item"><div class="box r-1-1"></div><span>1 / 1<br>정사각형(프로필)</span></div>
+      <div class="ratio-item"><div class="box r-16-9"></div><span>16 / 9<br>와이드 영상</span></div>
+      <div class="ratio-item"><div class="box r-2-3"></div><span>2 / 3<br>세로 포스터</span></div>
+      <div class="ratio-item"><div class="box r-4-3"></div><span>4 / 3<br>클래식 사진</span></div>
+    </div>
+
+    <table class="ratio-table">
+      <thead>
+        <tr><th>속성</th><th>역할</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>aspect-ratio</code></td><td>요소(박스)의 가로세로 <b>비율을 고정</b>. width만 있어도 height 자동 계산.</td></tr>
+        <tr><td><code>object-fit: cover</code></td><td>고정된 박스 안에 <b>이미지 내용물</b>을 찌그러짐 없이 채움 (넘치는 부분은 잘림).</td></tr>
+      </tbody>
+    </table>
+
+    <div class="pg-note">
+      <b>기억할 것 —</b> <code>aspect-ratio</code>는 <u>틀</u>을 고정하고, <code>object-fit</code>은 그 틀 안에 <u>내용물을 어떻게 배치할지</u> 정합니다. 카드형 UI에서 이미지 원본 크기가 제각각일 때는 이 두 속성을 항상 함께 씁니다.
+    </div>
+  </div>
+</section>
+
+<footer>Flexbox Responsive Card Lesson · 리사이즈 박스를 드래그해 직접 실험해보세요</footer>
+
+<script>
+(function(){
+  const ids = ['A','B','C'];
+  const stage = document.getElementById('pgStage');
+
+  function update(id){
+    const grow = document.getElementById('grow'+id).value;
+    const shrink = document.getElementById('shrink'+id).value;
+    const basis = document.getElementById('basis'+id).value;
+
+    document.getElementById('valGrow'+id).textContent = grow;
+    document.getElementById('valShrink'+id).textContent = shrink;
+    document.getElementById('valBasis'+id).textContent = basis + 'px';
+
+    const box = document.getElementById('box'+id);
+    box.style.flexGrow = grow;
+    box.style.flexShrink = shrink;
+    box.style.flexBasis = basis + 'px';
+
+    document.getElementById('label'+id).textContent = grow + ' / ' + shrink + ' / ' + basis + 'px';
+    document.getElementById('code'+id).textContent = 'flex: ' + grow + ' ' + shrink + ' ' + basis + 'px;';
+  }
+
+  ids.forEach(function(id){
+    ['grow','shrink','basis'].forEach(function(prop){
+      document.getElementById(prop+id).addEventListener('input', function(){ update(id); });
+    });
+    update(id);
+  });
+})();
+</script>
+
+</body>
+</html>
