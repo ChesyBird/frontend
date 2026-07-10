@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>무비 컬렉션 — CSS 선택자 연습</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/css/basic.css">
+
+  <style>
+    tr:first-child{
+      background-color: var(--secondary);
+    }
+
+    tr:first-child td{
+      color: white;
+    }
+
+    td:first-child{
+      padding-left: 30px;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+  <header id="site-header" class=" d-flex justify-between items-center
+          h-75px bg-dark text-white p-5">
+    <div class="logo fw-bold">🎬 무비 컬렉션</div>
+    <nav>
+      <ul class="nav-menu d-flex gap-5">
+        <li class="cursor-pointer"><a href="#">홈</a></li>
+       <li class="has-submenu cursor-pointer">
+          <a href="#">장르</a>
+          <!--<ul class="submenu">
+            <li><a href="#">액션</a></li>
+            <li><a href="#">로맨스</a></li>
+            <li><a href="#">SF</a></li>
+          </ul>-->
+        </li>
+        <li class="cursor-pointer"><a href="#">랭킹</a></li>
+        <li class="cursor-pointer"><a href="#" class="btn-signup">회원가입</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!--검색-->
+  <section class="d-flex flex-col items-center bg-white pb-6">
+    <h1 class="pt-5 pb-2">이번 주, 어떤 영화 볼까요?</h1>
+    <p class="text-gray mb-4">큐레이션된 컬렉션에서 다음 영화를 찾아보세요.</p>
+    <form class="search-form">
+      <input class="border-l-2 mb-5" type="text" name="keyword" placeholder="영화 제목 검색" required>
+      <select name="genre">
+        <option value="all">전체 장르</option>
+        <option value="action">액션</option>
+        <option value="romance">로맨스</option>
+        <option value="scifi">SF</option>
+      </select>
+      <button type="submit">검색</button>
+    </form>
+  </section>
+
+  <!--카드-->
+  <section class="movie-list max-w-lg mt-7 m-auto">
+    <h2 class="border-l-2 my-2 pl-4">이번 달 추천작</h2>
+    <div class="grid d-flex flex-wrap gap-5 ml-4 mt-5">
+
+      <article class="card  border rounded-lg overflow-hidden flex-2" data-rating="9.2">
+        <img class="w-100 h-300px object-cover" src="https://picsum.photos/seed/movie1/300/400" alt="스텔라 오디세이 포스터">
+        <div class="card-body bg-white px-3 py-5 fs-lg">
+          <h3>스텔라 오디세이</h3>
+          <p class="genre text-gray mb-20px">SF · 액션</p>
+          <span class="badge">NEW</span>
+        </div>
+      </article>
+
+      <article class="card  border rounded-lg overflow-hidden flex-2" data-rating="9.8">
+        <img class="w-100 h-300px object-cover" src="https://picsum.photos/seed/movie2/300/400" alt="도시의 밤 포스터">
+        <div class="card-body bg-white px-3 py-5 fs-lg">
+          <h3>도시의 밤</h3>
+          <p class="genre text-gray mb-20px">스릴러 · 드라마</p>
+          <span class="badge">HOT</span>
+        </div>
+      </article>
+
+      <article class="card  border rounded-lg overflow-hidden flex-2" data-rating="8.7">
+        <img class="w-100 h-300px object-cover" src="https://picsum.photos/seed/movie3/300/400" alt="여름의 문 포스터">
+        <div class="card-body bg-white px-3 py-5 fs-lg">
+          <h3>여름의 문</h3>
+          <p class="genre text-gray mb-20px">로맨스</p>
+          <span class="badge">NEW</span>
+        </div>
+      </article>
+
+      <article class="card  border rounded-lg overflow-hidden flex-2" data-rating="9.0">
+        <img class="w-100 h-300px object-cover" src="https://picsum.photos/seed/movie4/300/400" alt="마지막 항해 포스터">
+        <div class="card-body bg-white px-3 py-5 fs-lg">
+          <h3>마지막 항해</h3>
+          <p class="genre text-gray mb-20px">모험 · SF</p>
+          <span class="badge">NEW</span>
+        </div>
+      </article>
+
+      <article class="card  border rounded-lg overflow-hidden flex-2" data-rating="8.4">
+        <img class="w-100 h-300px object-cover" src="https://picsum.photos/seed/movie5/300/400" alt="붉은 골목 포스터">
+        <div class="card-body bg-white px-3 py-5 fs-lg">
+          <h3>붉은 골목</h3>
+          <p class="genre text-gray mb-20px">미스터리</p>
+          <span class="badge">HOT</span>
+        </div>
+      </article>
+
+      <article class="card  border rounded-lg overflow-hidden flex-2" data-rating="9.5">
+        <img class="w-100 h-300px object-cover" src="https://picsum.photos/seed/movie6/300/400" alt="파랑의 계절 포스터">
+        <div class="card-body bg-white px-3 py-5 fs-lg">
+          <h3>파랑의 계절</h3>
+          <p class="genre text-gray mb-20px">드라마</p>
+          <span class="badge">NEW</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!--테이블-->
+  <section class="max-w-lg m-auto">
+    <h2 class="title">실시간 랭킹</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>순위</th>
+          <th>제목</th>
+          <th>평점</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>도시의 밤</td><td>9.8</td></tr>
+        <tr><td>2</td><td>파랑의 계절</td><td>9.5</td></tr>
+        <tr><td>3</td><td>스텔라 오디세이</td><td>9.2</td></tr>
+        <tr><td>4</td><td>마지막 항해</td><td>9.0</td></tr>
+        <tr><td>5</td><td>여름의 문</td><td>8.7</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer id="site-footer">
+    <div class="footer-links">
+      <ul>
+        <li><a href="#">이용약관</a></li>
+        <li><a href="#">개인정보처리방침</a></li>
+        <li><a href="#">문의하기</a></li>
+      </ul>
+    </div>
+    <p class="copyright">&copy; 2026 무비 컬렉션. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>

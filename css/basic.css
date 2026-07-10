@@ -81,6 +81,7 @@ body{
   --danger: #E0483C;
   --success: #1E9E5A;
   --warning: #FFD166;
+  --navy: rgb(24, 17, 131);
 
   /* 여백/모서리에 쓸 공용 스케일 (아래 margin/padding/rounded에서 사용) */
   --space-0: 0;
@@ -173,7 +174,9 @@ body{
 .flex-col    { flex-direction: column; }
 .flex-col-rev{ flex-direction: column-reverse; }
 
+/* 자식 요소 넓이의 합이 부모요소보다 커지면 줄바꿈처리 */
 .flex-wrap  { flex-wrap: wrap; }
+/* 기본값: 한줄에 요소를 모두 표현 */
 .flex-nowrap{ flex-wrap: nowrap; }
 
 .flex-1   { flex: 1 1 0%; }  /* 남는 공간을 균등하게 차지 */
@@ -181,6 +184,18 @@ body{
 .flex-none{ flex: none; }    /* 늘어나거나 줄어들지 않음 */
 .shrink-0 { flex-shrink: 0; }/* 자식이 찌그러지지 않게 고정 (가로 스크롤 카드 등에 필수) */
 .grow-0   { flex-grow: 0; }
+
+.flex-2 {
+  flex: 1 1 300px;
+  /* 
+  단축속성--
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis:display: 300px;
+
+  을 플렉스 상자의 각 아이템들에 적용
+  */
+}
 
 /* justify-content (가로 정렬, flex-direction:row 기준) */
 .justify-start  { justify-content: flex-start; }
@@ -237,6 +252,8 @@ body{
 .m-4{ margin: var(--space-4); } .m-5{ margin: var(--space-5); }
 .m-6{ margin: var(--space-6); } .m-7{ margin: var(--space-7); }
 .m-auto{ margin: auto; }
+
+.m-center{ margin: 0px auto;}
 
 /* margin: 방향별 (t=top, b=bottom, l=left, r=right) */
 .mt-0{margin-top:var(--space-0);} .mt-1{margin-top:var(--space-1);} .mt-2{margin-top:var(--space-2);}
@@ -344,6 +361,7 @@ body{
 .bg-accent   { background-color: var(--accent); }
 .bg-dark     { background-color: var(--dark); }
 .bg-light    { background-color: var(--light); }
+.bg-gray     { background-color: var(--gray);}
 .bg-gray-light { background-color: var(--gray-light); }
 .bg-white    { background-color: var(--white); }
 .bg-danger   { background-color: var(--danger); }
@@ -359,6 +377,8 @@ body{
 .border-t   { border-top: 1px solid var(--gray-light); }
 .border-b   { border-bottom: 1px solid var(--gray-light); }
 .border-primary{ border-color: var(--primary); }
+
+.border-l-2{ border-left: var(--space-2) solid var(--navy) !important;}
 
 .rounded-none{ border-radius: 0; }
 .rounded-sm  { border-radius: 4px; }
@@ -396,6 +416,7 @@ body{
 .shadow-lg{ box-shadow: 0 12px 24px rgba(0,0,0,0.14); }
 
 /* overflow */
+/* 부모요소 밖으로 나가면 숨김처리 */
 .overflow-hidden{ overflow: hidden; }
 .overflow-auto  { overflow: auto; }
 .overflow-scroll{ overflow: scroll; }
@@ -413,7 +434,9 @@ body{
 .transition-slow{ transition: all 0.4s ease; }
 
 /* object-fit (이미지/영상 비율 유지) */
+/* 영역을 가득 채움 - 이미지 잘림 현상 발생 */
 .object-cover  { object-fit: cover; }
+/* 빈공간 발생 */
 .object-contain{ object-fit: contain; }
 
 /* 접근성: 화면엔 안 보이지만 스크린리더는 읽을 수 있게 */
@@ -428,9 +451,10 @@ body{
 }
 
 select{
-  padding: 10px 14px;
-  border: 1px solid #E4E4EE;
-  border-radius: 50px;
+  padding: 0px 14px;
+  height: 40px;
+  border: 1px solid var(--gray);
+  border-radius: 8px;
   appearance: none;              /* 브라우저 기본 화살표 제거 */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236E6E85' fill='none' stroke-width='2'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -441,4 +465,59 @@ select{
 option{
   color: #1A1A2E;
   background-color: #ffffff;     /* 이 정도는 대부분 브라우저에서 먹힘 */
+}
+
+input{
+  /*
+   단축속성: 여러개의 속성을 한번에 정의
+   ex) border: 선의 두께, 선의 모양, 색상(기본-검정)
+  */
+  border: 1px solid var(--gray);
+  height: 40px;
+  padding-left: 5px;
+  border-radius: 8px;
+}
+
+button{
+  background: var(--navy);
+  color: var(--white);
+  padding: 7px 15px;
+  border-radius: 10px;
+}
+
+.badge{
+  background-color: var(--dark);
+  border-radius: 5px;
+  padding: 2px 5px;
+  color: var(--white);
+  font-size: 0.9rem;
+}
+
+.title{
+  margin-top: 40px;
+  padding: 20px 0px;
+  font-size: 1.5rem;
+}
+
+table{
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td{
+  border-bottom: 1px solid black;
+  padding: 10px;
+  
+}
+
+thead tr, thead th{
+  background-color: var(--dark);
+  color: var(--white);
+  padding: 10px;
+  text-align: left;
+}
+
+.grid > article:nth-child(2){
+  border: 2px solid var(--navy);
+  box-shadow: 2px 4px 15px #444;
 }
