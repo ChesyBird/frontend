@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>반응형 네비게이션 — 햄버거 메뉴 만들기 교안</title>
+<style>
+  :root{
+    --ink:#15202B;
+    --paper:#EDF0EE;
+    --surface:#FFFFFF;
+    --line:#C9D2CE;
+    --accent:#1F6F5C;
+    --accent-soft:#DCEBE6;
+    --warm:#D98E2B;
+    --warm-soft:#F6E6CB;
+    --bad:#C24B3F;
+    --bad-soft:#F5DCD8;
+    --code-bg:#0F1B18;
+    --code-text:#D7E4DE;
+    --dark:#131B29;
+    --light:#EDF1F3;
+    --gray:#5B6675;
+    --orange:#FF5A36;
+    --mono: ui-monospace, "D2Coding", "Consolas", Menlo, monospace;
+    --sans: -apple-system, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.7;}
+  code{font-family:var(--mono); background:rgba(0,0,0,.06); padding:1px 5px; border-radius:4px; font-size:.88em;}
+  pre.code{
+    background:var(--code-bg); color:var(--code-text); font-family:var(--mono);
+    font-size:.83rem; padding:16px 18px; border-radius:10px; overflow-x:auto;
+    margin:12px 0; line-height:1.65;
+  }
+  pre.code code{background:none; padding:0; color:inherit;}
+  .cm{color:#7FA695;} /* 코드 주석용 */
+  .hl{color:var(--warm); font-weight:700;} /* 강조 */
+
+  .wrap{max-width:840px;margin:0 auto;padding:0 22px 120px;}
+  header.hero{
+    background:var(--ink); color:#fff; padding:52px 22px 42px;
+    border-bottom:6px solid var(--accent);
+  }
+  header.hero .wrap{padding:0;}
+  .eyebrow{font-family:var(--mono); font-size:.78rem; letter-spacing:.12em; color:var(--accent-soft); text-transform:uppercase; margin-bottom:10px;}
+  h1.title{font-size:2rem; font-weight:800; margin:0 0 12px;}
+  .hero p{max-width:600px; color:#C7D0CC; margin:0;}
+
+  section.step{padding-top:58px;}
+  .step-head{display:flex; align-items:baseline; gap:13px; margin-bottom:4px;}
+  .step-num{font-family:var(--mono); font-weight:700; color:var(--accent); font-size:.85rem; border:1px solid var(--accent); border-radius:20px; padding:2px 10px; white-space:nowrap;}
+  h2.step-title{font-size:1.4rem; font-weight:800; margin:0;}
+  .step-lead{color:#40504A; margin:12px 0 22px; max-width:660px;}
+
+  .card-block{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px 22px; margin-bottom:16px;}
+  .card-block h3{margin:0 0 10px; font-size:1rem; font-weight:700;}
+  .card-block p{margin:0 0 10px; color:#3C4A45; font-size:.94rem;}
+  .card-block p:last-child{margin-bottom:0;}
+
+  .tag{display:inline-block; font-family:var(--mono); font-size:.7rem; font-weight:700; padding:2px 9px; border-radius:20px; margin-right:6px;}
+  .tag.good{background:var(--accent-soft); color:var(--accent);}
+  .tag.bad{background:var(--bad-soft); color:var(--bad);}
+  .tag.warm{background:var(--warm-soft); color:#8A5A17;}
+
+  table.info{width:100%; border-collapse:collapse; font-size:.88rem; margin:8px 0;}
+  table.info th, table.info td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line);}
+  table.info th{color:#5B6D66; font-weight:700; font-size:.8rem;}
+  table.info td code{font-size:.8rem;}
+
+  .warn-box{
+    background:var(--bad-soft); border-left:4px solid var(--bad);
+    border-radius:0 10px 10px 0; padding:14px 16px; margin:12px 0;
+    font-size:.9rem;
+  }
+  .warn-box b{color:var(--bad);}
+  .tip-box{
+    background:var(--accent-soft); border-left:4px solid var(--accent);
+    border-radius:0 10px 10px 0; padding:14px 16px; margin:12px 0;
+    font-size:.9rem;
+  }
+
+  .checklist{margin:0; padding-left:0; list-style:none;}
+  .checklist li{display:flex; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); font-size:.92rem;}
+  .checklist li:last-child{border-bottom:none;}
+  .checklist li::before{content:"□"; color:var(--accent); font-weight:700; font-size:1.05rem; flex-shrink:0;}
+
+  /* ───────── 데모 리사이저 ───────── */
+  .resizer-outer{background:#fff; border:1px dashed var(--line); border-radius:12px; padding:16px; overflow-x:auto; margin-top:12px;}
+  .resizer-box{position:relative; min-width:230px; border:1px solid var(--line); border-right:none; background:var(--paper);}
+  .resizer-box .handle{
+    position:absolute; top:0; right:-14px; width:14px; height:100%;
+    background:var(--ink); border-radius:0 8px 8px 0; cursor:ew-resize;
+    display:flex; align-items:center; justify-content:center; touch-action:none; z-index:10;
+  }
+  .resizer-box .handle::after{content:"⋮"; color:#fff; font-size:.8rem;}
+  .readout{font-family:var(--mono); font-size:.78rem; color:var(--accent); font-weight:700; margin-top:20px;}
+
+  /* ───────── 데모 네비 (실제 실습 코드와 동일 구조) ───────── */
+  .demo-nav{ position:relative; min-height:220px; overflow:hidden; }
+  .demo-header{
+    position:relative;
+    display:flex; justify-content:space-between; align-items:center;
+    height:50px; background:var(--dark); color:#fff; padding:0 20px;
+    font-size:.85rem;
+  }
+  .demo-burger{ font-size:1.6rem; cursor:pointer; user-select:none; line-height:1; }
+  .demo-nav ul{ list-style:none; margin:0; padding:0; }
+  .demo-nav a{ color:inherit; text-decoration:none; }
+
+  .demo-menu{
+    position:absolute;
+    background-color:var(--dark);
+    top:50px; left:0; width:100%;
+    display:flex; flex-direction:column;
+    color:#fff;
+    transform:translateX(100%);
+    transition:transform 0.6s ease;
+    z-index:5;
+  }
+  .demo-menu.open{ transform:translateX(0%); }
+  .demo-menu > li{ padding:8px 40px; }
+  .demo-menu > li:last-child{ background-color:var(--orange); border-radius:5px; }
+
+  .demo-has-sub > a::after{
+    content:"▼"; font-size:.6rem; margin-left:8px;
+    display:inline-block; transform:rotate(0deg);
+    transition:transform 0.4s ease-in-out;
+  }
+  .demo-has-sub.open > a::after{ transform:rotate(180deg); }
+
+  .demo-sub{
+    max-height:0; overflow:hidden;
+    transition:max-height 0.4s ease-in-out;
+  }
+  .demo-has-sub.open .demo-sub{ max-height:150px; }
+  .demo-sub li{ padding:5px 20px; border-bottom:1px solid var(--light); }
+  .demo-sub li:hover{ background-color:var(--light); color:var(--dark); }
+
+  /* 데스크탑 모드: .demo-nav에 .desktop 클래스가 붙으면 전환
+     (실제 실습 코드에서는 @media (min-width:768px)가 이 역할을 합니다) */
+  .demo-nav.desktop .demo-burger{ display:none; }
+  .demo-nav.desktop .demo-menu{
+    position:static; flex-direction:row; transform:none;
+    width:auto; gap:4px;
+  }
+  .demo-nav.desktop .demo-menu > li{ padding:0 10px; position:relative; }
+  .demo-nav.desktop .demo-sub{
+    position:absolute; left:0; top:34px;
+    max-height:none; overflow:visible;
+    background-color:var(--dark); border-radius:5px; padding:10px;
+    width:120px;
+    visibility:hidden; opacity:0; transform:translateY(-8px);
+    transition:opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+  }
+  .demo-nav.desktop .demo-has-sub:hover .demo-sub,
+  .demo-nav.desktop .demo-has-sub.open .demo-sub{
+    visibility:visible; opacity:1; transform:translateY(0);
+  }
+  .demo-nav.desktop .demo-has-sub:hover > a::after{ transform:rotate(180deg); }
+
+  footer.end{padding:60px 22px 40px; text-align:center; color:#5B6D66; font-size:.85rem;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">RESPONSIVE NAVIGATION · 실습 교안</div>
+    <h1 class="title">반응형 네비게이션 — 햄버거 메뉴 만들기</h1>
+    <p>모바일에서는 햄버거(☰) 버튼과 슬라이드 메뉴 + 아코디언 서브메뉴, 데스크탑(768px~)에서는 가로 메뉴바 + hover 드롭다운. 하나의 HTML로 두 가지 메뉴를 만드는 과정을 단계별로 실습합니다.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ═══════════ STEP 0 ═══════════ -->
+  <section class="step">
+    <div class="step-head"><span class="step-num">STEP 0</span><h2 class="step-title">반응형 웹 핵심 개념 3가지</h2></div>
+    <p class="step-lead">이번 실습에 필요한 개념만 빠르게 정리합니다.</p>
+
+    <div class="card-block">
+      <h3>① 뷰포트(viewport)와 meta 태그</h3>
+      <p>뷰포트는 <b>브라우저가 콘텐츠를 그리는 기준 화면 크기</b>입니다. 모바일 브라우저는 이 태그가 없으면 뷰포트를 약 980px로 잡고 페이지를 축소해서 보여주기 때문에, 미디어 쿼리가 의도대로 동작하지 않습니다. 반응형의 전제 조건이에요.</p>
+      <pre class="code">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</pre>
+      <table class="info">
+        <tr><th>속성</th><th>역할</th></tr>
+        <tr><td><code>width=device-width</code></td><td>뷰포트 폭을 기기의 실제 화면 폭에 맞춤</td></tr>
+        <tr><td><code>initial-scale=1.0</code></td><td>처음 로드될 때 확대/축소 배율을 100%로 (해상도와는 무관, 줌 배율만 담당)</td></tr>
+      </table>
+    </div>
+
+    <div class="card-block">
+      <h3>② @media — 앳 룰(at-rule)</h3>
+      <p><code>:</code>으로 시작하면 가상 클래스, <code>@</code>로 시작하면 <b>앳 룰</b>입니다. 앳 룰은 CSS 엔진에게 "이 블록을 어떻게 처리할지" 지시하며, <code>@media</code>는 그중 화면 조건에 따라 내부 스타일 적용 여부를 결정하는 <b>조건부 그룹 규칙</b>이에요. 미디어 쿼리는 <b>뷰포트 폭</b>을 기준으로 조건을 판단합니다.</p>
+      <pre class="code"><span class="cm">/* 뷰포트 폭이 768px 이상일 때만 { } 안의 스타일 적용 */</span>
+@media (min-width: 768px) {
+  .burger { display: none; }
+}</pre>
+    </div>
+
+    <div class="card-block">
+      <h3>③ 모바일 퍼스트(Mobile First)</h3>
+      <p>기본 CSS를 <b>모바일 기준</b>으로 작성하고, <code>min-width</code> 미디어 쿼리로 큰 화면일 때의 스타일을 <b>추가</b>하는 방식입니다. 이번 실습도 이 순서를 따릅니다: 햄버거 메뉴(기본) → 가로 메뉴바(768px~).</p>
+      <p><span class="tag warm">참고</span> 768px은 태블릿 세로 폭에서 유래한 값이지만, 태블릿부터는 가로 메뉴가 충분히 들어가므로 "좁은 화면용 특수 처리(햄버거)가 필요 없어지는 경계"로 널리 쓰입니다. Bootstrap·Tailwind 모두 768px(md)을 기준으로 사용해요. 단, 브레이크포인트는 기기가 아니라 <b>내 콘텐츠가 깨지는 지점</b> 기준으로 잡는 것이 원칙입니다.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════ 완성 데모 ═══════════ -->
+  <section class="step">
+    <div class="step-head"><span class="step-num">DEMO</span><h2 class="step-title">완성 결과 미리보기</h2></div>
+    <p class="step-lead">오른쪽 손잡이를 드래그해서 폭을 바꿔보세요. 768px 미만이면 ☰ 버튼이 나타나고(클릭 → 슬라이드 메뉴, 장르 클릭 → 아코디언), 768px 이상이면 가로 메뉴 + hover 드롭다운으로 전환됩니다.</p>
+    <div class="card-block" style="padding:14px;">
+      <div class="resizer-outer" style="margin-top:0;">
+        <div class="resizer-box" id="demoBox" style="width:620px;">
+          <div class="demo-nav" id="demoNav">
+            <div class="demo-header">
+              <span>🎬 무비 컬렉션</span>
+              <nav style="display:flex; align-items:center;">
+                <div class="demo-burger" id="demoBurger">≡</div>
+                <ul class="demo-menu" id="demoMenu">
+                  <li><a href="#">홈</a></li>
+                  <li class="demo-has-sub" id="demoHasSub">
+                    <a href="#">장르</a>
+                    <ul class="demo-sub">
+                      <li><a href="#">액션</a></li>
+                      <li><a href="#">로맨스</a></li>
+                      <li><a href="#">SF</a></li>
+                    </ul>
+                  </li>
+                  <li><a href="#">랭킹</a></li>
+                  <li><a href="#">회원가입</a></li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+          <div class="handle" id="demoHandle"></div>
+        </div>
+      </div>
+      <div class="readout" id="demoReadout">620px</div>
+    </div>
+  </section>
+
+  <!-- ═══════════ STEP 1 ═══════════ -->
+  <section class="step">
+    <div class="step-head"><span class="step-num">STEP 1</span><h2 class="step-title">HTML 구조 잡기</h2></div>
+    <p class="step-lead">버거 버튼과 메뉴를 <code>nav</code> 안에 나란히 배치합니다. 서브메뉴가 있는 항목에는 <code>has-submenu</code> 클래스를 붙여서 CSS/JS가 구분할 수 있게 해요.</p>
+    <div class="card-block">
+      <pre class="code">&lt;header id="site-header"&gt;
+  &lt;div class="logo"&gt;🎬 무비 컬렉션&lt;/div&gt;
+  &lt;nav&gt;
+    &lt;div class="burger"&gt;≡&lt;/div&gt;          <span class="cm">&lt;!-- ☰ 또는 ≡ (수학기호) --&gt;</span>
+    &lt;ul class="nav-menu"&gt;                 <span class="cm">&lt;!-- open은 JS가 붙임. HTML에 미리 쓰지 않기! --&gt;</span>
+      &lt;li&gt;&lt;a href="#"&gt;홈&lt;/a&gt;&lt;/li&gt;
+      &lt;li class="has-submenu"&gt;
+        &lt;a href="#"&gt;장르&lt;/a&gt;
+        &lt;ul class="submenu"&gt;
+          &lt;li&gt;&lt;a href="#"&gt;액션&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href="#"&gt;로맨스&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href="#"&gt;SF&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href="#"&gt;랭킹&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#" class="btn-signup"&gt;회원가입&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/nav&gt;
+&lt;/header&gt;</pre>
+      <div class="warn-box"><b>흔한 실수:</b> 테스트하다가 <code>&lt;ul class="nav-menu open"&gt;</code>처럼 <code>open</code>을 HTML에 남겨두면, 페이지를 열자마자 메뉴가 펼쳐진 상태로 시작합니다. <code>open</code>은 JS가 클릭 시 붙였다 떼는 클래스이므로 마크업에는 쓰지 않아요.</div>
+    </div>
+  </section>
+
+  <!-- ═══════════ STEP 2 ═══════════ -->
+  <section class="step">
+    <div class="step-head"><span class="step-num">STEP 2</span><h2 class="step-title">슬라이드 메뉴 — transform: translateX</h2></div>
+    <p class="step-lead">메뉴를 화면 오른쪽 밖에 대기시켰다가, <code>open</code> 클래스가 붙으면 제자리로 미끄러져 들어오게 합니다.</p>
+
+    <div class="card-block">
+      <h3>왜 display:none → block이 아니라 translateX인가?</h3>
+      <p><code>display</code>는 <code>none</code>/<code>block</code> 같은 <b>키워드 값</b>이라 중간값이 없어서 트랜지션이 불가능해요. CSS 트랜지션은 <b>숫자 ↔ 숫자</b> 사이에서만 동작합니다. <code>translateX(100%) → translateX(0%)</code>는 숫자 변화라서 부드럽게 미끄러지는 애니메이션이 가능해요.</p>
+      <pre class="code">header{
+  position: relative;   <span class="cm">/* .nav-menu의 absolute 기준점 */</span>
+}
+
+.burger{
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.nav-menu{
+  position: absolute;         <span class="cm">/* header 기준으로 배치 */</span>
+  background-color: var(--dark);
+  top: 50px;                  <span class="cm">/* 헤더 높이만큼 아래 */</span>
+  left: 0px;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;     <span class="cm">/* 모바일: 세로 나열 */</span>
+
+  <span class="hl">transform: translateX(100%);</span>   <span class="cm">/* 자기 너비만큼 오른쪽 = 화면 밖 */</span>
+  <span class="hl">transition: transform 0.5s ease;</span>
+}
+
+.nav-menu.open{
+  <span class="hl">transform: translateX(0%);</span>     <span class="cm">/* 원래 자리로 슬라이드 인 */</span>
+}
+
+.nav-menu > li{
+  padding: 5px 40px;
+}
+.nav-menu > li:last-child{     <span class="cm">/* 회원가입 버튼 스타일 */</span>
+  background-color: var(--accent);
+  border-radius: 5px;
+}</pre>
+      <p><span class="tag warm">참고</span> <code>translateX(50%)</code>로 바꿔보면 "자기 너비의 50%만큼 이동한 위치"에 걸쳐 보입니다 — %가 <b>부모가 아니라 자기 자신의 크기 기준</b>이라는 걸 확인해보는 실험으로 좋아요.</p>
+      <div class="tip-box">메뉴가 <code>translateX(100%)</code>로 화면 밖에 있는 동안 body에 가로 스크롤이 생길 수 있어요. <code>body{ overflow-x: hidden; }</code>을 추가하면 방지됩니다.</div>
+    </div>
+  </section>
+
+  <!-- ═══════════ STEP 3 ═══════════ -->
+  <section class="step">
+    <div class="step-head"><span class="step-num">STEP 3</span><h2 class="step-title">서브메뉴 아코디언 — max-height + overflow:hidden</h2></div>
+    <p class="step-lead">"장르"를 클릭하면 하위 메뉴가 아래로 펼쳐지면서 다른 항목을 밀어내는 아코디언을 만듭니다.</p>
+
+    <div class="card-block">
+      <h3>원리: overflow:hidden이 max-height 밖을 잘라준다</h3>
+      <p><code>max-height</code>는 그 자체로 내용을 숨기지 못해요. 기본값 <code>overflow:visible</code>에서는 콘텐츠가 박스 밖으로 넘쳐서 그냥 보입니다. <b><code>overflow:hidden</code>이 함께 있어야</b> max-height를 넘는 부분이 잘려서 안 보이게 돼요.</p>
+      <pre class="code"><span class="cm">/* 초기: 높이 0 + 넘치는 콘텐츠 잘라서 화면에서 숨김 */</span>
+.submenu{
+  <span class="hl">max-height: 0px;</span>
+  <span class="hl">overflow: hidden;</span>
+  transition: max-height 0.4s ease-in-out;
+}
+
+<span class="cm">/* open 클래스가 붙으면 펼침 */</span>
+.has-submenu.open .submenu{
+  max-height: 150px;    <span class="cm">/* 실제 콘텐츠 높이에 가깝게! (아래 설명) */</span>
+}
+
+.submenu li{
+  padding: 5px 20px;
+  border-bottom: 1px solid var(--light);
+}
+.submenu li:hover{
+  background-color: var(--light);
+  color: var(--dark);
+}</pre>
+    </div>
+
+    <div class="card-block">
+      <h3>왜 display가 아니라 max-height인가? — 그리고 max-height의 성질</h3>
+      <table class="info">
+        <tr><th>속성</th><th>트랜지션</th><th>이유</th></tr>
+        <tr><td><code>display: none↔block</code></td><td>❌ 불가</td><td>키워드 값 — 중간값 계산 불가</td></tr>
+        <tr><td><code>height: 0↔auto</code></td><td>❌ 불가</td><td>auto는 숫자가 아니라 목표값 계산 불가</td></tr>
+        <tr><td><code>max-height: 0↔150px</code></td><td>✅ 가능</td><td>숫자 ↔ 숫자</td></tr>
+      </table>
+      <div class="warn-box"><b>주의 1 — 값을 너무 크게 잡으면 열림/닫힘이 비대칭:</b> 실제 콘텐츠가 120px인데 <code>max-height:500px</code>로 잡으면, 열릴 땐 120px 지점에서 이미 다 보여서 빨리 열린 것처럼 느껴지고, 닫힐 땐 500→120px 구간(빈 구간) 동안 아무 변화가 없다가 뒤늦게 닫혀요. <b>실제 콘텐츠 높이에 가까운 값</b>을 쓰거나, JS로 <code>scrollHeight</code>를 읽어 지정하세요.</div>
+      <div class="warn-box"><b>주의 2 — open 상태에 overflow:visible을 넣지 마세요:</b> 닫히는 트랜지션 도중 콘텐츠가 잘리지 않고 삐져나와 보이다가 뚝 사라집니다. <code>overflow:hidden</code>은 열림/닫힘 모두 유지해야 해요.</div>
+      <div class="warn-box"><b>주의 3 — max-height:0은 패딩을 못 접습니다:</b> 요소 자신의 <code>padding</code>은 콘텐츠가 아니라서 max-height로 줄일 수 없고 overflow로도 잘리지 않아요(box-sizing:border-box여도 패딩+테두리는 최소 크기로 남음). 서브메뉴 여백은 <b>자식 li의 padding</b>으로 주는 게 안전합니다.</div>
+    </div>
+
+    <div class="card-block">
+      <h3>화살표(▼) 붙이고 회전시키기</h3>
+      <pre class="code">.has-submenu > a::after{
+  content: "▼";
+  margin-left: 10px;
+  <span class="hl">display: inline-block;</span>   <span class="cm">/* inline이면 rotate 기준점이 틀어져 2시 방향을 봄 */</span>
+  <span class="hl">transform: rotate(0deg);</span>   <span class="cm">/* 닫힘 기준값 명시 — none↔180deg는 역방향이 튐 */</span>
+  transition: transform 0.4s ease-in-out;
+}
+.has-submenu.open > a::after{
+  transform: rotate(180deg);
+}</pre>
+      <p>화살표는 <code>li::after</code>가 아니라 <b><code>a::after</code></b>에 붙입니다. li에 붙이면 서브메뉴 ul까지 포함한 블록의 맨 끝(서브메뉴 아래)에 나와서 엉뚱한 위치가 돼요.</p>
+      <p><span class="tag warm">타이밍 함수</span> <code>ease-in</code>은 느리게 시작해 빠르게 끝나서 닫힐 때 "한 템포 쉬는" 느낌이 나요. 아코디언에는 양쪽 다 부드러운 <code>ease-in-out</code>이 적합합니다.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════ STEP 4 ═══════════ -->
+  <section class="step">
+    <div class="step-head"><span class="step-num">STEP 4</span><h2 class="step-title">자바스크립트 — open 클래스 토글</h2></div>
+    <p class="step-lead">CSS는 "open이 있으면 이렇게 보여라"까지만 담당하고, open을 붙였다 떼는 건 JS의 몫입니다.</p>
+    <div class="card-block">
+      <pre class="code">const burger = document.querySelector('.burger');
+const menu = document.querySelector('.nav-menu');
+
+<span class="cm">// 1. 버거 클릭 → 메뉴 슬라이드 토글</span>
+burger.addEventListener('click', (e) => {
+  e.stopPropagation();            <span class="cm">// 3번(바깥 클릭 닫기)과 충돌 방지</span>
+  menu.classList.toggle('open');
+});
+
+<span class="cm">// 2. "장르" 클릭 → 서브메뉴 아코디언 토글</span>
+document.querySelectorAll('.has-submenu > a').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();           <span class="cm">// # 링크 이동 방지</span>
+    link.parentElement.classList.toggle('open');
+  });
+});
+
+<span class="cm">// 3. (선택) 메뉴 바깥 클릭 → 모두 닫기</span>
+document.addEventListener('click', (e) => {
+  if(!menu.contains(e.target) && !burger.contains(e.target)){
+    menu.classList.remove('open');
+    document.querySelectorAll('.has-submenu.open')
+      .forEach(li => li.classList.remove('open'));
+  }
+});</pre>
+      <p><code>classList.toggle('open')</code>은 클래스가 있으면 떼고 없으면 붙여요. CSS 트랜지션은 클래스가 바뀌는 순간 자동으로 발동하므로, JS는 애니메이션을 직접 다루지 않고 <b>상태(클래스)만 관리</b>하면 됩니다.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════ STEP 5 ═══════════ -->
+  <section class="step">
+    <div class="step-head"><span class="step-num">STEP 5</span><h2 class="step-title">@media — 데스크탑 가로 메뉴로 전환</h2></div>
+    <p class="step-lead">768px 이상에서는 버거를 숨기고, 세로 슬라이드 메뉴를 가로 메뉴바로 되돌리고, 서브메뉴는 hover 드롭다운으로 바꿉니다.</p>
+
+    <div class="card-block">
+      <pre class="code">@media (min-width: 768px){
+  .burger{
+    display: none;               <span class="cm">/* 버거 숨김 */</span>
+  }
+
+  .nav-menu{
+    <span class="hl">position: static;</span>            <span class="cm">/* absolute 해제 → 헤더 흐름 안으로 복귀 */</span>
+    <span class="hl">flex-direction: row;</span>         <span class="cm">/* 주축을 가로로 */</span>
+    <span class="hl">transform: none;</span>             <span class="cm">/* translateX(100%) 해제 — 안 하면 메뉴가 안 보임! */</span>
+    width: auto;
+    gap: 20px;
+  }
+  .nav-menu li{
+    padding: 0px 10px;
+  }
+  .nav-menu > li{
+    position: relative;          <span class="cm">/* 드롭다운(absolute)의 기준점 */</span>
+  }
+}</pre>
+      <div class="warn-box"><b>절대 하지 말 것:</b> <code>.has-submenu{ max-height: 0px; }</code> — 서브메뉴가 아니라 <b>"장르" 메뉴 항목(li) 자체</b>를 높이 0으로 찌그러뜨립니다. 숨겨야 할 대상은 항상 <code>.submenu</code>예요.</div>
+    </div>
+
+    <div class="card-block">
+      <h3>데스크탑 드롭다운: max-height 대신 visibility + opacity</h3>
+      <p>데스크탑 서브메뉴는 <code>position:absolute</code>로 메뉴바 아래에 떠야 하는데, 이때 <code>max-height:0</code> 방식은 <b>패딩·테두리가 화면에 남는 한계</b>가 있어요(위 STEP 3 주의 3). 절대 위치 드롭다운은 <code>visibility + opacity</code> 조합이 정석입니다.</p>
+      <pre class="code">@media (min-width: 768px){
+  <span class="cm">/* max-height는 "콘텐츠 영역의 높이"만 제한한다.
+     콘텐츠는 0까지 줄어들 수 있지만 padding·border는 남기 때문에
+     (border-box여도 마찬가지 — 콘텐츠가 음수가 될 수는 없으므로)
+     패딩이 있는 드롭다운은 max-height 대신 visibility+opacity로 숨긴다 */</span>
+  .has-submenu .submenu{
+    position: absolute;
+    left: 0; top: 34px;
+    background-color: var(--dark);
+    width: 140px;
+    border-radius: 5px;
+    padding: 10px;                 <span class="cm">/* 이제 패딩 자유롭게 사용 가능 */</span>
+
+    <span class="hl">max-height: none;</span>              <span class="cm">/* 모바일 아코디언용 max-height 해제 (auto는 없는 값!) */</span>
+    overflow: visible;
+
+    <span class="hl">visibility: hidden;</span>            <span class="cm">/* 안 보이고 Tab 포커스도 안 감 (접근성 ↑) */</span>
+    <span class="hl">opacity: 0;</span>
+    transform: translateY(-8px);   <span class="cm">/* 살짝 위에서 내려오는 연출 */</span>
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+  }
+
+  <span class="cm">/* hover와 클릭(.open) 둘 다 지원 */</span>
+  .has-submenu:hover .submenu,
+  .has-submenu.open .submenu{
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .has-submenu:hover > a::after{
+    transform: rotate(180deg);
+  }
+}</pre>
+      <table class="info">
+        <tr><th>상황</th><th>적합한 숨김 방식</th><th>이유</th></tr>
+        <tr><td>모바일 아코디언 (static 흐름)</td><td><code>max-height + overflow:hidden</code></td><td>펼쳐질 때 아래 항목을 실제로 밀어냄</td></tr>
+        <tr><td>데스크탑 드롭다운 (absolute)</td><td><code>visibility + opacity</code></td><td>패딩 한계 없음, 포커스 처리 올바름</td></tr>
+      </table>
+      <div class="warn-box"><b><code>max-height: auto</code>는 존재하지 않는 값</b>이라 선언 자체가 무시되고, 기본 규칙의 <code>max-height:0</code>이 그대로 살아남습니다. 그러면 배경색이 "안 먹는" 게 아니라 <b>칠할 박스 높이가 0</b>인 상태가 돼요. 해제는 반드시 <code>max-height: none</code>.</div>
+    </div>
+  </section>
+
+  <!-- ═══════════ STEP 6 ═══════════ -->
+  <section class="step">
+    <div class="step-head"><span class="step-num">STEP 6</span><h2 class="step-title">디버깅 가이드 — 증상별 원인 찾기</h2></div>
+    <p class="step-lead">이 실습에서 실제로 겪게 되는 대표적인 증상과 원인입니다.</p>
+    <div class="card-block">
+      <table class="info">
+        <tr><th>증상</th><th>원인</th><th>해결</th></tr>
+        <tr><td>트랜지션 없이 뚝 나타남/사라짐</td><td><code>display:none↔block</code>을 같이 바꾸는 중</td><td>display 제거, max-height 또는 opacity만 변경</td></tr>
+        <tr><td>max-height:0인데 띠가 보임</td><td>요소 자신의 padding (max-height로 못 접음)</td><td>padding을 자식 li로 이동, 또는 visibility 방식</td></tr>
+        <tr><td>화살표가 닫힐 때 2시 방향을 봄</td><td><code>::after</code>에 <code>display:inline-block</code> 또는 기준값 <code>rotate(0deg)</code> 누락</td><td>둘 다 명시</td></tr>
+        <tr><td>빨리 열리고 늦게 닫힘</td><td>max-height가 실제 콘텐츠보다 너무 큼</td><td>실제 높이에 가깝게 or JS scrollHeight</td></tr>
+        <tr><td>닫힐 때 콘텐츠가 삐져나옴</td><td>open 상태에 <code>overflow:visible</code></td><td>overflow:hidden 유지</td></tr>
+        <tr><td>배경색이 안 먹음</td><td><code>max-height:auto</code>(무효값) → 높이 0 유지</td><td><code>max-height:none</code></td></tr>
+        <tr><td>데스크탑에서 메뉴가 안 보임</td><td>모바일용 <code>translateX(100%)</code> 해제 누락</td><td>미디어쿼리에 <code>transform:none</code></td></tr>
+        <tr><td>메뉴 항목이 찌그러짐</td><td><code>.has-submenu</code>(li)에 max-height:0</td><td>li가 아니라 .submenu를 숨길 것</td></tr>
+        <tr><td>페이지 열자마자 메뉴가 펼쳐져 있음</td><td>HTML에 <code>open</code> 클래스 하드코딩</td><td>마크업에서 open 제거</td></tr>
+        <tr><td>가로 스크롤 생김</td><td>translateX(100%)로 화면 밖 대기 중</td><td><code>body{overflow-x:hidden}</code></td></tr>
+      </table>
+      <p style="margin-top:12px;"><span class="tag good">TIP</span> 스타일이 안 먹을 땐 F12 → 요소 선택 → Styles 패널: 속성에 <b>취소선</b>이 있으면 다른 규칙에 덮어써진 것, 취소선 없이 적용됐는데 안 보이면 박스 크기가 0이거나 가려진 것.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════ STEP 7 ═══════════ -->
+  <section class="step">
+    <div class="step-head"><span class="step-num">STEP 7</span><h2 class="step-title">실습 체크리스트</h2></div>
+    <p class="step-lead">movie.html에 직접 적용하면서 하나씩 체크해보세요.</p>
+    <div class="card-block">
+      <ul class="checklist">
+        <li>viewport 메타 태그가 head에 있는지 확인</li>
+        <li>버거 버튼(≡)과 <code>.nav-menu</code> 마크업 작성 — HTML에 <code>open</code> 하드코딩 금지</li>
+        <li><code>header{position:relative}</code> + <code>.nav-menu{position:absolute; translateX(100%)}</code> 슬라이드 대기 상태 만들기</li>
+        <li><code>.nav-menu.open{translateX(0)}</code> + transition으로 슬라이드 인 확인</li>
+        <li><code>.submenu{max-height:0; overflow:hidden}</code> 아코디언 초기 상태</li>
+        <li>화살표 <code>a::after</code> — inline-block + rotate(0deg) 기준값 명시</li>
+        <li>JS: 버거 토글, has-submenu 토글, (선택) 바깥 클릭 닫기</li>
+        <li><code>@media(min-width:768px)</code>: 버거 숨김, 메뉴 static+row, <b>transform:none</b></li>
+        <li>데스크탑 서브메뉴: absolute + visibility/opacity 드롭다운으로 전환</li>
+        <li>브라우저 창을 좁혔다 넓혔다 하며 두 모드 모두 정상 동작 확인</li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<footer class="end">반응형 네비게이션 실습 교안 · movie.html / basic.css 기반</footer>
+
+<script>
+/* 리사이저 */
+function setupResizer(boxId, handleId, min, max, onChange){
+  const box = document.getElementById(boxId);
+  const handle = document.getElementById(handleId);
+  let dragging = false;
+  function apply(w){
+    w = Math.max(min, Math.min(max, w));
+    box.style.width = w + 'px';
+    if(onChange) onChange(w);
+  }
+  handle.addEventListener('pointerdown', e=>{ dragging=true; handle.setPointerCapture(e.pointerId); });
+  handle.addEventListener('pointermove', e=>{
+    if(!dragging) return;
+    const rect = box.getBoundingClientRect();
+    apply(e.clientX - rect.left);
+  });
+  handle.addEventListener('pointerup', ()=>{ dragging=false; });
+  handle.addEventListener('pointercancel', ()=>{ dragging=false; });
+  apply(box.getBoundingClientRect().width || min);
+}
+
+const demoNav    = document.getElementById('demoNav');
+const demoBurger = document.getElementById('demoBurger');
+const demoMenu   = document.getElementById('demoMenu');
+const demoHasSub = document.getElementById('demoHasSub');
+
+demoBurger.addEventListener('click', e=>{
+  e.stopPropagation();
+  demoMenu.classList.toggle('open');
+});
+demoHasSub.querySelector('a').addEventListener('click', e=>{
+  e.preventDefault();
+  demoHasSub.classList.toggle('open');
+});
+document.addEventListener('click', e=>{
+  if(!demoNav.contains(e.target)){
+    demoMenu.classList.remove('open');
+    demoHasSub.classList.remove('open');
+  }
+});
+
+/* 폭에 따라 .desktop 클래스 토글
+   (실제 실습 코드에서는 @media(min-width:768px)가 이 역할을 합니다.
+    교안 문서 안에서는 상자 폭만 바뀌고 브라우저 창 폭은 그대로라
+    @media가 반응하지 않으므로 JS로 흉내냅니다.) */
+setupResizer('demoBox','demoHandle',250,720, w=>{
+  const isDesktop = w >= 768 * 0.82; /* 상자 스케일 감안한 근사 기준(약 630px) */
+  demoNav.classList.toggle('desktop', isDesktop);
+  if(isDesktop){
+    demoMenu.classList.remove('open');
+    demoHasSub.classList.remove('open');
+  }
+  document.getElementById('demoReadout').textContent =
+    Math.round(w) + 'px · ' + (isDesktop ? '데스크탑 모드 (가로 메뉴 + hover 드롭다운)' : '모바일 모드 (☰ 클릭 → 슬라이드, 장르 클릭 → 아코디언)');
+});
+</script>
+</body>
+</html>

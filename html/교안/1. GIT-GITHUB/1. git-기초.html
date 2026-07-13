@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git 기초 — 개념부터 되돌리기까지 | 무비 컬렉션 해커톤</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --warn:#B45309; --warn-soft:#FEF3E2;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB; --code-key:#F2A65A; --code-str:#7EE787; --code-com:#7C8AAE;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.7;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);
+    color:#F4F3FF; padding:56px 24px 48px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:13px;
+    color:#B7B2FF; background:rgba(255,255,255,.08); padding:6px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.14);}
+  .eyebrow::before{content:"🐙";}
+  h1.title{font-size:clamp(26px,4vw,36px); margin:18px 0 10px; letter-spacing:-0.01em;}
+  header.hero p.lead{color:#C7C4EE; font-size:16.5px; max-width:64ch; margin:0;}
+
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px;
+    margin:-28px 0 44px; box-shadow:0 20px 40px -30px rgba(20,20,50,.35);}
+  nav.toc h2{font-size:13px; letter-spacing:.06em; color:var(--ink-soft); margin:0 0 10px; text-transform:uppercase;}
+  nav.toc ol{margin:0; padding-left:20px; columns:2; gap:24px;}
+  nav.toc li{margin-bottom:6px; font-size:14.5px;}
+  nav.toc a{color:var(--ink); text-decoration:none; border-bottom:1px dashed var(--line);}
+  nav.toc a:hover{color:var(--accent); border-color:var(--accent);}
+
+  .level-guide{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px;
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px; margin:0 0 44px;}
+  .level-card{border-radius:10px; padding:14px 16px; font-size:13.5px;}
+  .level-card b{display:block; font-size:15px; margin-bottom:4px;}
+  .level-card.seed{background:var(--seed-soft); color:#0B6E6A;}
+  .level-card.sprout{background:var(--sprout-soft); color:#3730A3;}
+  .level-card.tree{background:var(--tree-soft); color:var(--warn);}
+
+  .checklist{background:#14162B; color:#E7E5FF; border-radius:14px; padding:20px 22px; margin:0 0 48px;}
+  .checklist h2{font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:#9C90FF; margin:0 0 12px;}
+  .checklist ul{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:8px;}
+  .checklist li{font-size:13.5px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:8px; padding:8px 12px;}
+
+  section.lesson{margin:56px 0; scroll-margin-top:24px;}
+  .sec-num{font-family:var(--mono); color:var(--accent); font-size:14px; font-weight:700;}
+  h2.sec-title{font-size:23px; margin:6px 0 6px;}
+  p.sec-desc{color:var(--ink-soft); margin:0 0 22px; max-width:66ch;}
+  h3.sub-title{font-size:16.5px; margin:26px 0 8px;}
+
+  .analogy{background:var(--accent-soft); border-radius:12px; padding:16px 18px; margin:14px 0 22px;
+    font-size:14.5px; display:flex; gap:12px; align-items:flex-start;}
+  .analogy .emoji{font-size:22px; flex:none;}
+
+  pre.code{background:var(--code-bg); color:var(--code-ink); border-radius:12px; padding:16px 18px;
+    overflow-x:auto; font-family:var(--mono); font-size:13.3px; line-height:1.65; margin:12px 0;}
+  pre.code .k{color:var(--code-key);} pre.code .s{color:var(--code-str);} pre.code .c{color:var(--code-com);}
+  code.inline{font-family:var(--mono); background:var(--accent-soft); color:#3730A3; padding:2px 6px; border-radius:5px; font-size:.9em;}
+
+  table.ref{width:100%; border-collapse:separate; border-spacing:0; margin:14px 0; border:1px solid var(--line);
+    border-radius:10px; overflow:hidden; font-size:13.8px;}
+  table.ref th,table.ref td{padding:9px 12px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{background:#F3F1EA; font-size:12px; color:var(--ink-soft); text-transform:uppercase;}
+  table.ref tr:last-child td{border-bottom:none;}
+
+  .warn{border-left:3px solid var(--warn); background:var(--warn-soft); padding:12px 16px; border-radius:0 8px 8px 0; margin:16px 0; font-size:14px;}
+  .warn b{display:block; color:var(--warn); font-size:12px; margin-bottom:4px;}
+  .note{border-left:3px solid var(--accent); background:var(--accent-soft); padding:12px 16px; border-radius:0 8px 8px 0; margin:16px 0; font-size:14px;}
+  .note b{display:block; color:var(--accent); font-size:12px; margin-bottom:4px;}
+
+  .steps{margin:16px 0;}
+  .step{display:flex; gap:14px; margin-bottom:14px; align-items:flex-start;}
+  .step .num{flex:none; width:26px; height:26px; border-radius:50%; background:var(--accent); color:#fff;
+    font-family:var(--mono); font-weight:700; font-size:12.5px; display:flex; align-items:center; justify-content:center;}
+  .step .txt{font-size:14.3px; padding-top:2px;}
+  .step .txt b{display:block; margin-bottom:2px;}
+
+  .check{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin:16px 0;}
+  .check-label{font-family:var(--mono); font-size:11px; color:var(--accent); text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px; font-weight:700;}
+  .check-q{font-size:14px; margin-bottom:6px;}
+  .check details summary{cursor:pointer; font-size:12.5px; color:var(--accent); font-weight:600; list-style:none;}
+  .check details summary::-webkit-details-marker{display:none;}
+  .check details summary::before{content:"▸ "; }
+  .check .a-box{margin-top:8px; padding:10px 12px; background:#F5F5FF; border-radius:7px; font-size:13.3px; border:1px dashed #C7C4EE;}
+
+  .mission{border-radius:14px; padding:22px 24px; margin:18px 0; border:1px solid var(--line); background:var(--panel);}
+  .mission.seed{border-left:5px solid var(--seed);}
+  .mission.sprout{border-left:5px solid var(--sprout);}
+  .mission.tree{border-left:5px solid var(--tree);}
+  .m-head{display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap;}
+  .m-tag{font-family:var(--mono); font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px; color:#fff;}
+  .m-tag.seed{background:var(--seed);} .m-tag.sprout{background:var(--sprout);} .m-tag.tree{background:var(--tree);}
+  .m-point{font-family:var(--mono); font-size:12.5px; color:var(--ink-soft); margin-left:auto;}
+  .m-title{font-size:16px; font-weight:700; margin:0 0 6px;}
+  .m-body{font-size:14.3px; color:var(--ink);}
+  details.solution{margin-top:12px;}
+  details.solution summary{cursor:pointer; font-size:13px; color:var(--accent); font-weight:600; list-style:none; display:inline-flex; align-items:center; gap:6px;}
+  details.solution summary::-webkit-details-marker{display:none;}
+  details.solution summary::before{content:"▸"; transition:transform .15s ease;}
+  details.solution[open] summary::before{transform:rotate(90deg);}
+  .sol-box{margin-top:10px; padding:12px 14px; background:#F5F5FF; border-radius:8px; border:1px dashed #C7C4EE;}
+
+  .fun{background:linear-gradient(135deg,#FFF7ED,#FEF3E2); border:1px solid #F3D9B1; border-radius:14px; padding:20px 22px; margin:36px 0;}
+  .fun h3{margin:0 0 6px; font-size:16px; display:flex; align-items:center; gap:8px;}
+  .fun p{margin:0 0 12px; font-size:14.3px; color:var(--ink-soft);}
+
+  .next-link{background:#14162B; color:#E7E5FF; border-radius:14px; padding:20px 22px; margin:40px 0 0; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;}
+  .next-link div b{display:block; font-size:15px; margin-bottom:2px;}
+  .next-link div span{font-size:13px; color:#9C90FF;}
+  .next-link a{background:var(--accent); color:#fff; padding:9px 18px; border-radius:8px; text-decoration:none; font-size:13.5px; font-weight:600; white-space:nowrap;}
+
+  footer.end{margin-top:32px; padding-top:22px; border-top:1px solid var(--line); color:var(--ink-soft); font-size:13px; text-align:center;}
+
+  @media (max-width:640px){ header.hero{padding:44px 20px 40px;} nav.toc ol{columns:1;} }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Git & GitHub · 1부 기초편</span>
+    <h1 class="title">Git 기초 — 개념부터 되돌리기까지</h1>
+    <p class="lead">혼자 프로젝트를 관리할 때 필요한 모든 것을 다룹니다. Git이 뭔지부터, 커밋하고, 상태를 확인하고, 실수했을 때 되돌리고, 원격지와 충돌났을 때 해결하는 법까지. <b>2부(브랜치와 협업)</b>는 여기서 배운 개념을 기반으로 이어집니다.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <nav class="toc">
+    <h2>목차</h2>
+    <ol>
+      <li><a href="#basic">1. 기본 설명</a></li>
+      <li><a href="#start">2. 클론 / 초기화 / 원격지 업로드</a></li>
+      <li><a href="#undo">3. 커밋 내역 확인 & 되돌리기</a></li>
+      <li><a href="#conflict">4. 충돌 해결</a></li>
+      <li><a href="#graph">5. VSCode Graph 화면 읽는 법</a></li>
+      <li><a href="#cheatsheet">6. 명령어 총정리</a></li>
+      <li><a href="#missions">종합 미션</a></li>
+    </ol>
+  </nav>
+
+  <div class="level-guide">
+    <div class="level-card seed"><b>🌱 기초 미션</b>오늘 전원 필수.</div>
+    <div class="level-card sprout"><b>🌿 응용 미션</b>표준 진도.</div>
+    <div class="level-card tree"><b>🌳 도전 미션</b>선택, 심화+재미.</div>
+  </div>
+
+  <div class="checklist">
+    <h2>레벨업 체크리스트</h2>
+    <ul>
+      <li>☐ Git과 GitHub의 차이를 설명할 수 있다</li>
+      <li>☐ HEAD가 무엇을 가리키는지 설명할 수 있다</li>
+      <li>☐ git status로 세 가지 상태를 구분할 수 있다</li>
+      <li>☐ VSCode에서 커밋을 만들고 push할 수 있다</li>
+      <li>☐ log/diff로 변경 이력을 확인할 수 있다</li>
+      <li>☐ reset/revert의 차이를 알고 상황에 맞게 쓸 수 있다</li>
+      <li>☐ merge conflict를 직접 해결할 수 있다</li>
+    </ul>
+  </div>
+
+  <!-- ============================================================ -->
+  <section class="lesson" id="basic">
+    <span class="sec-num">01</span>
+    <h2 class="sec-title">기본 설명</h2>
+
+    <div class="analogy">
+      <span class="emoji">📸</span>
+      <div><b>Git</b>은 내 컴퓨터 안에서 코드의 "스냅샷"을 계속 찍어 저장하는 프로그램입니다. <b>GitHub</b>는 그 스냅샷 모음을 인터넷에 올려서 백업하고 협업하게 해주는 웹사이트입니다. <b>VSCode</b>는 이 둘을 터미널 없이 클릭으로 다루게 해주는 에디터입니다.</div>
+    </div>
+
+    <h3 class="sub-title">최초 설정 — 누가 커밋하는지 등록하기</h3>
+<pre class="code">git config --global user.name <span class="s">"본인이름"</span>
+git config --global user.email <span class="s">"본인이메일@example.com"</span></pre>
+    <div class="warn"><b>공용 컴퓨터라면 꼭 확인</b>커밋하기 전에 항상 아래로 지금 등록된 이름을 확인하세요. "다른 계정으로 여러 번 커밋해버렸다"는 사고는 대부분 이걸 건너뛰어서 생깁니다.
+<pre class="code">git config --global user.name
+git config --global user.email</pre></div>
+
+    <h3 class="sub-title">VSCode 기본 흐름 — Source Control 패널</h3>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div class="txt"><b>변경사항 확인</b>파일을 수정하면 Source Control 탭에 자동으로 목록이 뜸</div></div>
+      <div class="step"><div class="num">2</div><div class="txt"><b>스테이징</b>커밋할 파일 옆 <code class="inline">+</code> 클릭</div></div>
+      <div class="step"><div class="num">3</div><div class="txt"><b>커밋 메시지 작성</b>무엇을 왜 바꿨는지 적고 <code class="inline">Ctrl+Enter</code></div></div>
+      <div class="step"><div class="num">4</div><div class="txt"><b>Sync/Push</b>하단 <code class="inline">Sync Changes</code> 버튼으로 GitHub 업로드</div></div>
+    </div>
+    <div class="note"><b>좋은 커밋 메시지란</b><code class="inline">"수정함"</code>, <code class="inline">"ㅁㄴㅇㄹ"</code> 같은 메시지는 나중에 이력을 봐도 무슨 일이 있었는지 알 수 없습니다. <code class="inline">"카드 hover 효과 추가"</code>, <code class="inline">"모달 닫기 버튼 이벤트 수정"</code>처럼 <b>무엇을 왜</b> 바꿨는지 짧게 남기는 습관을 들이세요. (5번 VSCode Graph 섹션에서 이 기준으로 실제 커밋 이력을 진단해봅니다)</div>
+
+    <h3 class="sub-title">수정 → 스테이징 → 커밋, 세 영역으로 이해하기</h3>
+    <p>Git은 파일의 상태를 <b>세 단계 영역</b>으로 관리합니다. 이 세 영역을 구분해서 이해하면 <code class="inline">status</code>/<code class="inline">diff</code>가 왜 그렇게 동작하는지 자연스럽게 이해됩니다.</p>
+<pre class="code">파일 수정          git add            git commit
+Working Directory → Staging Area →   Repository
+   (작업 디렉토리)      (스테이징 영역)      (저장소, 커밋 완료)</pre>
+    <table class="ref">
+      <thead><tr><th>영역</th><th>의미</th></tr></thead>
+      <tbody>
+        <tr><td>Working Directory</td><td>지금 에디터에서 보고 있는, 실제 파일이 놓인 곳. 여기서 수정하면 "아직 아무 명령도 안 한" 상태</td></tr>
+        <tr><td>Staging Area</td><td><code class="inline">git add</code>로 "이번 커밋에 포함시키겠다"고 찜해둔 대기 공간</td></tr>
+        <tr><td>Repository</td><td><code class="inline">git commit</code>으로 실제 저장이 완료된 곳 (스냅샷으로 영구 기록됨)</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub-title">git status — 지금 상태 확인하기</h3>
+<pre class="code">git status</pre>
+    <p>가장 자주 치게 될 명령입니다. 지금 파일들이 세 영역 중 어디에 있는지 한 번에 보여줍니다.</p>
+<pre class="code">On branch main
+Changes to be committed:
+        modified:   badge.css          <span class="c">← Staging Area에 있음 (add 완료)</span>
+
+Changes not staged for commit:
+        modified:   card.css           <span class="c">← Working Directory에만 있음 (add 안 함)</span>
+
+Untracked files:
+        newpage.html                   <span class="c">← Git이 한 번도 추적한 적 없는 새 파일</span></pre>
+
+    <h3 class="sub-title">status 확인 시 알 수 있는 정보들</h3>
+    <table class="ref">
+      <thead><tr><th>문구</th><th>뜻</th><th>다음 행동</th></tr></thead>
+      <tbody>
+        <tr><td><code class="inline">Untracked files</code></td><td>한 번도 <code class="inline">add</code>한 적 없는 새 파일</td><td><code class="inline">git add</code>로 추적 시작</td></tr>
+        <tr><td><code class="inline">Changes not staged for commit</code></td><td>이미 추적 중인 파일이 수정됐지만 아직 <code class="inline">add</code> 안 함</td><td><code class="inline">git add</code>로 스테이징</td></tr>
+        <tr><td><code class="inline">Changes to be committed</code></td><td><code class="inline">add</code>까지 끝나서 커밋 대기 중</td><td><code class="inline">git commit</code></td></tr>
+        <tr><td><code class="inline">nothing to commit, working tree clean</code></td><td>아무 변경사항 없음, 전부 커밋 완료 상태</td><td>할 일 없음</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub-title">수정 내역 보는 방법 — git diff</h3>
+    <table class="ref">
+      <thead><tr><th>명령</th><th>비교 대상</th></tr></thead>
+      <tbody>
+        <tr><td><code class="inline">git diff</code></td><td>Working Directory ↔ Staging Area (스테이징 <b>안 된</b> 수정 내용만)</td></tr>
+        <tr><td><code class="inline">git diff --staged</code></td><td>Staging Area ↔ Repository (스테이징 <b>된</b> 수정 내용)</td></tr>
+      </tbody>
+    </table>
+    <div class="warn"><b>diff가 아무것도 안 나올 때</b>가장 흔한 원인은 이미 <code class="inline">add</code>까지 끝나서 <code class="inline">Changes to be committed</code> 상태이기 때문입니다. 이땐 <code class="inline">git diff</code>가 아니라 <code class="inline">git diff --staged</code>를 써야 내용이 보입니다. <code class="inline">git status</code>로 지금 어느 영역에 있는지 먼저 확인하는 습관을 들이면 헷갈리지 않습니다.</div>
+
+    <h3 class="sub-title">스테이징 되돌리기</h3>
+    <p><code class="inline">add</code>는 했는데 "아직 커밋하긴 이르다" 싶을 때, 파일 내용은 그대로 두고 스테이징만 취소합니다.</p>
+<pre class="code">git restore --staged 파일명     <span class="c"># 특정 파일만 스테이징 취소</span>
+git restore --staged .          <span class="c"># 스테이징된 것 전부 취소</span></pre>
+    <div class="note"><b>파일 내용은 안 건드림</b>스테이징 취소는 "이번 커밋에 포함시킬지"만 취소하는 거라, 수정한 내용 자체는 그대로 Working Directory에 남습니다. 완전히 예전 버전으로 파일 내용까지 되돌리고 싶다면 3번(되돌리기)에서 배울 <code class="inline">reset</code>이 필요합니다.</div>
+
+    <div class="check">
+      <div class="check-label">확인 퀴즈</div>
+      <div class="check-q"><code class="inline">git status</code>에 <code class="inline">Changes to be committed</code>라고 뜬 파일의 수정 내용을 보려면 어떤 명령을 써야 할까요?</div>
+      <details><summary>정답 보기</summary><div class="a-box"><code class="inline">git diff --staged</code>입니다. 일반 <code class="inline">git diff</code>는 스테이징 안 된 변경사항만 보여주기 때문에, 이미 add된 파일은 --staged 옵션을 붙여야 내용이 보입니다.</div></details>
+    </div>
+
+    <h3 class="sub-title">HEAD — 지금 내가 어디 있는지 가리키는 포인터</h3>
+    <p>앞으로 <code class="inline">HEAD~1</code> 같은 표현이 계속 등장하니, 여기서 미리 짚고 갑니다. (2부에서 배울 "detached HEAD"도 이 개념이 기준입니다)</p>
+    <div class="analogy">
+      <span class="emoji">📍</span>
+      <div><b>HEAD</b>는 "지금 내가 커밋 이력의 어느 지점에 있는지"를 가리키는 이정표입니다. 평소엔 <b>브랜치 이름</b>(예: main)을 가리키고 있어서, 새로 커밋할 때마다 그 브랜치가 자동으로 한 칸씩 앞으로 나아갑니다.</div>
+    </div>
+<pre class="code">HEAD → main → <span class="c">(가장 최근 커밋)</span></pre>
+    <table class="ref">
+      <thead><tr><th>표기</th><th>의미</th></tr></thead>
+      <tbody>
+        <tr><td><code class="inline">HEAD</code></td><td>지금 위치 (가장 최근 커밋)</td></tr>
+        <tr><td><code class="inline">HEAD~1</code></td><td>지금 위치에서 1단계 이전 커밋</td></tr>
+        <tr><td><code class="inline">HEAD~3</code></td><td>지금 위치에서 3단계 이전 커밋</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>3번에서 계속 쓰입니다</b>3번(되돌리기)의 <code class="inline">reset --soft HEAD~1</code>이 전부 이 포인터 개념을 기준으로 합니다. 지금은 "HEAD = 현재 위치를 가리키는 화살표"라는 것만 기억해두면 충분합니다.</div>
+
+    <div class="check">
+      <div class="check-label">확인 퀴즈</div>
+      <div class="check-q">Git과 GitHub 중, 인터넷 연결 없이도 커밋을 만들 수 있는 건 어느 쪽일까요?</div>
+      <details><summary>정답 보기</summary><div class="a-box">Git입니다. Git은 로컬(내 컴퓨터) 프로그램이라 오프라인에서도 커밋이 가능합니다. GitHub는 온라인 저장소라 push/pull처럼 원격과 통신할 때만 인터넷이 필요합니다.</div></details>
+    </div>
+    <div class="check">
+      <div class="check-label">확인 퀴즈</div>
+      <div class="check-q">커밋을 새로 하나 만들면 HEAD는 어떻게 될까요?</div>
+      <details><summary>정답 보기</summary><div class="a-box">HEAD가 가리키는 브랜치(예: main)가 그 새 커밋으로 한 칸 이동합니다. HEAD 자체가 브랜치를 가리키고 있어서, 브랜치가 이동하면 HEAD도 같이 최신 커밋을 가리키게 됩니다.</div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="lesson" id="start">
+    <span class="sec-num">02</span>
+    <h2 class="sec-title">클론 / 초기화 / 원격지 업로드</h2>
+
+    <h3 class="sub-title">이미 로컬에 프로젝트가 있을 때</h3>
+<pre class="code">git init                                    <span class="c"># 폴더를 Git 저장소로 만듦</span>
+git add .                                   <span class="c"># 모든 파일 스테이징</span>
+git commit -m <span class="s">"first commit"</span>
+git remote add origin <span class="s">깃허브저장소주소</span>
+git push -u origin main</pre>
+
+    <h3 class="sub-title">이미 있는 저장소를 가져올 때</h3>
+<pre class="code">git clone <span class="s">깃허브저장소주소</span></pre>
+    <div class="note"><b>init vs clone</b><code class="inline">init</code>은 빈 방에서 새로 시작, <code class="inline">clone</code>은 이미 있는 저장소를 통째로 복사. 팀 프로젝트 합류 시엔 거의 항상 clone을 씁니다.</div>
+
+    <h3 class="sub-title">연결된 원격 저장소 확인</h3>
+<pre class="code">git remote -v</pre>
+    <p>지금 이 프로젝트가 어느 GitHub 주소와 연결돼있는지 확인합니다. push가 이상한 곳으로 가는 것 같을 때 가장 먼저 확인하는 명령입니다.</p>
+
+    <h3 class="sub-title">.gitignore — 올리지 말아야 할 파일</h3>
+<pre class="code"><span class="c"># .gitignore</span>
+node_modules/
+.env
+.DS_Store
+*.log</pre>
+    <div class="warn"><b>이미 커밋된 파일은 안 지워짐</b><code class="inline">.gitignore</code>는 "앞으로 추적 안 할 파일"만 지정합니다. 이미 올린 파일은 <code class="inline">git rm --cached 파일명</code>으로 따로 빼야 합니다. 그래서 <b>업로드 전에 미리 작성</b>하는 게 중요합니다.</div>
+
+    <div class="check">
+      <div class="check-label">확인 퀴즈</div>
+      <div class="check-q">이미 GitHub에 있는 팀 프로젝트에 합류하게 됐습니다. init과 clone 중 어느 걸 써야 할까요?</div>
+      <details><summary>정답 보기</summary><div class="a-box">clone입니다. init은 완전히 새로운 저장소를 만들 때 쓰고, 이미 존재하는 저장소를 내 컴퓨터로 가져올 땐 clone을 씁니다.</div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="lesson" id="undo">
+    <span class="sec-num">03</span>
+    <h2 class="sec-title">커밋 내역 확인 & 되돌리기</h2>
+
+    <h3 class="sub-title">내역 확인 — log, diff</h3>
+<pre class="code">git log --oneline              <span class="c"># 한 줄씩 간단히</span>
+git log --oneline --graph --all <span class="c"># 브랜치까지 그래프로</span>
+git diff                        <span class="c"># 아직 커밋 안 한 변경사항 비교</span>
+git diff HEAD~1                 <span class="c"># 이전 커밋과 비교</span></pre>
+
+    <h3 class="sub-title">커밋 1개 취소</h3>
+    <table class="ref">
+      <thead><tr><th>명령</th><th>결과</th></tr></thead>
+      <tbody>
+        <tr><td><code class="inline">git reset --soft HEAD~1</code></td><td>커밋만 취소, 수정 내용은 스테이징 상태로 남음</td></tr>
+        <tr><td><code class="inline">git reset --hard HEAD~1</code></td><td>커밋 + 파일 내용까지 전부 버림 ⚠️</td></tr>
+        <tr><td><code class="inline">git commit --amend -m "새메시지"</code></td><td>취소가 아니라 직전 커밋을 "수정"</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub-title">여러 개 / 중간 커밋 다루기</h3>
+<pre class="code">git reset --soft HEAD~3     <span class="c"># 최근 3개 한꺼번에 취소</span>
+git revert c2b9e10          <span class="c"># 중간 커밋 하나만 콕 집어 취소 (히스토리 보존)</span>
+git rebase -i HEAD~5        <span class="c"># 여러 커밋을 하나로 합치기</span></pre>
+    <div class="note"><b>rebase -i가 하는 일</b>이 명령을 실행하면 최근 5개 커밋 목록이 에디터로 열립니다. 합치고 싶은 커밋 앞의 <code class="inline">pick</code>을 <code class="inline">squash</code>(줄여서 <code class="inline">s</code>)로 바꾸고 저장하면, 그 커밋들이 하나로 뭉쳐집니다. "커밋 5개를 나눠서 했는데 GitHub에 올리기 전에 깔끔하게 정리하고 싶다"는 상황에 씁니다.</div>
+    <div class="warn"><b>이미 push했다면 규칙이 다름</b>협업 중이거나 남이 pull 받았을 수 있다면 <code class="inline">revert</code>로 안전하게 취소하세요. <code class="inline">rebase</code>는 커밋 히스토리 자체를 다시 쓰는 명령이라 <b>반드시 push 전에만</b> 써야 합니다. 혼자 쓰는 저장소에서 이미 push한 걸 되돌리고 싶다면 <code class="inline">reset --hard</code> 후 <code class="inline">git push --force</code>를 쓰는데, 이건 <b>원격 저장소의 기록을 강제로 덮어쓰는 명령</b>이라 그 사이 다른 사람이 작업한 내용이 있다면 통째로 날아갈 수 있습니다. 팀 프로젝트에서는 거의 쓰지 않는 게 안전합니다.</div>
+
+    <h3 class="sub-title">원격지로 통째로 맞추기</h3>
+    <p>로컬 작업을 다 버리고 원격 최신 상태로 리셋하고 싶을 때입니다.</p>
+<pre class="code">git log --oneline              <span class="c"># 뭘 버리게 되는지 먼저 확인</span>
+git fetch origin               <span class="c"># 원격 정보만 받아옴 (아직 합치진 않음)</span>
+git reset --hard origin/main   <span class="c"># 로컬을 원격 main과 완전히 똑같이 맞춤</span></pre>
+    <div class="warn"><b>흔한 실수</b><code class="inline">git reset --hard HEAD~1</code>은 로컬 커밋 1개만 되돌릴 뿐, 원격과 같아진다는 보장이 없습니다. 원격과 정확히 맞추려면 반드시 <code class="inline">origin/main</code>처럼 <b>원격 브랜치를 기준</b>으로 reset해야 합니다.</div>
+
+    <div class="check">
+      <div class="check-label">확인 퀴즈</div>
+      <div class="check-q"><code class="inline">reset</code>과 <code class="inline">revert</code>의 가장 큰 차이는 무엇일까요?</div>
+      <details><summary>정답 보기</summary><div class="a-box">reset은 커밋 자체를 히스토리에서 없애버리는(과거를 지우는) 방식이고, revert는 기존 커밋은 그대로 두고 그걸 되돌리는 새 커밋을 추가하는 방식입니다. 그래서 이미 push해서 다른 사람이 봤을 수도 있는 커밋은 reset이 아니라 revert로 취소하는 게 안전합니다.</div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="lesson" id="conflict">
+    <span class="sec-num">04</span>
+    <h2 class="sec-title">충돌 해결</h2>
+    <p class="sec-desc">원격지와 로컬이 어긋났을 때 선택지는 두 가지입니다 — <b>①통째로 원격 걸로 맞추기</b>(03에서 배움), 또는 <b>②직접 충돌을 해결하며 둘 다 살리기</b>.</p>
+
+    <div class="warn"><b>충돌이 생기는 전형적 상황</b>같은 파일의 <b>같은 줄</b>을 나와 원격 저장소 양쪽에서 다르게 고쳤을 때 발생합니다.</div>
+
+    <p>충돌이 나면 파일 안에 이런 표시가 생깁니다.</p>
+<pre class="code"><span class="k">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span>
+<span class="c">여기는 "내가(로컬) 고친" 내용</span>
+<span class="k">=======</span>
+<span class="c">여기는 "원격 저장소에 있던" 내용</span>
+<span class="k">&gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/main</span></pre>
+
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div class="txt"><b>pull 시도</b><code class="inline">git pull</code> 실행, 충돌 있으면 자동 표시</div></div>
+      <div class="step"><div class="num">2</div><div class="txt"><b>충돌 파일 열기</b>Source Control 탭에 느낌표 아이콘으로 표시됨</div></div>
+      <div class="step"><div class="num">3</div><div class="txt"><b>선택 버튼 클릭</b><code class="inline">Accept Current</code> / <code class="inline">Accept Incoming</code> / <code class="inline">Accept Both</code> 중 선택</div></div>
+      <div class="step"><div class="num">4</div><div class="txt"><b>기호 사라졌는지 확인</b><code class="inline">&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> 등이 완전히 지워졌는지 직접 체크</div></div>
+      <div class="step"><div class="num">5</div><div class="txt"><b>다시 커밋</b>해결한 파일을 스테이징 후 커밋하면 끝</div></div>
+    </div>
+
+    <div class="check">
+      <div class="check-label">확인 퀴즈</div>
+      <div class="check-q"><code class="inline">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code>와 <code class="inline">=======</code> 사이에 있는 내용은 누구 것일까요?</div>
+      <details><summary>정답 보기</summary><div class="a-box">나(로컬)의 내용입니다. <code class="inline">=======</code>과 <code class="inline">&gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/main</code> 사이의 내용이 원격 저장소의 내용입니다.</div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="lesson" id="graph">
+    <span class="sec-num">05</span>
+    <h2 class="sec-title">VSCode Graph 화면 읽는 법 (실전 판독)</h2>
+    <p class="sec-desc">Source Control 아이콘 아래쪽의 <b>"그래프(Graph)"</b> 탭을 누르면 지금까지의 커밋 이력이 이렇게 시각적으로 나옵니다. <code class="inline">git log --oneline --graph</code>를 클릭 화면으로 옮겨놓은 것과 같습니다.</p>
+
+    <table class="ref">
+      <thead><tr><th>화면 요소</th><th>의미</th></tr></thead>
+      <tbody>
+        <tr><td>세로로 이어진 <b>파란 점(●)</b></td><td>각각 커밋 하나. 점을 잇는 선이 시간 순서(부모→자식 관계)를 나타냄</td></tr>
+        <tr><td>맨 위, <b>파란 배경으로 강조된 줄</b></td><td>지금 <b>선택된 커밋</b> (보통 HEAD, 즉 가장 최근 커밋)</td></tr>
+        <tr><td><b>main</b> 파란 배지</td><td>이 커밋이 <code class="inline">main</code> 브랜치의 <b>최신 지점(tip)</b>이라는 표시 — 즉 지금 HEAD가 여기 있음</td></tr>
+        <tr><td>커밋 메시지 옆 이름</td><td><b>작성자(author)</b></td></tr>
+        <tr><td>선택된 커밋 아래 들여쓰기된 파일 목록</td><td>그 커밋에서 <b>실제로 바뀐 파일</b>과 변경 종류 (예: <code class="inline">index.html ... M</code>)</td></tr>
+        <tr><td>맨 아래 "Initial commit"</td><td>이 저장소의 <b>첫 번째 커밋</b> (부모가 없는 루트 커밋)</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub-title">파일 옆 알파벳 한 글자의 의미</h3>
+    <table class="ref">
+      <thead><tr><th>표시</th><th>의미</th></tr></thead>
+      <tbody>
+        <tr><td><code class="inline">M</code></td><td>Modified — 기존 파일 수정</td></tr>
+        <tr><td><code class="inline">A</code></td><td>Added — 새 파일 추가</td></tr>
+        <tr><td><code class="inline">D</code></td><td>Deleted — 파일 삭제</td></tr>
+        <tr><td><code class="inline">R</code></td><td>Renamed — 파일 이름 변경</td></tr>
+      </tbody>
+    </table>
+
+    <div class="warn"><b>실전 진단 — 이 커밋 메시지들, 괜찮을까요?</b>
+      실제 커밋 이력에는 <code class="inline">실습</code>, <code class="inline">교안</code>, <code class="inline">정리</code>처럼 <b>한 단어짜리 메시지</b>가 자주 보입니다. 01번에서 배운 "좋은 커밋 메시지" 기준으로 보면, 몇 달 뒤에 이 목록만 보고 "그날 정확히 뭘 고쳤는지" 알 수 있을까요? 알 수 없습니다. <code class="inline">"flex 레이아웃 작성"</code>처럼 구체적인 메시지와 비교해보면 차이가 확 드러납니다.
+    </div>
+
+    <div class="check">
+      <div class="check-label">확인 퀴즈</div>
+      <div class="check-q">그래프에서 "main" 배지가 붙은 커밋이 이동하려면 어떤 행동을 해야 할까요?</div>
+      <details><summary>정답 보기</summary><div class="a-box">main 브랜치에서 새 커밋을 만들면 됩니다. 커밋할 때마다 HEAD가 가리키는 브랜치가 그 새 커밋으로 이동하므로, main 배지도 그래프에서 새 커밋 쪽으로 따라 올라갑니다.</div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="lesson" id="cheatsheet">
+    <span class="sec-num">06</span>
+    <h2 class="sec-title">명령어 총정리 (치트시트)</h2>
+    <p class="sec-desc">1부에서 배운 명령을 한 번에 훑어볼 수 있도록 정리했습니다. 브랜치·협업 관련 명령은 2부 치트시트에 따로 있습니다.</p>
+
+    <table class="ref">
+      <thead><tr><th>분류</th><th>명령</th><th>설명</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="2">최초 설정</td><td><code class="inline">git config --global user.name "이름"</code></td><td>커밋 작성자 이름 등록</td></tr>
+        <tr><td><code class="inline">git config --global user.email "메일"</code></td><td>커밋 작성자 이메일 등록</td></tr>
+
+        <tr><td rowspan="4">시작하기</td><td><code class="inline">git init</code></td><td>새 저장소 만들기</td></tr>
+        <tr><td><code class="inline">git clone [주소]</code></td><td>기존 저장소 복사해오기</td></tr>
+        <tr><td><code class="inline">git remote add origin [주소]</code></td><td>원격 저장소 연결</td></tr>
+        <tr><td><code class="inline">git remote -v</code></td><td>연결된 원격 주소 확인</td></tr>
+
+        <tr><td rowspan="4">기본 흐름</td><td><code class="inline">git add [파일]</code></td><td>스테이징</td></tr>
+        <tr><td><code class="inline">git commit -m "메시지"</code></td><td>커밋</td></tr>
+        <tr><td><code class="inline">git push</code></td><td>원격에 업로드</td></tr>
+        <tr><td><code class="inline">git pull</code></td><td>원격에서 받아와 합치기</td></tr>
+
+        <tr><td rowspan="4">확인하기</td><td><code class="inline">git status</code></td><td>지금 상태 확인</td></tr>
+        <tr><td><code class="inline">git log --oneline</code></td><td>커밋 이력 간단히 보기</td></tr>
+        <tr><td><code class="inline">git diff</code></td><td>스테이징 안 된 변경 비교</td></tr>
+        <tr><td><code class="inline">git diff --staged</code></td><td>스테이징 된 변경 비교</td></tr>
+
+        <tr><td rowspan="6">되돌리기</td><td><code class="inline">git restore --staged [파일]</code></td><td>스테이징만 취소</td></tr>
+        <tr><td><code class="inline">git reset --soft HEAD~1</code></td><td>커밋만 취소, 내용은 남김</td></tr>
+        <tr><td><code class="inline">git reset --hard HEAD~1</code></td><td>커밋+내용 전부 삭제</td></tr>
+        <tr><td><code class="inline">git revert [해시]</code></td><td>안전하게 되돌리는 새 커밋 추가</td></tr>
+        <tr><td><code class="inline">git commit --amend</code></td><td>직전 커밋 수정</td></tr>
+        <tr><td><code class="inline">git fetch && git reset --hard origin/main</code></td><td>원격과 완전히 동일하게 맞추기</td></tr>
+
+        <tr><td>기타</td><td><code class="inline">.gitignore</code></td><td>추적 제외할 파일 지정</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="lesson" id="missions">
+    <span class="sec-num">★</span>
+    <h2 class="sec-title">종합 미션</h2>
+    <p class="sec-desc">1부에서 배운 걸 종합해서 실제 상황처럼 풀어봅니다.</p>
+
+    <div class="mission seed">
+      <div class="m-head"><span class="m-tag seed">🌱 기초</span><span class="m-point">🏆 15p</span></div>
+      <div class="m-title">미션 1 — 처음부터 끝까지 업로드</div>
+      <div class="m-body">무비 컬렉션 프로젝트 폴더에서 <code class="inline">git init</code>부터 GitHub 새 저장소에 첫 push까지 전 과정을 직접 실행하세요. 업로드 전에 <code class="inline">.gitignore</code>도 함께 작성하세요.</div>
+      <details class="solution"><summary>정답 보기</summary>
+        <div class="sol-box"><pre class="code">git init
+<span class="c"># .gitignore 파일 작성</span>
+git add .
+git commit -m <span class="s">"first commit"</span>
+git remote add origin <span class="s">[주소]</span>
+git push -u origin main</pre></div>
+      </details>
+    </div>
+
+    <div class="mission seed">
+      <div class="m-head"><span class="m-tag seed">🌱 기초</span><span class="m-point">🏆 15p</span></div>
+      <div class="m-title">미션 2 — 커밋 이력 읽기</div>
+      <div class="m-body"><code class="inline">git log --oneline</code>으로 지금까지의 커밋을 확인하고, 세 번째로 최근인 커밋의 해시를 찾아 적어보세요.</div>
+      <details class="solution"><summary>정답 보기</summary>
+        <div class="sol-box">목록에서 위에서 3번째 줄에 있는 커밋의 앞 7자리 해시가 정답입니다. 숫자를 세는 것보다 이렇게 직접 눈으로 찾는 게 실수를 줄입니다.</div>
+      </details>
+    </div>
+
+    <div class="mission sprout">
+      <div class="m-head"><span class="m-tag sprout">🌿 응용</span><span class="m-point">🏆 25p</span></div>
+      <div class="m-title">미션 3 — 일부러 충돌 만들고 해결하기</div>
+      <div class="m-body">짝과 같은 저장소를 각자 clone 받으세요. 같은 파일의 같은 줄을 다르게 고쳐 각자 push를 시도해 충돌을 발생시킨 다음, 04에서 배운 Accept 버튼 방식으로 직접 해결하세요.</div>
+      <details class="solution"><summary>정답 보기</summary>
+        <div class="sol-box">먼저 push한 쪽은 성공, 나중 쪽은 거부당합니다. 나중 쪽이 pull을 받으면 충돌이 발생하고, VSCode의 Accept Current/Incoming으로 해결한 뒤 다시 커밋·push하면 됩니다.</div>
+      </details>
+    </div>
+
+    <div class="mission seed">
+      <div class="m-head"><span class="m-tag seed">🌱 기초</span><span class="m-point">🏆 15p</span></div>
+      <div class="m-title">미션 4 — 내 커밋 메시지 진단하기</div>
+      <div class="m-body">VSCode Graph 탭(또는 <code class="inline">git log --oneline</code>)으로 본인의 실제 커밋 이력을 열어보세요. 가장 부실한 메시지 3개를 찾아서, 그때 실제로 뭘 했는지 기억을 되살려 "무엇을 왜 바꿨는지"가 드러나는 메시지로 다시 써보세요. (실제로 되돌릴 필요는 없고, 종이/메모에 개선안만 적어도 됩니다)</div>
+      <details class="solution"><summary>예시 보기</summary>
+        <div class="sol-box">
+          <code class="inline">정리</code> → <code class="inline">"카드 컴포넌트 CSS를 basic/components로 분리"</code><br>
+          <code class="inline">실습</code> → <code class="inline">"flex justify-content 값 4종 비교 실습"</code><br>
+          <code class="inline">교안</code> → <code class="inline">"CSS 선택자 고급편 교안 초안 작성"</code>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <div class="fun">
+    <h3>🎭 충돌 연극</h3>
+    <p>2인 1조로 "로컬의 나"와 "원격 저장소" 역할을 맡아 같은 대사(코드 한 줄)를 다르게 바꾼 대본으로 merge conflict를 몸으로 연기해봅니다. 마지막엔 실제로 VSCode에서 그 상황을 재현해 해결까지 완료하면 미션 클리어.</p>
+  </div>
+
+  <div class="next-link">
+    <div><b>다음 편 — 브랜치와 협업</b><span>브랜치, stash, Pull Request, Fork, Issue를 다룹니다</span></div>
+    <a href="./git-branch-collab.html">2부로 이동 →</a>
+  </div>
+
+  <footer class="end">Git 기초 — 개념부터 되돌리기까지 · 무비 컬렉션 해커톤 실습 교안 (1부)</footer>
+</div>
+
+</body>
+</html>

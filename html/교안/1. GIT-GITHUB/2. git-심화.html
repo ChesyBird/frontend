@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git 2부 — 브랜치와 협업 | 무비 컬렉션 해커톤</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --warn:#B45309; --warn-soft:#FEF3E2;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB; --code-key:#F2A65A; --code-str:#7EE787; --code-com:#7C8AAE;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.7;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);
+    color:#F4F3FF; padding:56px 24px 48px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:13px;
+    color:#B7B2FF; background:rgba(255,255,255,.08); padding:6px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.14);}
+  .eyebrow::before{content:"🌿";}
+  h1.title{font-size:clamp(26px,4vw,36px); margin:18px 0 10px; letter-spacing:-0.01em;}
+  header.hero p.lead{color:#C7C4EE; font-size:16.5px; max-width:64ch; margin:0;}
+
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px;
+    margin:-28px 0 44px; box-shadow:0 20px 40px -30px rgba(20,20,50,.35);}
+  nav.toc h2{font-size:13px; letter-spacing:.06em; color:var(--ink-soft); margin:0 0 10px; text-transform:uppercase;}
+  nav.toc ol{margin:0; padding-left:20px; columns:2; gap:24px;}
+  nav.toc li{margin-bottom:6px; font-size:14.5px;}
+  nav.toc a{color:var(--ink); text-decoration:none; border-bottom:1px dashed var(--line);}
+  nav.toc a:hover{color:var(--accent); border-color:var(--accent);}
+
+  .level-guide{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px;
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px; margin:0 0 44px;}
+  .level-card{border-radius:10px; padding:14px 16px; font-size:13.5px;}
+  .level-card b{display:block; font-size:15px; margin-bottom:4px;}
+  .level-card.seed{background:var(--seed-soft); color:#0B6E6A;}
+  .level-card.sprout{background:var(--sprout-soft); color:#3730A3;}
+  .level-card.tree{background:var(--tree-soft); color:var(--warn);}
+
+  .checklist{background:#14162B; color:#E7E5FF; border-radius:14px; padding:20px 22px; margin:0 0 48px;}
+  .checklist h2{font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:#9C90FF; margin:0 0 12px;}
+  .checklist ul{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:8px;}
+  .checklist li{font-size:13.5px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:8px; padding:8px 12px;}
+
+  section.lesson{margin:56px 0; scroll-margin-top:24px;}
+  .sec-num{font-family:var(--mono); color:var(--accent); font-size:14px; font-weight:700;}
+  h2.sec-title{font-size:23px; margin:6px 0 6px;}
+  p.sec-desc{color:var(--ink-soft); margin:0 0 22px; max-width:66ch;}
+  h3.sub-title{font-size:16.5px; margin:26px 0 8px;}
+
+  .analogy{background:var(--accent-soft); border-radius:12px; padding:16px 18px; margin:14px 0 22px;
+    font-size:14.5px; display:flex; gap:12px; align-items:flex-start;}
+  .analogy .emoji{font-size:22px; flex:none;}
+
+  .recap{background:#F3F1EA; border:1px dashed #C9C4B8; border-radius:12px; padding:14px 18px; margin:14px 0 22px; font-size:13.8px; color:var(--ink-soft);}
+  .recap b{color:var(--ink); display:block; margin-bottom:4px; font-size:12px; text-transform:uppercase; letter-spacing:.04em;}
+
+  pre.code{background:var(--code-bg); color:var(--code-ink); border-radius:12px; padding:16px 18px;
+    overflow-x:auto; font-family:var(--mono); font-size:13.3px; line-height:1.65; margin:12px 0;}
+  pre.code .k{color:var(--code-key);} pre.code .s{color:var(--code-str);} pre.code .c{color:var(--code-com);}
+  code.inline{font-family:var(--mono); background:var(--accent-soft); color:#3730A3; padding:2px 6px; border-radius:5px; font-size:.9em;}
+
+  table.ref{width:100%; border-collapse:separate; border-spacing:0; margin:14px 0; border:1px solid var(--line);
+    border-radius:10px; overflow:hidden; font-size:13.8px;}
+  table.ref th,table.ref td{padding:9px 12px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{background:#F3F1EA; font-size:12px; color:var(--ink-soft); text-transform:uppercase;}
+  table.ref tr:last-child td{border-bottom:none;}
+
+  .warn{border-left:3px solid var(--warn); background:var(--warn-soft); padding:12px 16px; border-radius:0 8px 8px 0; margin:16px 0; font-size:14px;}
+  .warn b{display:block; color:var(--warn); font-size:12px; margin-bottom:4px;}
+  .note{border-left:3px solid var(--accent); background:var(--accent-soft); padding:12px 16px; border-radius:0 8px 8px 0; margin:16px 0; font-size:14px;}
+  .note b{display:block; color:var(--accent); font-size:12px; margin-bottom:4px;}
+
+  .steps{margin:16px 0;}
+  .step{display:flex; gap:14px; margin-bottom:14px; align-items:flex-start;}
+  .step .num{flex:none; width:26px; height:26px; border-radius:50%; background:var(--accent); color:#fff;
+    font-family:var(--mono); font-weight:700; font-size:12.5px; display:flex; align-items:center; justify-content:center;}
+  .step .txt{font-size:14.3px; padding-top:2px;}
+  .step .txt b{display:block; margin-bottom:2px;}
+
+  .check{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin:16px 0;}
+  .check-label{font-family:var(--mono); font-size:11px; color:var(--accent); text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px; font-weight:700;}
+  .check-q{font-size:14px; margin-bottom:6px;}
+  .check details summary{cursor:pointer; font-size:12.5px; color:var(--accent); font-weight:600; list-style:none;}
+  .check details summary::-webkit-details-marker{display:none;}
+  .check details summary::before{content:"▸ "; }
+  .check .a-box{margin-top:8px; padding:10px 12px; background:#F5F5FF; border-radius:7px; font-size:13.3px; border:1px dashed #C7C4EE;}
+
+  .mission{border-radius:14px; padding:22px 24px; margin:18px 0; border:1px solid var(--line); background:var(--panel);}
+  .mission.seed{border-left:5px solid var(--seed);}
+  .mission.sprout{border-left:5px solid var(--sprout);}
+  .mission.tree{border-left:5px solid var(--tree);}
+  .m-head{display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap;}
+  .m-tag{font-family:var(--mono); font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px; color:#fff;}
+  .m-tag.seed{background:var(--seed);} .m-tag.sprout{background:var(--sprout);} .m-tag.tree{background:var(--tree);}
+  .m-point{font-family:var(--mono); font-size:12.5px; color:var(--ink-soft); margin-left:auto;}
+  .m-title{font-size:16px; font-weight:700; margin:0 0 6px;}
+  .m-body{font-size:14.3px; color:var(--ink);}
+  details.solution{margin-top:12px;}
+  details.solution summary{cursor:pointer; font-size:13px; color:var(--accent); font-weight:600; list-style:none; display:inline-flex; align-items:center; gap:6px;}
+  details.solution summary::-webkit-details-marker{display:none;}
+  details.solution summary::before{content:"▸"; transition:transform .15s ease;}
+  details.solution[open] summary::before{transform:rotate(90deg);}
+  .sol-box{margin-top:10px; padding:12px 14px; background:#F5F5FF; border-radius:8px; border:1px dashed #C7C4EE;}
+
+  .fun{background:linear-gradient(135deg,#FFF7ED,#FEF3E2); border:1px solid #F3D9B1; border-radius:14px; padding:20px 22px; margin:36px 0;}
+  .fun h3{margin:0 0 6px; font-size:16px; display:flex; align-items:center; gap:8px;}
+  .fun p{margin:0 0 12px; font-size:14.3px; color:var(--ink-soft);}
+
+  .prev-link{background:#14162B; color:#E7E5FF; border-radius:14px; padding:20px 22px; margin:0 0 40px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;}
+  .prev-link div b{display:block; font-size:15px; margin-bottom:2px;}
+  .prev-link div span{font-size:13px; color:#9C90FF;}
+  .prev-link a{background:var(--accent); color:#fff; padding:9px 18px; border-radius:8px; text-decoration:none; font-size:13.5px; font-weight:600; white-space:nowrap;}
+
+  footer.end{margin-top:32px; padding-top:22px; border-top:1px solid var(--line); color:var(--ink-soft); font-size:13px; text-align:center;}
+
+  @media (max-width:640px){ header.hero{padding:44px 20px 40px;} nav.toc ol{columns:1;} }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Git & GitHub · 2부 브랜치와 협업</span>
+    <h1 class="title">브랜치와 협업</h1>
+    <p class="lead">혼자 쓰는 Git을 넘어, 실험하고(브랜치) 여러 명이 같이 작업하는(GitHub 협업) 방법을 배웁니다. <b>1부(기초편)</b>에서 배운 HEAD·commit·status 개념을 그대로 사용하니, 헷갈리면 1부를 먼저 확인하세요.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="prev-link">
+    <div><b>이전 편 — Git 기초</b><span>HEAD, 커밋, status, diff, 되돌리기, 충돌 해결을 다룹니다</span></div>
+    <a href="./git-basics.html">← 1부 보기</a>
+  </div>
+
+  <nav class="toc">
+    <h2>목차</h2>
+    <ol>
+      <li><a href="#branch">1. 브랜치</a></li>
+      <li><a href="#collab">2. GitHub 협업</a></li>
+      <li><a href="#cheatsheet">3. 명령어 총정리</a></li>
+      <li><a href="#missions">종합 미션</a></li>
+    </ol>
+  </nav>
+
+  <div class="level-guide">
+    <div class="level-card seed"><b>🌱 기초 미션</b>오늘 전원 필수.</div>
+    <div class="level-card sprout"><b>🌿 응용 미션</b>표준 진도.</div>
+    <div class="level-card tree"><b>🌳 도전 미션</b>선택, 심화+재미.</div>
+  </div>
+
+  <div class="checklist">
+    <h2>레벨업 체크리스트</h2>
+    <ul>
+      <li>☐ 브랜치를 만들고 stash로 작업을 임시 보관할 수 있다</li>
+      <li>☐ detached HEAD가 왜 위험한지 설명할 수 있다</li>
+      <li>☐ Pull Request로 협업하는 흐름을 설명할 수 있다</li>
+      <li>☐ Fork와 Clone의 차이를 설명할 수 있다</li>
+    </ul>
+  </div>
+
+  <!-- ============================================================ -->
+  <section class="lesson" id="branch">
+    <span class="sec-num">01</span>
+    <h2 class="sec-title">브랜치</h2>
+
+    <div class="analogy">
+      <span class="emoji">🌿</span>
+      <div>브랜치는 원본을 건드리지 않고 <b>평행세계에서 실험</b>하는 것과 같습니다. main은 항상 정상 작동하는 버전으로 유지하고, 새 기능은 별도 브랜치에서 만들다가 잘 되면 합칩니다.</div>
+    </div>
+
+<pre class="code">git branch                       <span class="c"># 브랜치 목록</span>
+git checkout -b feature/search   <span class="c"># 새 브랜치 만들며 이동</span>
+git checkout main                <span class="c"># main으로 돌아가기</span>
+git merge feature/search         <span class="c"># main에 합치기</span></pre>
+
+    <div class="recap"><b>1부 복습 — HEAD</b>HEAD는 "지금 내가 커밋 이력의 어느 지점에 있는지" 가리키는 이정표입니다. 평소엔 브랜치 이름(main 등)을 가리킵니다. 자세한 내용은 1부 01번을 참고하세요.</div>
+
+    <div class="warn"><b>detached HEAD 주의</b>브랜치 이름이 아니라 커밋 해시로 <code class="inline">checkout</code>하면 브랜치와의 연결이 끊긴 "detached HEAD" 상태가 됩니다. 이 상태에서 커밋하면 그 커밋이 어떤 브랜치에도 안 속해서 나중에 유실될 수 있습니다. 뭔가 수정하고 커밋할 계획이면 반드시 <code class="inline">git checkout -b 새브랜치이름</code>으로 먼저 브랜치를 만들어 붙잡아두세요.</div>
+
+    <h3 class="sub-title">stash — 작업을 잠깐 서랍에 넣어두기</h3>
+    <p>커밋하기엔 애매한 미완성 코드가 있는데 급하게 다른 브랜치로 이동해야 할 때 씁니다.</p>
+<pre class="code">git stash              <span class="c"># 지금 변경사항을 서랍에 넣고 작업 전 상태로</span>
+git checkout main      <span class="c"># 다른 브랜치에서 급한 일 처리</span>
+git checkout feature/search
+git stash pop           <span class="c"># 서랍에서 다시 꺼내오기 (꺼내면서 서랍은 비워짐)</span></pre>
+
+    <div class="check">
+      <div class="check-label">확인 퀴즈</div>
+      <div class="check-q">커밋하기엔 애매한 미완성 코드를 그대로 두고 다른 브랜치로 급히 이동해야 합니다. 뭘 써야 할까요?</div>
+      <details><summary>정답 보기</summary><div class="a-box">git stash 입니다. 미완성 코드를 임시로 보관해두고 깨끗한 상태로 브랜치를 이동한 뒤, 나중에 stash pop으로 다시 꺼내올 수 있습니다.</div></details>
+    </div>
+    <div class="check">
+      <div class="check-label">확인 퀴즈</div>
+      <div class="check-q">브랜치 이름이 아니라 커밋 해시로 checkout했을 때 생기는 위험한 상태의 이름은?</div>
+      <details><summary>정답 보기</summary><div class="a-box">detached HEAD입니다. 이 상태에서 커밋하면 어떤 브랜치에도 속하지 않아 나중에 그 커밋을 잃어버릴 수 있습니다.</div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="lesson" id="collab">
+    <span class="sec-num">02</span>
+    <h2 class="sec-title">GitHub 협업</h2>
+    <p class="sec-desc">지금까지는 Git 자체 기능이었다면, 여기부터는 <b>GitHub만의 협업 기능</b>입니다.</p>
+
+    <table class="ref">
+      <thead><tr><th>기능</th><th>역할</th></tr></thead>
+      <tbody>
+        <tr><td>Fork</td><td>다른 사람의 저장소를 <b>내 계정으로 통째로 복사</b>해서 내 소유로 만듦 (오픈소스에 기여할 때 주로 사용)</td></tr>
+        <tr><td>Pull Request(PR)</td><td>"이 변경사항을 원본 저장소에 반영해주세요"라고 <b>요청</b>하는 것. 리뷰를 거쳐 merge됨</td></tr>
+        <tr><td>Issue</td><td>버그 리포트, 기능 요청 등을 기록하는 <b>게시판</b> 같은 기능</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub-title">팀 프로젝트에서의 전형적인 흐름</h3>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div class="txt"><b>브랜치 생성</b><code class="inline">git checkout -b feature/login</code></div></div>
+      <div class="step"><div class="num">2</div><div class="txt"><b>작업 후 push</b>내 브랜치를 원격에 올림</div></div>
+      <div class="step"><div class="num">3</div><div class="txt"><b>Pull Request 열기</b>GitHub 웹사이트에서 "이 브랜치를 main에 합쳐주세요" 요청 생성</div></div>
+      <div class="step"><div class="num">4</div><div class="txt"><b>코드 리뷰</b>팀원이 코드를 보고 댓글/승인</div></div>
+      <div class="step"><div class="num">5</div><div class="txt"><b>Merge</b>승인되면 main 브랜치에 합쳐짐</div></div>
+    </div>
+
+    <div class="note"><b>오픈소스 기여는 한 단계 더 있음</b>남의 저장소는 직접 push할 권한이 없으므로, <b>Fork(내 계정으로 복사) → Clone(내 컴퓨터로) → 브랜치 작업 → 내 Fork에 push → 원본 저장소로 Pull Request</b> 순서를 거칩니다.</div>
+
+    <div class="check">
+      <div class="check-label">확인 퀴즈</div>
+      <div class="check-q">권한이 없는 오픈소스 프로젝트에 기여하고 싶습니다. 가장 먼저 해야 할 것은?</div>
+      <details><summary>정답 보기</summary><div class="a-box">Fork입니다. 직접 push할 권한이 없으니 먼저 그 저장소를 내 계정으로 복사(Fork)한 뒤, 그걸 clone해서 작업하고 Pull Request를 보내야 합니다.</div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="lesson" id="cheatsheet">
+    <span class="sec-num">03</span>
+    <h2 class="sec-title">명령어 총정리 (치트시트)</h2>
+    <p class="sec-desc">2부에서 배운 명령과, GitHub 웹사이트에서 클릭으로 하는 협업 작업을 정리했습니다.</p>
+
+    <table class="ref">
+      <thead><tr><th>분류</th><th>명령 / 작업</th><th>설명</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4">브랜치</td><td><code class="inline">git branch</code></td><td>브랜치 목록</td></tr>
+        <tr><td><code class="inline">git checkout -b [이름]</code></td><td>브랜치 생성+이동</td></tr>
+        <tr><td><code class="inline">git merge [브랜치]</code></td><td>현재 브랜치에 합치기</td></tr>
+        <tr><td><code class="inline">git stash</code> / <code class="inline">git stash pop</code></td><td>작업 임시 보관/꺼내기</td></tr>
+
+        <tr><td rowspan="3">GitHub 웹에서</td><td>Fork</td><td>남의 저장소를 내 계정으로 복사</td></tr>
+        <tr><td>Pull Request</td><td>브랜치 변경사항을 main에 합쳐달라고 요청</td></tr>
+        <tr><td>Issue</td><td>버그/기능요청 기록</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>1부 치트시트도 확인하세요</b>최초 설정, 시작하기, 기본 흐름, 확인하기, 되돌리기 관련 명령은 <a href="./git-basics.html#cheatsheet">1부 치트시트</a>에 정리돼 있습니다.</div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="lesson" id="missions">
+    <span class="sec-num">★</span>
+    <h2 class="sec-title">종합 미션</h2>
+    <p class="sec-desc">2부에서 배운 걸 종합해서 실제 상황처럼 풀어봅니다.</p>
+
+    <div class="mission sprout">
+      <div class="m-head"><span class="m-tag sprout">🌿 응용</span><span class="m-point">🏆 20p</span></div>
+      <div class="m-title">미션 1 — 브랜치 + stash 조합 실습</div>
+      <div class="m-body"><code class="inline">feature/dark-mode</code> 브랜치를 만들어 배경색을 바꾸다가, 다 마치지 않은 채로 <code class="inline">git stash</code>로 임시 보관하고 main으로 이동해보세요. 다시 브랜치로 돌아와 <code class="inline">git stash pop</code>으로 작업을 이어가세요.</div>
+      <details class="solution"><summary>정답 보기</summary>
+        <div class="sol-box"><pre class="code">git checkout -b feature/dark-mode
+<span class="c"># 배경색 일부만 수정</span>
+git stash
+git checkout main
+git checkout feature/dark-mode
+git stash pop
+<span class="c"># 아까 하던 수정이 그대로 돌아와 있어야 정상</span></pre></div>
+      </details>
+    </div>
+
+    <div class="mission tree">
+      <div class="m-head"><span class="m-tag tree">🌳 도전</span><span class="m-point">🏆 25p</span></div>
+      <div class="m-title">미션 2 — detached HEAD 직접 겪어보기</div>
+      <div class="m-body"><code class="inline">git log --oneline</code>으로 과거 커밋 해시를 확인 후 <code class="inline">git checkout [해시]</code>로 이동하고 경고 메시지를 확인하세요. 이 상태에서 파일을 수정·커밋한 다음 <code class="inline">git checkout main</code>으로 돌아가면 그 커밋이 어떻게 되는지 확인하고, 잃지 않으려면 어떻게 했어야 하는지 설명하세요.</div>
+      <details class="solution"><summary>정답 보기</summary>
+        <div class="sol-box">main으로 돌아가면 detached 상태에서 만든 커밋은 어느 브랜치에도 안 보입니다 (완전히 사라진 건 아니고, Git이 내부적으로 남겨두는 <code class="inline">reflog</code>라는 별도 이력으로 당분간 복구는 가능하지만, 방치하면 결국 정리됩니다). 커밋 전에 <code class="inline">git checkout -b 임시브랜치</code>로 먼저 브랜치를 만들어뒀어야 안전하게 보존됐을 것입니다.</div>
+      </details>
+    </div>
+
+    <div class="mission tree">
+      <div class="m-head"><span class="m-tag tree">🌳 도전</span><span class="m-point">🏆 20p</span></div>
+      <div class="m-title">미션 3 — 미니 PR 흐름 체험</div>
+      <div class="m-body">짝과 함께 같은 저장소에서, 한 명은 <code class="inline">feature/badge-color</code> 브랜치로 뱃지 색을 바꾸고 push한 뒤 GitHub에서 실제로 Pull Request를 열어보세요. 다른 한 명은 리뷰어가 되어 코드에 댓글을 달고 승인(Approve)한 뒤 Merge까지 진행하세요.</div>
+      <details class="solution"><summary>정답 보기</summary>
+        <div class="sol-box">GitHub 저장소 페이지에서 "Compare & pull request" 버튼 → 제목/설명 작성 → Create pull request → 리뷰어가 Files changed 탭에서 댓글 → Review changes → Approve → Merge pull request 순서로 진행하면 됩니다.</div>
+      </details>
+    </div>
+  </section>
+
+  <div class="fun">
+    <h3>🌱 브랜치 릴레이 + 미니 데모데이</h3>
+    <p>① 4명이 한 팀. main에서 각자 다른 브랜치(<code class="inline">feature/a</code>, <code class="inline">feature/b</code>...)를 만들어 서로 다른 부분(뱃지 색, 카드 그림자, 버튼 모양 등)을 동시에 작업합니다. ② 각자 Pull Request를 열고, 팀원끼리 돌아가며 리뷰·승인·머지까지 진행합니다. ③ 마지막엔 4개의 변경사항이 모두 합쳐진 main을 다 함께 확인하는 미니 데모데이로 마무리합니다.</p>
+  </div>
+
+  <footer class="end">Git 2부 — 브랜치와 협업 · 무비 컬렉션 해커톤 실습 교안</footer>
+</div>
+
+</body>
+</html>
