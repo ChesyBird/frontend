@@ -60,10 +60,14 @@ header{
 }
 
 .has-submenu > a::after{
+    /* 레이아웃 크기를 가질 수 없는 인라인 요소에서는 적용이 안됨 */
+    display: inline-block;
     /* 추가하고 싶은 컨텐츠를 쌍따옴표 안에 작성 */
     content: "▼";
     margin-left: 10px;
     transform: rotate(0deg);
+
+    transition: transform 1s ease;
 }
 
 .has-submenu.open > a::after {
@@ -87,11 +91,41 @@ header{
         반응형 웹- 미디어 태그를 이용해서 태블릿 이상 크기일 때 스타일을 지정
         햄버거- 네비바로 변환
 */
+/* 768px 이상이면 적용될 스타일을 지정 */
 @media (min-width: 768px) {
     /* 선택자를 이용해서 요소 선택 및 스타일 지정 */
     .burger{
         display: none;
     }
 
-    
+    .nav-menu{
+        /* 요소를 순서대로 배치- 기본값 */
+        position: static;
+        flex-direction: row;
+        transform: translatex(0%);
+    }
+
+    .nav-menu > li{
+        padding: 5px; 
+    }
+
+    .has-submenu{
+        position: relative;
+    }
+
+    .submenu{
+        position: absolute;
+        background-color: var(--dark);
+        width: 130px;
+        max-height: none;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .has-submenu:hover .submenu{
+        visibility: visible;
+        opacity: 1;
+    }
+
 }
