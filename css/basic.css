@@ -516,8 +516,3 @@ thead tr, thead th{
   padding: 10px;
   text-align: left;
 }
-
-.grid > article:nth-child(2){
-  border: 2px solid var(--navy);
-  box-shadow: 2px 4px 15px #444;
-}

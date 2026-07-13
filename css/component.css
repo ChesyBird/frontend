@@ -1,0 +1,97 @@
+/* 반응형 메뉴 만들기 */
+
+/* 1.
+    기본스타일 정의- 작은 화면(핸드폰)을 기준으로
+*/
+/* 2.
+    화면이 커지면 미디어쿼리를 이용해서 스타일을 지정
+*/
+header{
+    position: relative;
+}
+
+.nav-menu{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: absolute;
+    top: 50px;
+    left: 0px;
+    background-color: var(--dark);
+    width: 100%;
+    padding: 5px 10px;
+
+    transform: translateX(100%);
+    /* 부드럽게 이동시켜주도록 모션을 추가 */
+    transition: transform 0.5s ease;
+}
+
+/* 두개의 클래스를 모두 가지고 있으면 */
+.nav-menu.open{
+    transform: translateX(0%);
+} 
+
+/* 2. card */
+.card:hover{
+    transform: translateY(-10px);
+    border: 2px solid var(--navy);
+    box-shadow: 2px 4px 15px #444;
+}
+
+.card{
+    transition: transform 0.5s ease, 
+    box-shadow 0.5s ease;
+}
+
+/* 서브메뉴 초기설정 - 화면에서 숨김 feat.높이값 */
+.has-submenu .submenu{
+    /* 부모요소의 크기가 줄어들면서 자식요소만 남음
+        겹침현상 -> 부모 영역을 벗어난 요소는 숨김처리
+    */
+    max-height: 0px;
+    overflow: hidden;
+
+    transition: max-height 0.5s ease;
+}
+
+/* 서브메뉴를 보여줌 */
+.has-submenu.open .submenu{
+    max-height: 120px;
+}
+
+.has-submenu > a::after{
+    /* 추가하고 싶은 컨텐츠를 쌍따옴표 안에 작성 */
+    content: "▼";
+    margin-left: 10px;
+    transform: rotate(0deg);
+}
+
+.has-submenu.open > a::after {
+    transform: rotate(180deg);
+}
+
+.nav-menu > li{
+    padding: 5px 50px;
+}
+
+.submenu > li{
+    padding: 5px 20px;
+}
+
+.submenu > li:hover{
+    background-color: var(--light);
+    color: var(--dark);
+}
+
+/* 뷰포트 폭이 768px 이상일 때만 {}안의 스타일 적용
+        반응형 웹- 미디어 태그를 이용해서 태블릿 이상 크기일 때 스타일을 지정
+        햄버거- 네비바로 변환
+*/
+@media (min-width: 768px) {
+    /* 선택자를 이용해서 요소 선택 및 스타일 지정 */
+    .burger{
+        display: none;
+    }
+
+    
+}
