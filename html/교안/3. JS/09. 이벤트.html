@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>09. 이벤트.html — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · CHAPTER 09</span>
+  <h1 class="title">09. 이벤트</h1>
+  <p class="subtitle">클릭·입력에 반응하는 페이지 — 검색 필터와 유효성 검사까지</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>🎯 학습 목표</h3><ul><li>☐ 이벤트 설정 4가지 방법을 구분하고 표준 모델(addEventListener)을 쓸 수 있다</li><li>☐ 주요 이벤트 종류(마우스/키보드/폼/문서)를 알고 골라 쓸 수 있다</li><li>☐ 이벤트 객체(target)와 preventDefault를 활용할 수 있다</li><li>☐ 버블링을 이해하고 이벤트 위임으로 동적 요소를 처리할 수 있다</li><li>☐ 정규표현식으로 입력값 유효성 검사를 할 수 있다</li></ul></div><section class="sec"><div class="sec-head"><span class="sec-no">09-1</span><h2>이벤트란 / 설정 방법 4가지</h2></div><p class="body">이벤트 활용이란 <b>이벤트 속성과 이벤트 핸들러(함수)를 연동</b>하여, 이벤트 발생 시 특정 기능이 동작하게 하는 것입니다.</p>
+<table class="ref">
+  <thead><tr><th>설정 방법</th><th>작성 방식</th><th>비고</th></tr></thead>
+  <tbody><tr><td>① 고전 이벤트 모델</td><td><code class='i'>요소.onclick = function(){...}</code></td><td>핸들러 1개만 가능. 제거는 null 대입. 핸들러 안 this = 발생 요소</td></tr>
+<tr><td>② 인라인 이벤트 모델</td><td><code class='i'>&lt;h1 onclick="함수()"&gt;</code></td><td>HTML 안에 직접 작성 — script의 함수를 호출하는 방식 선호</td></tr>
+<tr><td>③ 표준 이벤트 모델 ⭐</td><td><code class='i'>요소.addEventListener('click', 핸들러)</code></td><td>W3C 공식 표준. <b>여러 핸들러 등록 가능.</b> this = 발생 요소</td></tr>
+<tr><td>④ IE 이벤트 모델</td><td><code class='i'>요소.attachEvent('onclick', 핸들러)</code></td><td>구형 익스플로러 전용 <b>레거시</b> — this가 window를 가리키는 등 차이. 지금은 사용 안 함</td></tr></tbody></table>
+<pre class="code"><span class="c">// ① 고전 모델</span>
+const h = document.getElementById(<span class="s">"title"</span>);
+h.onclick = function () {
+  console.log(<span class="s">"클릭!"</span>);
+  h.onclick = null;   <span class="c">// 핸들러 제거 → 한 번만 실행</span>
+};
+
+<span class="c">// ③ 표준 모델 (이 과정의 기본)</span>
+h.addEventListener(<span class="s">"click"</span>, function () {
+  console.log(<span class="s">"표준 모델 클릭!"</span>);
+});</pre>
+<div class="box imp"><div class="box-title">⭐ 이 과정은 addEventListener만 씁니다</div><div class="box-body"><p class="body">표준 모델은 <b>한 요소에 여러 핸들러</b>를 겹쳐 등록할 수 있고, 제거도 <code class='i'>removeEventListener(이벤트명, 핸들러)</code>로 명확합니다. 단, 제거하려면 핸들러를 <b>이름 있는 함수</b>로 등록해야 합니다(익명 함수는 같은 함수임을 증명할 수 없어 제거 불가).</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">09-2</span><h2>이벤트 종류 목록</h2></div><table class="ref">
+  <thead><tr><th>분류</th><th>이벤트</th><th>발생 시점</th></tr></thead>
+  <tbody><tr><td>마우스</td><td>click</td><td>클릭했을 때 (가장 많이 사용)</td></tr>
+<tr><td>마우스</td><td>dblclick</td><td>더블클릭했을 때</td></tr>
+<tr><td>마우스</td><td>mouseover / mouseout</td><td>마우스가 요소에 들어올 때 / 나갈 때</td></tr>
+<tr><td>마우스</td><td>mousemove</td><td>요소 위에서 마우스가 움직일 때</td></tr>
+<tr><td>마우스</td><td>mousedown / mouseup</td><td>버튼을 누를 때 / 뗄 때</td></tr>
+<tr><td>키보드</td><td>keydown</td><td>키를 누르는 순간 (꾹 누르면 반복 발생)</td></tr>
+<tr><td>키보드</td><td>keyup</td><td>키에서 손을 뗄 때</td></tr>
+<tr><td>키보드</td><td>keypress</td><td>문자 키 입력 시 — <b>deprecated, keydown 사용 권장</b></td></tr>
+<tr><td>폼</td><td>submit</td><td>폼을 제출할 때 (form 요소에 발생) ⭐</td></tr>
+<tr><td>폼</td><td>input</td><td>입력값이 바뀔 때마다 <b>실시간</b> 발생 ⭐</td></tr>
+<tr><td>폼</td><td>change</td><td>값 변경이 <b>확정</b>될 때 — select 선택, input은 포커스 벗어날 때</td></tr>
+<tr><td>폼</td><td>focus / blur</td><td>입력란에 커서가 들어올 때 / 나갈 때</td></tr>
+<tr><td>문서/창</td><td>load</td><td>이미지까지 모든 리소스 로드 완료 (window.onload)</td></tr>
+<tr><td>문서/창</td><td>DOMContentLoaded</td><td>HTML 구조만 완성되면 발생 (load보다 빠름)</td></tr>
+<tr><td>문서/창</td><td>resize / scroll</td><td>창 크기 변경 / 스크롤할 때</td></tr></tbody></table>
+<div class="box imp"><div class="box-title">⭐ input vs change — 검색창의 선택</div><div class="box-body"><p class="body">타이핑하는 <b>즉시</b> 반응하는 실시간 검색은 <code class='i'>input</code>, 셀렉트박스처럼 선택이 <b>확정</b>될 때 반응하려면 <code class='i'>change</code>. 우리 검색 필터는 keyword에 input, 장르 select에 change를 씁니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">09-3</span><h2>이벤트 객체 — 발생 정보 들여다보기</h2></div><p class="body">핸들러의 첫 매개변수로 <b>이벤트 객체</b>가 전달됩니다(관례상 e 또는 event). 어떤 요소에서, 어떤 키로, 어디서 발생했는지가 모두 담겨 있습니다.</p>
+<table class="ref">
+  <thead><tr><th>속성/메서드</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">e.target</td><td>이벤트가 <b>실제로 발생한</b> 요소 ⭐</td></tr>
+<tr><td class="mono">e.currentTarget</td><td>핸들러가 <b>등록된</b> 요소 (위임에서 target과 달라짐)</td></tr>
+<tr><td class="mono">e.type</td><td>이벤트 이름 ("click" 등)</td></tr>
+<tr><td class="mono">e.key</td><td>키보드 이벤트에서 눌린 키 ("Enter", "a" 등)</td></tr>
+<tr><td class="mono">e.preventDefault()</td><td>태그의 기본 동작 차단 ⭐</td></tr>
+<tr><td class="mono">e.stopPropagation()</td><td>이벤트 전파(버블링) 중단</td></tr></tbody></table>
+<pre class="code">const input = document.querySelector(<span class="s">"input[name=keyword]"</span>);
+
+input.addEventListener(<span class="s">"keydown"</span>, function (e) {
+  console.log(<span class="s">"누른 키:"</span>, e.key);
+  if (e.key === <span class="s">"Enter"</span>) console.log(<span class="s">"엔터로 검색!"</span>);
+});</pre></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">09-4</span><h2>기본 이벤트 제거 — preventDefault</h2></div><p class="body"><code class='i'>&lt;a&gt;</code>, <code class='i'>&lt;input type="submit"&gt;</code>처럼 <b>기본 동작(이동·제출)을 스스로 가진 태그</b>가 있습니다. 이를 막아야 자바스크립트로 대신 처리할 수 있습니다.</p>
+<pre class="code">const form = document.querySelector(<span class="s">".search-form"</span>);
+
+form.addEventListener(<span class="s">"submit"</span>, function (e) {
+  e.preventDefault();   <span class="c">// 페이지 새로고침(기본 제출) 차단!</span>
+  console.log(<span class="s">"이제 JS가 검색을 처리합니다"</span>);
+});
+
+<span class="c">// 고전 모델에서는 핸들러에서 return false; 로도 기본 동작을 막았음 (레거시)</span></pre>
+<div class="box warn"><div class="box-title">⚠️ preventDefault를 빼먹으면</div><div class="box-body"><p class="body">submit 순간 <b>페이지가 새로고침</b>되어 애써 그린 화면과 데이터가 전부 초기화됩니다. 폼을 JS로 다룰 때 무조건 첫 줄은 e.preventDefault()라고 기억하세요. index.html의 서브메뉴 토글 코드에도 이미 <code class='i'>e.preventDefault()</code>가 # 링크 이동을 막고 있습니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">09-5</span><h2>이벤트 전달 — 버블링과 캡처링, 그리고 이벤트 위임</h2></div><p class="body">자식 요소를 클릭하면 그 이벤트는 <b>부모 → 조상으로 거슬러 전파</b>됩니다(버블링). 반대로 조상에서 내려오는 단계를 캡처링이라 하며, addEventListener의 <b>3번째 인자</b>를 true로 주면 캡처링 단계에서 실행됩니다(기본값 false = 버블링).</p>
+<pre class="code"><span class="c">// 카드 안의 h3를 클릭해도, 이벤트는 card → grid → body로 올라간다</span>
+document.querySelector(<span class="s">".grid"</span>).addEventListener(<span class="s">"click"</span>, function (e) {
+  console.log(<span class="s">"실제 클릭된 것:"</span>, e.target);
+});</pre>
+<p class="body">이 성질을 활용한 것이 <b>이벤트 위임(delegation)</b>: 자식들 각각이 아니라 <b>부모 하나에만</b> 핸들러를 걸고, e.target으로 누가 클릭됐는지 판별하는 기법입니다.</p>
+<pre class="code">document.querySelector(<span class="s">".grid"</span>).addEventListener(<span class="s">"click"</span>, function (e) {
+  const card = e.target.closest(<span class="s">".card"</span>);  <span class="c">// 클릭 지점에서 가장 가까운 .card</span>
+  if (!card) return;                       <span class="c">// 카드 밖 클릭이면 무시</span>
+  console.log(card.dataset.rating + <span class="s">"점짜리 카드 클릭!"</span>);
+});</pre>
+<div class="box imp"><div class="box-title">⭐ 동적으로 만든 요소에는 위임이 정답</div><div class="box-body"><p class="body">8장에서 innerHTML로 카드를 <b>다시 그릴 때마다</b> 카드에 걸었던 핸들러는 사라집니다. 부모(.grid)는 그대로이므로 <b>부모에 위임</b>하면 카드를 몇 번을 다시 그려도 클릭이 동작합니다. 전파를 멈춰야 할 때만 e.stopPropagation()을 씁니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">09-6</span><h2>유효성 검사와 정규표현식</h2></div><p class="body">유효성 검사란 사용자가 입력한 데이터가 <b>양식에 맞는지 검사</b>하는 것입니다. 형식 검사에는 <b>정규표현식(Regular Expression)</b>을 사용하며, <code class='i'>/패턴/</code>으로 만들고 <code class='i'>정규식.test(문자열)</code>이 true/false를 리턴합니다.</p>
+<table class="ref">
+  <thead><tr><th>패턴</th><th>의미</th></tr></thead>
+  <tbody><tr><td class="mono">^ / $</td><td>문자열의 시작 / 끝</td></tr>
+<tr><td class="mono">[a-z] [A-Z] [0-9]</td><td>영소문자 / 영대문자 / 숫자 중 한 글자</td></tr>
+<tr><td class="mono">[가-힣]</td><td>한글 한 글자</td></tr>
+<tr><td class="mono">\d / \s / .</td><td>숫자 / 공백 / 아무 문자 하나</td></tr>
+<tr><td class="mono">+ / * / ?</td><td>1번 이상 / 0번 이상 / 0번 또는 1번 반복</td></tr>
+<tr><td class="mono">{n} / {n,m}</td><td>정확히 n번 / n~m번 반복</td></tr></tbody></table>
+<pre class="code">const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
+
+console.log(emailRegex.test(<span class="s">"movie@test.com"</span>));  <span class="c">// true</span>
+console.log(emailRegex.test(<span class="s">"movie@@com"</span>));      <span class="c">// false</span>
+
+const keywordRegex = /^[가-힣a-zA-Z0-9\s]+$/;    <span class="c">// 한글·영문·숫자·공백만 허용</span>
+console.log(keywordRegex.test(<span class="s">"도시의 밤"</span>));      <span class="c">// true</span>
+console.log(keywordRegex.test(<span class="s">"&lt;script&gt;"</span>));      <span class="c">// false — 위험 문자 차단</span></pre>
+<div class="box link"><div class="box-title">🔗 index.html 연결 포인트</div><div class="box-body"><p class="body">검색 폼에서 <b>submit → preventDefault → 입력값 검사(정규식) → 통과하면 filter로 걸러 renderMovies()</b> — 이 흐름이 실습 미션이자 사이트의 검색 기능 완성입니다.</p></div></div></section>
+</main>
+<footer class="end">09. 이벤트 — 교안 · 짝꿍 실습지: 09. 이벤트-실습.html</footer>
+</body>
+</html>

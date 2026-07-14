@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>08. DOM.html — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · CHAPTER 08</span>
+  <h1 class="title">08. DOM</h1>
+  <p class="subtitle">문서를 객체로 다루기 — 콘솔의 데이터가 드디어 화면이 되는 핵심 전환점</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>🎯 학습 목표</h3><ul><li>☐ 노드 개념과 요소 노드/텍스트 노드를 구분할 수 있다</li><li>☐ querySelector로 요소를 선택하고 textContent·style·classList를 바꿀 수 있다</li><li>☐ createElement / appendChild와 innerHTML 두 방식으로 요소를 만들 수 있다</li><li>☐ dataset으로 data-* 속성을 읽고 쓸 수 있다</li><li>☐ 배열 데이터로 화면 목록을 동적으로 그릴 수 있다</li></ul></div><section class="sec"><div class="sec-head"><span class="sec-no">08-1</span><h2>DOM과 노드</h2></div><p class="body">DOM(Document Object Model)은 <b>HTML의 태그를 객체화하여 자바스크립트에서 다룰 수 있게 한 것</b>입니다. HTML을 트리로 구조화했을 때 각각의 태그가 <b>노드</b>입니다.</p>
+<table class="ref">
+  <thead><tr><th>노드 종류</th><th>의미</th></tr></thead>
+  <tbody><tr><td>요소 노드(Element Node)</td><td>태그 그 자체 (예: &lt;h3&gt;, &lt;article&gt;)</td></tr>
+<tr><td>텍스트 노드(Text Node)</td><td>태그 안에 기록된 문자 — 텍스트 노드를 갖는 태그(h1, p 등)와 갖지 않는 태그(img 등)가 있음</td></tr></tbody></table></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">08-2</span><h2>요소 선택하기</h2></div><table class="ref">
+  <thead><tr><th>방법</th><th>설명 · 리턴</th></tr></thead>
+  <tbody><tr><td class="mono">document.getElementById('아이디')</td><td>id로 1개 선택</td></tr>
+<tr><td class="mono">document.querySelector('CSS선택자')</td><td><b>CSS 선택자</b>로 일치하는 <b>첫 번째</b> 요소 1개</td></tr>
+<tr><td class="mono">document.querySelectorAll('CSS선택자')</td><td>일치하는 <b>모든</b> 요소 (NodeList — forEach 가능)</td></tr></tbody></table>
+<pre class="code">const logo   = document.querySelector(<span class="s">".logo"</span>);     <span class="c">// 클래스</span>
+const header = document.querySelector(<span class="s">"#site-header"</span>); <span class="c">// 아이디</span>
+const cards  = document.querySelectorAll(<span class="s">".card"</span>);   <span class="c">// 전부 (6개)</span>
+console.log(cards.length);</pre>
+<div class="box imp"><div class="box-title">⭐ CSS 시간에 배운 선택자를 그대로 씁니다</div><div class="box-body"><p class="body"><code class='i'>querySelector(".has-submenu &gt; a")</code>처럼 결합자·가상클래스까지 CSS 선택자 문법이 전부 동작합니다. CSS 실력이 곧 DOM 선택 실력입니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">08-3</span><h2>내용·속성·스타일 바꾸기</h2></div><table class="ref">
+  <thead><tr><th>대상</th><th>방법</th></tr></thead>
+  <tbody><tr><td>텍스트</td><td><code class='i'>요소.textContent = "새 글자"</code> — 순수 텍스트로 취급 (안전)</td></tr>
+<tr><td>HTML</td><td><code class='i'>요소.innerHTML = "&lt;b&gt;굵게&lt;/b&gt;"</code> — 태그로 해석됨</td></tr>
+<tr><td>일반 속성</td><td><code class='i'>요소.setAttribute('src', 값)</code> / <code class='i'>요소.getAttribute('src')</code> / <code class='i'>요소.src = 값</code> (직접 대입)</td></tr>
+<tr><td>data-* 속성</td><td><code class='i'>요소.dataset.rating</code> — data-rating을 읽고 씀 ⭐</td></tr>
+<tr><td>스타일</td><td><code class='i'>요소.style.backgroundColor = "gold"</code></td></tr>
+<tr><td>클래스</td><td><code class='i'>요소.classList.add / remove / toggle / contains</code></td></tr></tbody></table>
+<pre class="code">const card = document.querySelector(<span class="s">".card"</span>);
+
+console.log(card.dataset.rating);        <span class="c">// data-rating=<span class="s">"9.2"</span> → <span class="s">"9.2"</span></span>
+card.style.borderColor = <span class="s">"gold"</span>;         <span class="c">// 스타일 직접 변경</span>
+card.classList.add(<span class="s">"featured"</span>);          <span class="c">// 클래스 추가</span></pre>
+<div class="box warn"><div class="box-title">⚠️ CSS 속성명의 - 는 카멜케이스로</div><div class="box-body"><p class="body">자바스크립트 식별자에는 -를 쓸 수 없어 <code class='i'>background-color → backgroundColor</code>, <code class='i'>font-size → fontSize</code>로 바꿔 씁니다.</p></div></div>
+<p class="body">우리 index.html의 기존 스크립트가 이미 <code class='i'>classList.toggle('open')</code>으로 버거 메뉴를 여닫고 있죠 — 그 코드가 바로 이 절의 내용입니다.</p></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">08-4</span><h2>요소 생성 ① — createElement 방식</h2></div><p class="body"><b>텍스트 노드가 있는</b> 요소: 요소 노드 생성 → 텍스트 노드 생성 → 요소에 텍스트 추가 → body(부모)에 요소 추가</p>
+<pre class="code">const h3 = document.createElement(<span class="s">"h3"</span>);        <span class="c">// 요소 노드 생성</span>
+const text = document.createTextNode(<span class="s">"새 영화"</span>); <span class="c">// 텍스트 노드 생성</span>
+h3.appendChild(text);                            <span class="c">// 요소에 텍스트 추가</span>
+document.body.appendChild(h3);                   <span class="c">// 문서에 추가</span>
+
+<span class="c">// 실무 단축: h3.textContent = <span class="s">"새 영화"</span>; 로 텍스트 노드 생성을 대신</span></pre>
+<p class="body"><b>텍스트 노드가 없는</b> 요소(img 등): 요소 생성 → 속성 설정 → 부모에 추가</p>
+<pre class="code">const img = document.createElement(<span class="s">"img"</span>);
+img.setAttribute(<span class="s">"src"</span>, <span class="s">"poster.jpg"</span>);   <span class="c">// 또는 img.src = <span class="s">"poster.jpg"</span></span>
+document.body.appendChild(img);</pre></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">08-5</span><h2>요소 생성 ② — innerHTML + 템플릿 리터럴 ⭐</h2></div><p class="body">여러 개의 요소를 한 번에 그릴 때는 <b>HTML 문자열을 조립해 innerHTML에 대입</b>하는 방식이 압도적으로 편합니다. 4~5장에서 만든 makeCard()가 드디어 화면과 만납니다.</p>
+<pre class="code">const grid = document.querySelector(<span class="s">".grid"</span>);
+
+let html = <span class="s">""</span>;
+movies.forEach(function (movie) {
+  html += makeCard(movie);   <span class="c">// 5장 미션에서 만든 함수!</span>
+});
+grid.innerHTML = html;        <span class="c">// 카드 6장이 한 번에 그려짐</span></pre>
+<div class="box imp"><div class="box-title">⭐ 데이터가 바뀌면 다시 그린다</div><div class="box-body"><p class="body">「movies 배열 → makeCard → innerHTML」 이 3단 파이프라인이 이 과정의 심장입니다. 9장의 검색 필터도, 10장의 API 데이터도 <b>배열만 바꾸고 같은 파이프라인으로 다시 그리면</b> 끝입니다.</p></div></div>
+<div class="box warn"><div class="box-title">⚠️ innerHTML과 보안(XSS)</div><div class="box-body"><p class="body"><b>사용자가 입력한 값</b>을 검증 없이 innerHTML에 넣으면 악성 스크립트가 심어질 수 있습니다(XSS 공격). 사용자 입력을 표시할 때는 textContent를 쓰거나 값을 검증하세요. 우리가 직접 만든 데이터는 안전합니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">08-6</span><h2>요소 제거</h2></div><table class="ref">
+  <thead><tr><th>방법</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">부모.removeChild(자식요소)</td><td>부모에서 자식 노드를 제거 (전통 방식)</td></tr>
+<tr><td class="mono">요소.parentNode.removeChild(요소)</td><td>제거할 요소 기준으로 부모로 올라가 자신을 제거</td></tr>
+<tr><td class="mono">요소.remove()</td><td>자신을 바로 제거 (최신 방식, 가장 간단)</td></tr></tbody></table>
+<pre class="code">const firstCard = document.querySelector(<span class="s">".card"</span>);
+firstCard.remove();                                <span class="c">// 최신 방식</span>
+<span class="c">// firstCard.parentNode.removeChild(firstCard);    // 전통 방식 (같은 결과)</span></pre></section>
+</main>
+<footer class="end">08. DOM — 교안 · 짝꿍 실습지: 08. DOM-실습.html</footer>
+</body>
+</html>

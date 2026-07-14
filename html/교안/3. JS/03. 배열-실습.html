@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>03. 배열-실습 — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · WORKSHEET 03</span>
+  <h1 class="title">03. 배열 — 실습</h1>
+  <p class="subtitle">배열 메서드 연습 + 영화 6편을 배열 데이터로 만들어 평점순 정렬하는 미션</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>📝 실습 안내</h3><ul>
+    <li>교안 「03. 배열」을 참고하며 순서대로 풉니다.</li>
+    <li>🌱기초 → 🌿응용 → 🌳도전 순서로 어려워지고, 마지막 🎬미션은 index.html/main.js에 실제 기능을 쌓는 누적 과제입니다.</li>
+    <li>막히면 힌트 → 그래도 막히면 정답을 보고, 정답을 덮고 다시 한 번 직접 작성해보세요.</li></ul></div><article class="problem">
+    <div class="p-head"><span class="p-no">Q1</span><h3 class="p-title">배열 기본 조작</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">상영작 목록을 배열로 다뤄보세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>첫 번째 영화와 마지막 영화를 각각 출력한다 (length 활용)</li><li>push로 "스텔라 오디세이"를 맨 뒤에 추가한다</li><li>shift로 맨 앞 영화를 제거하고, 제거된 제목을 출력한다</li><li>최종 배열과 length를 출력한다</li></ul></div>
+    <span class="mini-label">시작 코드</span><pre class="code">const nowShowing = [<span class="s">"도시의 밤"</span>, <span class="s">"파랑의 계절"</span>, <span class="s">"여름의 문"</span>];</pre>
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const nowShowing = [<span class="s">"도시의 밤"</span>, <span class="s">"파랑의 계절"</span>, <span class="s">"여름의 문"</span>];
+console.log(nowShowing[0]);
+console.log(nowShowing[nowShowing.length - 1]);
+
+nowShowing.push(<span class="s">"스텔라 오디세이"</span>);
+const removed = nowShowing.shift();
+console.log(removed);        <span class="c">// 도시의 밤</span>
+console.log(nowShowing);     <span class="c">// [<span class="s">"파랑의 계절"</span>, <span class="s">"여름의 문"</span>, <span class="s">"스텔라 오디세이"</span>]</span>
+console.log(nowShowing.length); <span class="c">// 3</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q2</span><h3 class="p-title">slice vs splice 결과 예측</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">원본이 바뀌는지 아닌지에 집중해서 결과를 예측하세요.</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">const a = [10, 20, 30, 40, 50];
+const b = a.slice(1, 4);
+console.log(b);
+console.log(a);
+
+a.splice(1, 3);
+console.log(a);</pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>세 개의 console.log 결과를 예측하고 실행해서 확인한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">slice의 두 번째 인자는 '끝 인덱스 미포함'입니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// [20, 30, 40]        ← slice(1,4): 인덱스 1~3, 끝(4) 미포함</span>
+<span class="c">// [10, 20, 30, 40, 50] ← slice는 원본 유지</span>
+<span class="c">// [10, 50]            ← splice(1,3): 인덱스 1부터 3개 제거, 원본 변경</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q3</span><h3 class="p-title">join으로 장르 문자열 만들기</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">카드에 표시되는 "SF · 액션" 같은 문자열을 배열에서 만들어보세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>join을 사용해 "SF · 액션" 문자열을 만들어 출력한다</li><li>요소를 "모험"까지 3개로 늘려도 코드 수정 없이 동작하는지 확인한다</li></ul></div>
+    <span class="mini-label">시작 코드</span><pre class="code">const genres = [<span class="s">"SF"</span>, <span class="s">"액션"</span>];</pre>
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const genres = [<span class="s">"SF"</span>, <span class="s">"액션"</span>];
+console.log(genres.join(<span class="s">" · "</span>));   <span class="c">// SF · 액션</span>
+
+genres.push(<span class="s">"모험"</span>);
+console.log(genres.join(<span class="s">" · "</span>));   <span class="c">// SF · 액션 · 모험</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q4</span><h3 class="p-title">숫자 정렬 함정 고치기</h3><span class="badge tree">🌳 도전</span></div>
+    <p class="p-desc">아래 코드는 의도대로 동작하지 않습니다. 원인을 설명하고 고치세요.</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">const ratings = [9.2, 8.7, 10, 9.8];
+ratings.sort();
+console.log(ratings); <span class="c">// 기대: [8.7, 9.2, 9.8, 10]  실제: ???</span></pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>실제 출력이 무엇인지, 왜 그런지 한 줄로 설명한다</li><li>비교 함수를 넣어 오름차순으로 고친다</li><li>내림차순 버전도 작성한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// 실제: [10, 8.7, 9.2, 9.8] — 문자열 기준이라 <span class="s">"10"</span>이 <span class="s">"8"</span>보다 앞</span>
+
+ratings.sort(function (a, b) { return a - b; }); <span class="c">// 오름차순</span>
+ratings.sort(function (a, b) { return b - a; }); <span class="c">// 내림차순</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q5</span><h3 class="p-title">영화 6편 배열 만들기 + 평점 정렬</h3><span class="badge mission">🎬 index.html 미션</span></div>
+    <p class="p-desc">index.html의 카드 6개(지금은 전부 복사·붙여넣기)를 대신할 <b>진짜 데이터</b>를 main.js에 만듭니다. 아직 문자열 배열 2개로 단순하게 — 5장에서 객체 배열로 업그레이드합니다.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>titles 배열에 서로 다른 영화 제목 6개를 담는다</li><li>ratings 배열에 각 영화의 평점 6개를 같은 순서로 담는다 (그중 1개는 null — 개봉 예정작)</li><li>for문으로 `제목 - 평점` 형태로 6줄을 출력한다 (null이면 삼항연산자로 "개봉 예정" 표시)</li><li>[...ratings] 복사본을 내림차순 정렬해서 출력한다 (랭킹 테이블 준비)</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">제목과 평점을 배열 2개로 나누니 벌써 불편하죠? 이 불편함이 5장 '객체 배열'을 배우는 이유입니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// main.js (이어서 작성)</span>
+const titles  = [<span class="s">"도시의 밤"</span>, <span class="s">"파랑의 계절"</span>, <span class="s">"스텔라 오디세이"</span>,
+                 <span class="s">"마지막 항해"</span>, <span class="s">"여름의 문"</span>, <span class="s">"은하수 특급"</span>];
+const ratings = [9.8, 9.5, 9.2, 9.0, 8.7, null];
+
+for (let i = 0; i &lt; titles.length; i++) {
+  const label = ratings[i] ? ratings[i] : <span class="s">"개봉 예정"</span>;
+  console.log(<span class="s">`${titles[i]} - ${label}`</span>);
+}
+
+const sorted = [...ratings].sort(function (a, b) { return b - a; });
+console.log(sorted); <span class="c">// [9.8, 9.5, 9.2, 9, 8.7, null]</span></pre></div></details>
+  </article>
+</main>
+<footer class="end">03. 배열 — 실습지 · 교안: 03. 배열.html</footer>
+</body>
+</html>

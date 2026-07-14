@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>02. 기본문법-실습 — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · WORKSHEET 02</span>
+  <h1 class="title">02. 기본문법 — 실습</h1>
+  <p class="subtitle">변수·형변환·연산자·제어문 연습, 그리고 영화 데이터 변수화 + 삼항연산자 배지 미션</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>📝 실습 안내</h3><ul>
+    <li>교안 「02. 기본문법」을 참고하며 순서대로 풉니다.</li>
+    <li>🌱기초 → 🌿응용 → 🌳도전 순서로 어려워지고, 마지막 🎬미션은 index.html/main.js에 실제 기능을 쌓는 누적 과제입니다.</li>
+    <li>막히면 힌트 → 그래도 막히면 정답을 보고, 정답을 덮고 다시 한 번 직접 작성해보세요.</li></ul></div><article class="problem">
+    <div class="p-head"><span class="p-no">Q1</span><h3 class="p-title">let과 const 고르기</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">각 상황에 let과 const 중 무엇이 알맞은지 고르고, 실제로 선언해보세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>① 영화 제목 (바뀔 일 없음) → ?</li><li>② 남은 좌석 수 (예매될 때마다 줄어듦) → ?</li><li>③ 원주율 3.14 → ?</li><li>④ 현재 페이지 번호 (다음 버튼 누르면 증가) → ?</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const movieTitle = <span class="s">"스텔라 오디세이"</span>; <span class="c">// ① 안 바뀜 → const</span>
+let seatsLeft = 30;                   <span class="c">// ② 바뀜 → let</span>
+const PI = 3.14;                      <span class="c">// ③ 안 바뀜 → const</span>
+let currentPage = 1;                  <span class="c">// ④ 바뀜 → let</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q2</span><h3 class="p-title">typeof와 형변환 결과 예측</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">실행 결과를 먼저 종이에 적고, 콘솔로 확인하세요.</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">console.log(typeof <span class="s">"9.2"</span>);
+console.log(typeof 9.2);
+console.log(<span class="s">"10"</span> + 5);
+console.log(<span class="s">"10"</span> - 5);
+console.log(Number(<span class="s">"120분"</span>));
+console.log(parseInt(<span class="s">"120분"</span>));</pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>6줄의 출력 결과를 각각 예측한 뒤 실행해서 채점한다</li><li>틀린 항목은 교안 02-6을 다시 읽고 이유를 적는다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// <span class="s">"string"</span></span>
+<span class="c">// <span class="s">"number"</span></span>
+<span class="c">// <span class="s">"105"</span>   ← +는 문자열 연결 우선</span>
+<span class="c">// 5       ← -는 숫자 연산</span>
+<span class="c">// NaN     ← Number()는 전체가 숫자여야 함</span>
+<span class="c">// 120     ← parseInt()는 앞에서부터 읽을 수 있는 만큼</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q3</span><h3 class="p-title">연산자 우선순위 계산</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">괄호 없이 계산 순서를 따져 결과를 예측하세요.</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">console.log(2 + 3 * 4);
+console.log((2 + 3) * 4);
+console.log(10 &gt; 5 &amp;&amp; 3 &gt; 7);
+console.log(10 &gt; 5 || 3 &gt; 7);
+console.log(7 % 2 === 1);</pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>5줄의 결과를 예측하고 실행해서 확인한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">우선순위: 최우선 > 단항 > 산술 > 관계 > 논리 > 삼항 > 대입</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// 14    (산술 * 가 + 보다 먼저)</span>
+<span class="c">// 20    (최우선 괄호가 가장 먼저)</span>
+<span class="c">// false (true &amp;&amp; false)</span>
+<span class="c">// true  (true || false)</span>
+<span class="c">// true  (산술 % 가 비교 === 보다 먼저 → 1 === 1)</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q4</span><h3 class="p-title">평점 등급 나누기 (if / switch)</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">같은 로직을 두 가지 방식으로 작성해보세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>rating이 9.0 이상 "명작", 7.0 이상 "볼만함", 그 외 "비추"를 출력하는 if~else if~else 작성</li><li>genre 값("action"/"romance"/"scifi")에 따라 "액션"/"로맨스"/"SF"를 출력하는 switch 작성 (default: "기타")</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">switch에서 break를 빼먹으면 아래 case까지 줄줄이 실행됩니다(fall-through).</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const rating = 9.4;
+if (rating &gt;= 9.0)      console.log(<span class="s">"명작"</span>);
+else if (rating &gt;= 7.0) console.log(<span class="s">"볼만함"</span>);
+else                    console.log(<span class="s">"비추"</span>);
+
+const genre = <span class="s">"scifi"</span>;
+switch (genre) {
+  case <span class="s">"action"</span>:  console.log(<span class="s">"액션"</span>);   break;
+  case <span class="s">"romance"</span>: console.log(<span class="s">"로맨스"</span>); break;
+  case <span class="s">"scifi"</span>:   console.log(<span class="s">"SF"</span>);     break;
+  default:        console.log(<span class="s">"기타"</span>);
+}</pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q5</span><h3 class="p-title">구구단 짝수 단만 출력</h3><span class="badge tree">🌳 도전</span></div>
+    <p class="p-desc">중첩 반복문과 continue를 함께 사용해보세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>2단부터 9단까지 출력하되, 홀수 단은 continue로 건너뛴다</li><li>각 단은 `2 x 1 = 2` 형태로 1~9까지 출력한다 (템플릿 리터럴 사용)</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">for (let dan = 2; dan &lt;= 9; dan++) {
+  if (dan % 2 === 1) continue; <span class="c">// 홀수 단 건너뛰기</span>
+  for (let i = 1; i &lt;= 9; i++) {
+    console.log(<span class="s">`${dan} x ${i} = ${dan * i}`</span>);
+  }
+}</pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q6</span><h3 class="p-title">영화 1편 변수화 + 삼항연산자 배지</h3><span class="badge mission">🎬 index.html 미션</span></div>
+    <p class="p-desc">index.html 카드에 하드코딩된 영화 정보를 main.js의 변수로 옮기고, <b>평점이 있으면 배지 문자열, 없으면 빈 문자열</b>을 만드는 삼항연산자를 작성합니다. (아직 화면은 안 바꿉니다 — 콘솔로만!)</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>main.js에 movieTitle(제목), movieGenre(장르), movieRating(평점 9.2) 변수를 const로 선언한다</li><li>평점 등급(명작/볼만함/비추)을 if문으로 콘솔에 출력한다</li><li>const ratingBadge = movieRating ? `⭐ ${movieRating}` : ""; 를 작성한다</li><li>movieRating을 null로 바꿔보고 ratingBadge가 빈 문자열이 되는 것도 확인한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">null은 조건식에서 false로 취급됩니다(거짓 같은 값). 그래서 rating ? A : B 패턴이 동작합니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// main.js (이어서 작성)</span>
+const movieTitle = <span class="s">"스텔라 오디세이"</span>;
+const movieGenre = <span class="s">"SF · 액션"</span>;
+const movieRating = 9.2;   <span class="c">// null로 바꿔서도 테스트!</span>
+
+if (movieRating &gt;= 9.0)      console.log(<span class="s">"명작"</span>);
+else if (movieRating &gt;= 7.0) console.log(<span class="s">"볼만함"</span>);
+else                         console.log(<span class="s">"비추"</span>);
+
+const ratingBadge = movieRating ? <span class="s">`⭐ ${movieRating}`</span> : <span class="s">""</span>;
+console.log(<span class="s">`[${movieTitle}] ${ratingBadge}`</span>);
+<span class="c">// movieRating = 9.2  → [스텔라 오디세이] ⭐ 9.2</span>
+<span class="c">// movieRating = null → [스텔라 오디세이]</span></pre></div></details>
+  </article>
+</main>
+<footer class="end">02. 기본문법 — 실습지 · 교안: 02. 기본문법.html</footer>
+</body>
+</html>

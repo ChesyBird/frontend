@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>07. BOM.html — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · CHAPTER 07</span>
+  <h1 class="title">07. BOM</h1>
+  <p class="subtitle">브라우저 자체를 다루는 객체들 — window · location · 타이머 · 저장소</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>🎯 학습 목표</h3><ul><li>☐ BOM 구조와 window가 최상위 객체임을 설명할 수 있다</li><li>☐ setTimeout / setInterval로 시간 기반 동작을 만들 수 있다</li><li>☐ location 객체로 페이지 이동을 제어할 수 있다</li><li>☐ localStorage에 데이터를 저장하고 꺼낼 수 있다</li></ul></div><section class="sec"><div class="sec-head"><span class="sec-no">07-1</span><h2>BOM(Browser Object Model) 구조</h2></div><p class="body">BOM은 <b>브라우저 창 자체</b>를 다루는 객체 모델입니다. 최상위에 <b>window 객체</b>가 있고, 그 아래에 location · navigator · history · screen, 그리고 문서를 다루는 <b>document(=DOM, 8장)</b>가 있습니다.</p>
+<table class="ref">
+  <thead><tr><th>객체</th><th>담당</th></tr></thead>
+  <tbody><tr><td class="mono">window</td><td>브라우저 창 — 자바스크립트의 <b>최상위 객체</b>. 모든 전역 객체·함수가 이 아래에 존재</td></tr>
+<tr><td class="mono">screen</td><td>사용자 모니터 화면 정보</td></tr>
+<tr><td class="mono">location</td><td>주소 표시줄(URL) 정보와 이동</td></tr>
+<tr><td class="mono">navigator</td><td>브라우저 자체 정보 (이름·버전·OS)</td></tr>
+<tr><td class="mono">history</td><td>방문 기록 — 앞으로/뒤로 가기</td></tr>
+<tr><td class="mono">document</td><td>문서(HTML) — 8장 DOM에서 학습</td></tr></tbody></table>
+<p class="body">window가 최상위이므로 <code class='i'>window.console.log()</code> → <code class='i'>console.log()</code>처럼 <b>window.는 생략 가능</b>합니다.</p></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">07-2</span><h2>window 객체 — 창 제어</h2></div><p class="body"><code class='i'>window.open('주소', '이름 또는 open방식', '형태')</code>로 새 창을 열 수 있습니다.</p>
+<table class="ref">
+  <thead><tr><th>형태 옵션</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">width / height</td><td>창의 너비 / 높이 값</td></tr>
+<tr><td class="mono">location</td><td>주소 입력 창 표시 여부</td></tr>
+<tr><td class="mono">menubar / toolbar / status</td><td>메뉴 / 툴바 / 상태표시줄 표시 여부</td></tr>
+<tr><td class="mono">resizable</td><td>화면 크기 조절 가능 여부 (yes | no | 1 | 0)</td></tr></tbody></table>
+<table class="ref">
+  <thead><tr><th>메서드</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">moveBy(x,y) / moveTo(x,y)</td><td>창 위치 조정 (상대 / 절대)</td></tr>
+<tr><td class="mono">resizeBy(x,y) / resizeTo(x,y)</td><td>창 크기 조정 (상대 / 절대)</td></tr>
+<tr><td class="mono">scrollBy(x,y) / scrollTo(x,y)</td><td>스크롤 이동 (상대 / 절대)</td></tr>
+<tr><td class="mono">focus() / blur()</td><td>창에 초점 맞춤 / 제거</td></tr>
+<tr><td class="mono">close()</td><td>창 닫기 (스크립트로 연 창만 확실히 닫힘)</td></tr>
+<tr><td class="mono">alert() / confirm() / prompt()</td><td>경고 / 확인(true·false 리턴) / 입력(문자열 리턴) 대화상자</td></tr></tbody></table>
+<div class="box warn"><div class="box-title">⚠️ 팝업 차단</div><div class="box-body"><p class="body">요즘 브라우저는 <b>사용자 클릭 없이 실행되는 window.open을 차단</b>합니다. 새 창은 반드시 버튼 클릭 같은 사용자 동작 안에서 여세요.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">07-3</span><h2>타이머 — setTimeout · setInterval ⭐</h2></div><table class="ref">
+  <thead><tr><th>메서드</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">setTimeout(함수, ms)</td><td>일정 시간 <b>후 한 번</b> 실행 / 취소용 id 리턴</td></tr>
+<tr><td class="mono">setInterval(함수, ms)</td><td>일정 시간<b>마다 반복</b> 실행 / 취소용 id 리턴</td></tr>
+<tr><td class="mono">clearTimeout(id)</td><td>setTimeout 예약 취소</td></tr>
+<tr><td class="mono">clearInterval(id)</td><td>setInterval 반복 종료</td></tr></tbody></table>
+<pre class="code">setTimeout(function () {
+  console.log(<span class="s">"3초 후 한 번 실행"</span>);
+}, 3000);
+
+let count = 0;
+const timerId = setInterval(function () {
+  count++;
+  console.log(count + <span class="s">"초 경과"</span>);
+  if (count &gt;= 5) clearInterval(timerId);  <span class="c">// 5초 뒤 반복 종료</span>
+}, 1000);</pre>
+<div class="box imp"><div class="box-title">⭐ clearInterval을 위해 id를 꼭 변수에 저장</div><div class="box-body"><p class="body">setInterval은 멈추라고 하기 전까지 <b>영원히</b> 돕니다. 리턴되는 id를 변수에 담아두지 않으면 멈출 방법이 없습니다. 11장의 <b>캐러셀 자동 넘김</b>이 setInterval, 마우스 올리면 멈추기가 clearInterval입니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">07-4</span><h2>window.onload — 문서가 준비된 후 실행</h2></div><p class="body"><code class='i'>window.onload</code>에 함수를 설정하면 <b>모든 태그(이미지 포함)가 화면에 나타난 뒤</b> 자동으로 실행됩니다. 1장에서 배운 「script를 body 끝에 두기」와 같은 문제(요소가 만들어지기 전 접근)를 푸는 또 다른 방법입니다.</p>
+<pre class="code">window.onload = function () {
+  console.log(<span class="s">"문서 로드 완료 — 이제 어떤 요소든 안전하게 선택 가능"</span>);
+};</pre>
+<p class="body">참고: 최신 코드에서는 이미지까지 기다리지 않고 HTML 구조만 완성되면 실행되는 <code class='i'>DOMContentLoaded</code> 이벤트(9장)를 더 많이 씁니다.</p></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">07-5</span><h2>screen · location · navigator · history</h2></div><table class="ref">
+  <thead><tr><th>screen 속성</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">width / height</td><td>화면 너비 / 높이</td></tr>
+<tr><td class="mono">availWidth / availHeight</td><td>작업표시줄 등을 뺀 실제 사용 가능 너비 / 높이</td></tr>
+<tr><td class="mono">colorDepth / pixelDepth</td><td>사용 가능한 색상 수 / 픽셀당 비트 수</td></tr></tbody></table>
+<table class="ref">
+  <thead><tr><th>location 속성</th><th>설명 (예: https://movie.com:8080/list?genre=sf#top)</th></tr></thead>
+  <tbody><tr><td class="mono">href</td><td>전체 URL — 값을 대입하면 <b>페이지 이동</b></td></tr>
+<tr><td class="mono">protocol / host / hostname / port</td><td>https: / movie.com:8080 / movie.com / 8080</td></tr>
+<tr><td class="mono">pathname</td><td>/list</td></tr>
+<tr><td class="mono">search</td><td>?genre=sf (요청 매개변수)</td></tr>
+<tr><td class="mono">hash</td><td>#top (앵커)</td></tr></tbody></table>
+<table class="ref">
+  <thead><tr><th>location 메서드</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">assign('주소')</td><td>새 페이지 로드 — <b>뒤로 가기 가능</b></td></tr>
+<tr><td class="mono">replace('주소')</td><td>현재 페이지를 교체 — <b>뒤로 가기 불가</b></td></tr>
+<tr><td class="mono">reload()</td><td>현재 문서 새로고침</td></tr></tbody></table>
+<p class="body"><b>navigator</b>는 브라우저 정보(<code class='i'>userAgent</code> 등), <b>history</b>는 방문 기록을 다룹니다: <code class='i'>history.back()</code>(뒤로), <code class='i'>history.forward()</code>(앞으로), <code class='i'>history.go(-2)</code>(2페이지 뒤로).</p></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">07-6</span><h2>localStorage · sessionStorage — 브라우저 저장소</h2></div><p class="body">window의 저장소 객체로, 새로고침해도 데이터가 남습니다. <b>localStorage는 지우기 전까지 영구</b>, sessionStorage는 탭을 닫으면 삭제됩니다.</p>
+<table class="ref">
+  <thead><tr><th>메서드</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">setItem(키, 값)</td><td>저장 — 값은 <b>문자열만</b> 가능</td></tr>
+<tr><td class="mono">getItem(키)</td><td>읽기 — 없으면 null</td></tr>
+<tr><td class="mono">removeItem(키)</td><td>해당 키 삭제</td></tr>
+<tr><td class="mono">clear()</td><td>전부 삭제</td></tr></tbody></table>
+<pre class="code">localStorage.setItem(<span class="s">"nickname"</span>, <span class="s">"무비덕후"</span>);
+console.log(localStorage.getItem(<span class="s">"nickname"</span>)); <span class="c">// 무비덕후</span>
+
+<span class="c">// 객체/배열은 JSON 문자열로 변환해서 저장 (JSON은 10장에서 자세히)</span>
+localStorage.setItem(<span class="s">"fav"</span>, JSON.stringify({ title: <span class="s">"도시의 밤"</span> }));
+const fav = JSON.parse(localStorage.getItem(<span class="s">"fav"</span>));
+console.log(fav.title);</pre>
+<div class="box warn"><div class="box-title">⚠️ 문자열만 저장됩니다</div><div class="box-body"><p class="body">객체를 그대로 setItem하면 <code class='i'>"[object Object]"</code>가 저장되어 버립니다. 반드시 <code class='i'>JSON.stringify</code>로 넣고 <code class='i'>JSON.parse</code>로 꺼내세요.</p></div></div></section>
+</main>
+<footer class="end">07. BOM — 교안 · 짝꿍 실습지: 07. BOM-실습.html</footer>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>09. 이벤트-실습 — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · WORKSHEET 09</span>
+  <h1 class="title">09. 이벤트 — 실습</h1>
+  <p class="subtitle">이벤트 등록·위임·유효성 검사 연습 + 검색/장르 필터를 완성하는 미션</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>📝 실습 안내</h3><ul>
+    <li>교안 「09. 이벤트」을 참고하며 순서대로 풉니다.</li>
+    <li>🌱기초 → 🌿응용 → 🌳도전 순서로 어려워지고, 마지막 🎬미션은 index.html/main.js에 실제 기능을 쌓는 누적 과제입니다.</li>
+    <li>막히면 힌트 → 그래도 막히면 정답을 보고, 정답을 덮고 다시 한 번 직접 작성해보세요.</li></ul></div><article class="problem">
+    <div class="p-head"><span class="p-no">Q1</span><h3 class="p-title">고전 모델 vs 표준 모델</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">같은 버튼에 두 방식으로 핸들러를 달아 차이를 확인하세요.</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">&lt;button id=<span class="s">"likeBtn"</span>&gt;좋아요&lt;/button&gt;</pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>onclick으로 "A" 출력 핸들러를 달고, 다시 onclick으로 "B" 출력 핸들러를 단다 → 클릭 시 무엇이 출력되나?</li><li>addEventListener로 "C", "D" 두 핸들러를 달고 클릭한다 → 무엇이 출력되나?</li><li>두 결과의 차이를 한 줄로 정리한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const btn = document.querySelector(<span class="s">"#likeBtn"</span>);
+
+btn.onclick = function () { console.log(<span class="s">"A"</span>); };
+btn.onclick = function () { console.log(<span class="s">"B"</span>); }; <span class="c">// A를 덮어씀!</span>
+<span class="c">// 클릭 → B만 출력 (고전 모델은 핸들러 1개만)</span>
+
+btn.addEventListener(<span class="s">"click"</span>, function () { console.log(<span class="s">"C"</span>); });
+btn.addEventListener(<span class="s">"click"</span>, function () { console.log(<span class="s">"D"</span>); });
+<span class="c">// 클릭 → B, C, D 모두 출력 (표준 모델은 여러 개 누적 가능)</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q2</span><h3 class="p-title">이벤트 골라 쓰기</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">상황에 맞는 이벤트 이름을 교안 09-2 표에서 고르세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>① 검색어를 타이핑할 때마다 실시간으로 반응 → ?</li><li>② 장르 셀렉트박스에서 선택을 바꿨을 때 → ?</li><li>③ 폼에서 검색 버튼을 누르거나 엔터를 쳤을 때 → ?</li><li>④ 카드에 마우스를 올렸을 때 → ?</li><li>⑤ HTML 구조가 완성되자마자 (이미지 기다리지 않고) → ?</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// ① input  ② change  ③ submit  ④ mouseover  ⑤ DOMContentLoaded</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q3</span><h3 class="p-title">preventDefault 체험</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">기본 동작이 무엇인지 몸으로 확인하세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>index.html의 검색 폼에 submit 핸들러를 달되, preventDefault 없이 콘솔 출력만 한다 → 제출해보고 무슨 일이 생기는지 관찰 (콘솔이 지워지는 이유는?)</li><li>e.preventDefault()를 추가하고 다시 제출해 차이를 확인한다</li><li>input[name=keyword]의 value를 콘솔에 출력한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">required 속성 때문에 빈 값으로는 제출 자체가 안 됩니다 — 아무 글자나 넣고 테스트하세요.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const form = document.querySelector(<span class="s">".search-form"</span>);
+
+form.addEventListener(<span class="s">"submit"</span>, function (e) {
+  e.preventDefault();   <span class="c">// 이 줄이 없으면 페이지가 새로고침되어 콘솔도 초기화!</span>
+  const keyword = document.querySelector(<span class="s">"input[name=keyword]"</span>).value;
+  console.log(<span class="s">"검색어:"</span>, keyword);
+});</pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q4</span><h3 class="p-title">이벤트 위임으로 카드 클릭 처리</h3><span class="badge tree">🌳 도전</span></div>
+    <p class="p-desc">동적으로 그린 카드에도 동작하는 클릭 처리를 만드세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>.grid에 클릭 핸들러 하나만 등록한다</li><li>e.target.closest(".card")로 클릭된 카드를 찾는다 (없으면 return)</li><li>카드 안 h3의 textContent를 alert로 띄운다</li><li>renderMovies(movies)로 카드를 다시 그린 뒤에도 클릭이 여전히 동작하는지 확인한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">querySelector는 document뿐 아니라 '요소.querySelector'로 그 요소 안에서만 찾을 수도 있습니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">document.querySelector(<span class="s">".grid"</span>).addEventListener(<span class="s">"click"</span>, function (e) {
+  const card = e.target.closest(<span class="s">".card"</span>);
+  if (!card) return;
+
+  const title = card.querySelector(<span class="s">"h3"</span>).textContent;
+  alert(title + <span class="s">" 상세 정보 (준비 중)"</span>);
+});
+
+<span class="c">// 카드에 직접 걸었다면 renderMovies() 후 전부 사라졌겠지만,</span>
+<span class="c">// 부모 .grid에 위임했으므로 다시 그려도 계속 동작!</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q5</span><h3 class="p-title">이메일 유효성 검사</h3><span class="badge tree">🌳 도전</span></div>
+    <p class="p-desc">정규표현식으로 형식을 검사하는 함수를 만드세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>function isValidEmail(email) 을 만든다 — 교안의 이메일 정규식과 test() 사용</li><li>"movie@test.com", "movie@@com", "가나다@test.com" 세 값으로 테스트한다</li><li>prompt로 이메일을 입력받아, 유효하면 "가입 가능", 아니면 "형식 오류"를 alert한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">function isValidEmail(email) {
+  const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
+  return regex.test(email);
+}
+
+console.log(isValidEmail(<span class="s">"movie@test.com"</span>));  <span class="c">// true</span>
+console.log(isValidEmail(<span class="s">"movie@@com"</span>));      <span class="c">// false</span>
+console.log(isValidEmail(<span class="s">"가나다@test.com"</span>)); <span class="c">// false (한글은 패턴에 없음)</span>
+
+const email = prompt(<span class="s">"이메일을 입력하세요"</span>);
+alert(isValidEmail(email) ? <span class="s">"가입 가능"</span> : <span class="s">"형식 오류"</span>);</pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q6</span><h3 class="p-title">검색 + 장르 필터 완성</h3><span class="badge mission">🎬 index.html 미션</span></div>
+    <p class="p-desc">8장의 renderMovies()에 이벤트를 연결해 <b>실제로 동작하는 검색</b>을 완성합니다. 배열을 걸러서 같은 함수로 다시 그리기만 하면 됩니다.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>movies의 각 객체에 genreCode 속성("action"/"romance"/"scifi" 등 select의 value와 맞춤)을 추가한다</li><li>function filterMovies() 를 만든다 — keyword input의 value(trim!)와 select의 value를 읽는다</li><li>movies를 filter한다: 제목에 keyword가 포함(includes)되고, 장르가 "all"이거나 genreCode와 일치</li><li>걸러진 배열로 renderMovies(filtered)를 호출한다</li><li>폼 submit(preventDefault!)과 select의 change, keyword의 input 세 곳에서 filterMovies가 실행되게 연결한다</li><li>도전: keyword가 한글·영문·숫자·공백 외 문자를 포함하면 alert 후 중단 (정규식)</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">빈 검색어일 때 includes("")는 항상 true — 검색창을 지우면 자동으로 전체 목록이 복원됩니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// main.js (이어서 작성) — movies 각 객체에 genreCode 추가했다고 가정</span>
+const form = document.querySelector(<span class="s">".search-form"</span>);
+const keywordInput = document.querySelector(<span class="s">"input[name=keyword]"</span>);
+const genreSelect = document.querySelector(<span class="s">"select[name=genre]"</span>);
+
+function filterMovies() {
+  const keyword = keywordInput.value.trim();
+  const genre = genreSelect.value;
+
+  <span class="c">// (도전) 위험 문자 차단</span>
+  if (keyword &amp;&amp; !/^[가-힣a-zA-Z0-9\s]+$/.test(keyword)) {
+    alert(<span class="s">"검색어는 한글/영문/숫자만 입력하세요"</span>);
+    return;
+  }
+
+  const filtered = movies.filter(function (m) {
+    const matchKeyword = m.title.includes(keyword);
+    const matchGenre = genre === <span class="s">"all"</span> || m.genreCode === genre;
+    return matchKeyword &amp;&amp; matchGenre;
+  });
+
+  renderMovies(filtered);
+}
+
+form.addEventListener(<span class="s">"submit"</span>, function (e) {
+  e.preventDefault();     <span class="c">// 새로고침 차단 — 반드시!</span>
+  filterMovies();
+});
+genreSelect.addEventListener(<span class="s">"change"</span>, filterMovies);
+keywordInput.addEventListener(<span class="s">"input"</span>, filterMovies);  <span class="c">// 실시간 검색</span></pre></div></details>
+  </article>
+</main>
+<footer class="end">09. 이벤트 — 실습지 · 교안: 09. 이벤트.html</footer>
+</body>
+</html>

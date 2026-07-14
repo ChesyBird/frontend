@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>08. DOM-실습 — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · WORKSHEET 08</span>
+  <h1 class="title">08. DOM — 실습</h1>
+  <p class="subtitle">선택·수정·생성·제거 연습 + 하드코딩 카드 6장을 데이터 렌더링으로 교체하는 핵심 미션</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>📝 실습 안내</h3><ul>
+    <li>교안 「08. DOM」을 참고하며 순서대로 풉니다.</li>
+    <li>🌱기초 → 🌿응용 → 🌳도전 순서로 어려워지고, 마지막 🎬미션은 index.html/main.js에 실제 기능을 쌓는 누적 과제입니다.</li>
+    <li>막히면 힌트 → 그래도 막히면 정답을 보고, 정답을 덮고 다시 한 번 직접 작성해보세요.</li></ul></div><article class="problem">
+    <div class="p-head"><span class="p-no">Q1</span><h3 class="p-title">요소 선택 연습</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">index.html을 열고 콘솔에서 선택해보세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>.logo 요소를 선택해 textContent를 출력한다</li><li>querySelectorAll(".card")의 length를 출력한다</li><li>첫 번째 카드의 dataset.rating을 출력한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">console.log(document.querySelector(<span class="s">".logo"</span>).textContent);
+console.log(document.querySelectorAll(<span class="s">".card"</span>).length);   <span class="c">// 6</span>
+console.log(document.querySelector(<span class="s">".card"</span>).dataset.rating); <span class="c">// <span class="s">"9.2"</span></span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q2</span><h3 class="p-title">스타일·클래스 조작</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">콘솔에서 화면을 직접 바꿔보세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>h1 요소의 글자색을 style로 tomato로 바꾼다</li><li>첫 번째 카드에 classList.add로 "featured" 클래스를 넣는다</li><li>classList.toggle을 두 번 실행해 켜졌다 꺼지는 것을 확인한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">글자 색 속성은 CSS의 color → JS에서도 style.color 입니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">document.querySelector(<span class="s">"h1"</span>).style.color = <span class="s">"tomato"</span>;
+
+const card = document.querySelector(<span class="s">".card"</span>);
+card.classList.add(<span class="s">"featured"</span>);
+card.classList.toggle(<span class="s">"featured"</span>); <span class="c">// 꺼짐</span>
+card.classList.toggle(<span class="s">"featured"</span>); <span class="c">// 켜짐</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q3</span><h3 class="p-title">createElement로 공지 추가</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">전통 방식으로 요소를 만들어 문서에 붙여보세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>p 요소를 createElement로 만든다</li><li>textContent에 "이번 주 신작이 업데이트되었습니다"를 넣는다</li><li>setAttribute로 class="notice"를 설정한다</li><li>검색 section 요소를 선택해 appendChild로 추가한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const notice = document.createElement(<span class="s">"p"</span>);
+notice.textContent = <span class="s">"이번 주 신작이 업데이트되었습니다"</span>;
+notice.setAttribute(<span class="s">"class"</span>, <span class="s">"notice"</span>);
+
+const searchSection = document.querySelector(<span class="s">"section"</span>);
+searchSection.appendChild(notice);</pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q4</span><h3 class="p-title">랭킹 테이블 tbody 다시 그리기</h3><span class="badge tree">🌳 도전</span></div>
+    <p class="p-desc">3장의 sort와 innerHTML을 조합해 랭킹 테이블을 데이터로 그려보세요.</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">const ranking = [
+  { title: <span class="s">"여름의 문"</span>,   rating: 8.7 },
+  { title: <span class="s">"도시의 밤"</span>,   rating: 9.8 },
+  { title: <span class="s">"파랑의 계절"</span>, rating: 9.5 },
+];</pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>[...ranking]을 평점 내림차순으로 정렬한다</li><li>forEach로 <tr><td>순위</td><td>제목</td><td>평점</td></tr> 문자열을 누적한다 (순위 = 인덱스 + 1)</li><li>tbody 요소를 선택해 innerHTML에 대입한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">forEach 콜백의 두 번째 매개변수가 인덱스입니다 — 순위는 i + 1.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const sorted = [...ranking].sort(function (a, b) {
+  return b.rating - a.rating;
+});
+
+let rows = <span class="s">""</span>;
+sorted.forEach(function (m, i) {
+  rows += <span class="s">`&lt;tr&gt;&lt;td&gt;${i + 1}&lt;/td&gt;&lt;td&gt;${m.title}&lt;/td&gt;&lt;td&gt;${m.rating}&lt;/td&gt;&lt;/tr&gt;`</span>;
+});
+
+document.querySelector(<span class="s">"tbody"</span>).innerHTML = rows;</pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q5</span><h3 class="p-title">카드 6장 동적 렌더링 (핵심 전환점!)</h3><span class="badge mission">🎬 index.html 미션</span></div>
+    <p class="p-desc">index.html에 복사·붙여넣기된 카드 6개를 <b>전부 삭제</b>하고, 5장의 movies 배열 + makeCard()로 <b>화면을 데이터로 그립니다.</b> 평점 배지가 드디어 눈에 보입니다.</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">/* styles.css에 추가 — 배지 위치 (카드 오른쪽 상단) */
+.card { position: relative; }
+.rating-badge {
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(0,0,0,.75); color: gold;
+  padding: 4px 10px; border-radius: 999px;
+  font-size: 13px; font-weight: 700;
+}</pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>index.html의 <article class="card">…</article> 6개를 전부 삭제한다 (grid div는 남긴다!)</li><li>위 CSS를 styles.css에 추가한다</li><li>main.js에 function renderMovies(list) 를 만든다 — forEach + makeCard로 html 문자열을 누적해 .grid의 innerHTML에 대입</li><li>renderMovies(movies) 를 호출해 카드 6장이 그려지는지 확인한다</li><li>rating이 null인 영화만 배지가 안 뜨는지 확인한다 (2장부터 이어온 삼항연산자의 완성!)</li><li>도전: 8-4번 문제를 함수화해 renderRanking(movies)도 만들어 실행한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">renderMovies를 '함수'로 만드는 이유: 9장에서 검색 결과 배열로 renderMovies(filtered)를 다시 부르기만 하면 필터링이 완성되기 때문입니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// main.js (이어서 작성)</span>
+function renderMovies(list) {
+  const grid = document.querySelector(<span class="s">".grid"</span>);
+  let html = <span class="s">""</span>;
+  list.forEach(function (movie) {
+    html += makeCard(movie);
+  });
+  grid.innerHTML = html;
+}
+
+function renderRanking(list) {
+  const sorted = [...list]
+    .filter(function (m) { return m.rating; })  <span class="c">// 평점 없는 작품 제외</span>
+    .sort(function (a, b) { return b.rating - a.rating; });
+  let rows = <span class="s">""</span>;
+  sorted.forEach(function (m, i) {
+    rows += <span class="s">`&lt;tr&gt;&lt;td&gt;${i + 1}&lt;/td&gt;&lt;td&gt;${m.title}&lt;/td&gt;&lt;td&gt;${m.rating}&lt;/td&gt;&lt;/tr&gt;`</span>;
+  });
+  document.querySelector(<span class="s">"tbody"</span>).innerHTML = rows;
+}
+
+renderMovies(movies);
+renderRanking(movies);</pre></div></details>
+  </article>
+</main>
+<footer class="end">08. DOM — 실습지 · 교안: 08. DOM.html</footer>
+</body>
+</html>

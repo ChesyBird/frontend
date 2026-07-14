@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>07. BOM-실습 — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · WORKSHEET 07</span>
+  <h1 class="title">07. BOM — 실습</h1>
+  <p class="subtitle">타이머·location·localStorage 연습 + 헤더에 실시간 시계를 띄우는 첫 화면 미션</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>📝 실습 안내</h3><ul>
+    <li>교안 「07. BOM」을 참고하며 순서대로 풉니다.</li>
+    <li>🌱기초 → 🌿응용 → 🌳도전 순서로 어려워지고, 마지막 🎬미션은 index.html/main.js에 실제 기능을 쌓는 누적 과제입니다.</li>
+    <li>막히면 힌트 → 그래도 막히면 정답을 보고, 정답을 덮고 다시 한 번 직접 작성해보세요.</li></ul></div><article class="problem">
+    <div class="p-head"><span class="p-no">Q1</span><h3 class="p-title">confirm으로 성인 인증 흉내</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">대화상자 3종을 써보세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>confirm("19세 이상입니까?")의 결과를 변수에 담는다</li><li>true면 alert로 "입장 환영!", false면 alert로 "관람 불가"를 띄운다</li><li>prompt("닉네임을 입력하세요")로 입력받아 콘솔에 출력한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const isAdult = confirm(<span class="s">"19세 이상입니까?"</span>);
+if (isAdult) alert(<span class="s">"입장 환영!"</span>);
+else         alert(<span class="s">"관람 불가"</span>);
+
+const nickname = prompt(<span class="s">"닉네임을 입력하세요"</span>);
+console.log(nickname);   <span class="c">// 취소를 누르면 null</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q2</span><h3 class="p-title">5초 카운트다운</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">setInterval과 clearInterval을 짝으로 사용하세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>count 변수를 5로 시작한다</li><li>1초마다 count를 출력하고 1씩 줄인다</li><li>0이 되면 "상영 시작!"을 출력하고 clearInterval로 멈춘다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">id를 변수에 담아야 clearInterval(id)로 멈출 수 있습니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">let count = 5;
+const id = setInterval(function () {
+  console.log(count);
+  count--;
+  if (count &lt; 0) {
+    console.log(<span class="s">"상영 시작!"</span>);
+    clearInterval(id);
+  }
+}, 1000);</pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q3</span><h3 class="p-title">location 속성 분해</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">아무 사이트나 열고 콘솔에서 location 속성을 확인하세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>location.href / protocol / hostname / pathname / search 를 각각 출력한다</li><li>검색 결과 페이지(예: 포털에서 검색 후)에서 search 값에 무엇이 담기는지 관찰한다</li><li>location.href = 로 페이지를 이동시켜본 뒤, 뒤로 가기가 되는지 확인한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">console.log(location.href);      <span class="c">// 전체 URL</span>
+console.log(location.protocol);  <span class="c">// https:</span>
+console.log(location.hostname);  <span class="c">// 도메인</span>
+console.log(location.pathname);  <span class="c">// /경로</span>
+console.log(location.search);    <span class="c">// ?키=값&amp;키=값 (검색 페이지에서 확인)</span>
+
+location.href = <span class="s">"https:<span class="c">//example.com"</span>; // 이동 (assign과 동일, 뒤로 가기 O)</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q4</span><h3 class="p-title">localStorage 방문 횟수 카운터</h3><span class="badge tree">🌳 도전</span></div>
+    <p class="p-desc">새로고침해도 남는 데이터를 만들어보세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>localStorage에서 "visit" 값을 읽는다 (처음이면 null)</li><li>null이면 0으로 시작, 아니면 Number()로 숫자 변환한다 (저장소 값은 문자열!)</li><li>1 증가시켜 다시 저장하고, `n번째 방문입니다` 를 출력한다</li><li>새로고침을 여러 번 하며 숫자가 늘어나는지 확인한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">getItem은 항상 문자열(또는 null)을 리턴합니다. 2장의 형변환이 여기서 쓰입니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">let visit = localStorage.getItem(<span class="s">"visit"</span>);
+visit = visit ? Number(visit) : 0;   <span class="c">// 문자열 → 숫자 변환 필수!</span>
+
+visit++;
+localStorage.setItem(<span class="s">"visit"</span>, visit);
+console.log(<span class="s">`${visit}번째 방문입니다`</span>);</pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q5</span><h3 class="p-title">헤더에 실시간 시계 달기</h3><span class="badge mission">🎬 index.html 미션</span></div>
+    <p class="p-desc">드디어 <b>화면이 처음으로 움직입니다!</b> setInterval + Date로 헤더에 현재 시각을 표시합니다. (요소 선택·표시 코드는 8장 내용이라 아래에 제공 — 다음 장에서 배웁니다)</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">&lt;!-- index.html 헤더의 로고 옆에 추가 --&gt;
+&lt;div class=<span class="s">"logo"</span>&gt;🎬 무비 컬렉션 &lt;span id=<span class="s">"clock"</span>&gt;&lt;/span&gt;&lt;/div&gt;</pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>index.html 로고 span에 id="clock"인 빈 span을 추가한다 (위 참고)</li><li>main.js에 function showClock() 을 만든다 — new Date()에서 시:분:초를 꺼내 문자열로 조립</li><li>제공 코드 document.querySelector("#clock").textContent = 시각문자열; 로 화면에 표시한다</li><li>setInterval(showClock, 1000) 으로 1초마다 갱신하고, showClock()을 한 번 즉시 호출해 처음 1초 공백을 없앤다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">화면에 8:5:3처럼 나온다면? 도전과제: 한 자리 숫자 앞에 0을 붙여 08:05:03으로 만들어보세요 (삼항연산자: h < 10 ? "0"+h : h).</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// main.js (이어서 작성)</span>
+function showClock() {
+  const now = new Date();
+  const h = now.getHours();
+  const m = now.getMinutes();
+  const s = now.getSeconds();
+  const text = <span class="s">`${h}:${m}:${s}`</span>;
+  document.querySelector(<span class="s">"#clock"</span>).textContent = text; <span class="c">// ← 8장에서 배울 한 줄!</span>
+}
+
+showClock();                  <span class="c">// 즉시 1회 실행</span>
+setInterval(showClock, 1000); <span class="c">// 이후 1초마다 갱신</span></pre></div></details>
+  </article>
+</main>
+<footer class="end">07. BOM — 실습지 · 교안: 07. BOM.html</footer>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>04. 함수.html — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · CHAPTER 04</span>
+  <h1 class="title">04. 함수</h1>
+  <p class="subtitle">코드 묶음에 이름을 붙여 재사용하기 — 선언 방법 3가지와 호이스팅</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>🎯 학습 목표</h3><ul><li>☐ 선언적 함수 · 익명 함수 · 즉시실행함수를 구분해서 작성할 수 있다</li><li>☐ 매개변수와 return의 동작 규칙을 설명할 수 있다</li><li>☐ 호이스팅 때문에 생기는 실행 순서 차이를 예측할 수 있다</li><li>☐ 함수를 값처럼 다른 함수에 전달(콜백)할 수 있다</li></ul></div><section class="sec"><div class="sec-head"><span class="sec-no">04-1</span><h2>함수란</h2></div><p class="body">함수는 <b>소스코드의 집합</b>으로, 메서드·모듈·기능·프로시저 등으로도 불리며 자바스크립트에서는 <b>function 자료형</b>입니다. 「입력 값(매개변수) → 연산 → 반환값」 구조로, 같은 코드를 이름 하나로 몇 번이고 재사용할 수 있게 해줍니다.</p></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">04-2</span><h2>함수 선언 3가지 방법</h2></div><p class="body"><b>① 선언적 함수</b> — function 키워드에 함수 이름을 붙여 작성</p>
+<pre class="code">function greet(name) {
+  return <span class="s">`안녕하세요, ${name}님!`</span>;
+}
+console.log(greet(<span class="s">"지민"</span>));</pre>
+<div class="out"><span class="out-label">실행 결과</span><pre>안녕하세요, 지민님!</pre></div>
+<p class="body"><b>② 익명 함수(함수 표현식)</b> — 이름 없는 함수를 변수에 대입. 콜백 형태로 자주 사용</p>
+<pre class="code">const greet2 = function (name) {
+  return <span class="s">`반갑습니다, ${name}님!`</span>;
+};
+console.log(greet2(<span class="s">"수현"</span>));</pre>
+<p class="body"><b>③ 즉시실행함수(IIFE)</b> — 호출 없이 정의와 동시에 바로 실행</p>
+<pre class="code">(function () {
+  console.log(<span class="s">"페이지 초기화 완료"</span>);
+})();</pre>
+<p class="body">참고로 ES6부터는 익명 함수를 더 짧게 쓰는 <b>화살표 함수</b>도 있습니다: <code class='i'>const greet3 = (name) => `hi ${name}`;</code> — 우리 index.html의 기존 스크립트가 이미 이 문법을 쓰고 있죠.</p></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">04-3</span><h2>함수 호출 / 매개변수와 return</h2></div><p class="body">함수는 반드시 <b>선언(정의)되어야 실행</b>할 수 있고, 호출하는 것을 함수 실행이라 합니다. return 값이 있다면 받을 변수를 준비합니다.</p>
+<pre class="code">함수명();                    <span class="c">// return 없는 경우</span>
+const result = 함수명(인자1, 인자2); <span class="c">// return 있는 경우</span></pre>
+<table class="ref">
+  <thead><tr><th>규칙</th><th>동작</th></tr></thead>
+  <tbody><tr><td>인자를 <b>더 많이</b> 넘기면</td><td>초과분은 무시됨 (오류 아님)</td></tr>
+<tr><td>인자를 <b>더 적게</b> 넘기면</td><td>빠진 매개변수는 undefined가 됨</td></tr>
+<tr><td>return 값을 지정하지 않으면</td><td>undefined가 반환됨</td></tr>
+<tr><td>return을 만나면</td><td>즉시 함수를 종료하고 호출한 곳으로 돌아감</td></tr></tbody></table>
+<pre class="code">function add(a, b) { return a + b; }
+console.log(add(1, 2, 99)); <span class="c">// 3        (99는 무시)</span>
+console.log(add(1));        <span class="c">// NaN      (b가 undefined → 1 + undefined)</span></pre></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">04-4</span><h2>가변인자 함수 — arguments</h2></div><p class="body">매개변수 개수가 정해지지 않은 함수를 가변인자 함수라고 합니다. 모든 (function 키워드) 함수 내부에는 <b>arguments</b>라는 <b>유사 배열 객체</b>가 자동 생성되어 전달된 인자가 순서대로 저장됩니다.</p>
+<pre class="code">function sum() {
+  let total = 0;
+  for (let i = 0; i &lt; arguments.length; i++) {
+    total += arguments[i];
+  }
+  return total;
+}
+console.log(sum(1, 2, 3));       <span class="c">// 6</span>
+console.log(sum(10, 20, 30, 40)); <span class="c">// 100</span></pre>
+<div class="box warn"><div class="box-title">⚠️ arguments는 '유사' 배열</div><div class="box-body"><p class="body">length와 인덱스는 있지만 <b>진짜 배열이 아니라서</b> push, sort 같은 배열 메서드는 쓸 수 없습니다. 또 <b>화살표 함수에는 arguments가 없습니다.</b> 최신 코드에서는 나머지 매개변수 <code class='i'>function sum(...nums)</code>를 씁니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">04-5</span><h2>함수를 매개변수로 전달 — 콜백</h2></div><p class="body">함수도 하나의 자료형(값)이므로 <b>다른 함수의 매개변수로 전달</b>할 수 있습니다. 전달받은 쪽에서 나중에 호출한다고 해서 <b>콜백(callback) 함수</b>라고 부릅니다.</p>
+<pre class="code">function run(callback) {
+  console.log(<span class="s">"작업 시작"</span>);
+  callback();              <span class="c">// 전달받은 함수를 호출</span>
+}
+
+run(function () {
+  console.log(<span class="s">"전달된 함수 실행!"</span>);
+});</pre>
+<div class="out"><span class="out-label">실행 결과</span><pre>작업 시작
+전달된 함수 실행!</pre></div>
+<div class="box imp"><div class="box-title">⭐ 이미 콜백을 쓰고 있습니다</div><div class="box-body"><p class="body">3장의 <code class='i'>sort(function(a,b){...})</code>, <code class='i'>forEach(function(item){...})</code>, 그리고 9장의 <code class='i'>addEventListener('click', function(){...})</code> — 전부 콜백입니다. 자바스크립트 전체를 관통하는 개념입니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">04-6</span><h2>내장 함수</h2></div><table class="ref">
+  <thead><tr><th>함수</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">isNaN(number)</td><td>number가 NaN인지 확인 — NaN 판별은 반드시 이 함수로 (NaN === NaN 은 false!)</td></tr>
+<tr><td class="mono">isFinite(number)</td><td>유한한 숫자인지 확인</td></tr>
+<tr><td class="mono">eval(String)</td><td>문자열을 자바스크립트 코드로 실행 — <b>보안 위험으로 사용 금지</b> 수준의 레거시</td></tr></tbody></table>
+<div class="box warn"><div class="box-title">⚠️ NaN은 자기 자신과도 다릅니다</div><div class="box-body"><p class="body"><code class='i'>NaN === NaN</code>은 <b>false</b>입니다. 그래서 비교연산자가 아니라 <code class='i'>isNaN()</code>(또는 <code class='i'>Number.isNaN()</code>)으로 판별해야 합니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">04-7</span><h2>호이스팅(Hoisting) — 선언이 끌어올려진다</h2></div><p class="body">자바스크립트는 코드를 실행하기 전에 <b>선언부를 먼저 훑어 메모리에 등록</b>합니다. 그래서 마치 선언이 파일 맨 위로 끌어올려진 것처럼 동작하는데, 이를 호이스팅이라고 합니다. 중요한 것은 <b>선언 방식에 따라 결과가 다르다</b>는 점입니다.</p>
+<pre class="code">hello();          <span class="c">// 동작! — 선언적 함수는 <span class="s">"함수 전체"</span>가 호이스팅</span>
+function hello() {
+  console.log(<span class="s">"안녕하세요"</span>);
+}
+
+bye();            <span class="c">// TypeError: bye is not a function</span>
+var bye = function () {
+  console.log(<span class="s">"안녕히가세요"</span>);
+};
+<span class="c">// var bye <span class="s">"선언"</span>만 끌어올려져 undefined 상태 → undefined() 호출이라 오류</span></pre>
+<table class="ref">
+  <thead><tr><th>선언 방식</th><th>호이스팅 결과</th><th>선언 전 사용하면</th></tr></thead>
+  <tbody><tr><td>function 선언적 함수</td><td>함수 <b>전체</b>가 올라감</td><td>정상 동작</td></tr>
+<tr><td>var 변수</td><td>선언만 올라감 (값은 undefined)</td><td>undefined</td></tr>
+<tr><td>let / const</td><td>올라가지만 초기화 전 접근 금지(TDZ)</td><td><b>ReferenceError</b></td></tr></tbody></table>
+<div class="box imp"><div class="box-title">⭐ 호이스팅에 기대지 말 것</div><div class="box-body"><p class="body">선언적 함수가 '아래에 있어도 동작'하는 건 알아두되, <b>코드는 항상 「선언 먼저, 사용 나중」 순서로</b> 작성하는 습관을 들이세요. let/const가 선언 전 사용을 오류로 막아주는 이유가 바로 이것입니다.</p></div></div></section>
+</main>
+<footer class="end">04. 함수 — 교안 · 짝꿍 실습지: 04. 함수-실습.html</footer>
+</body>
+</html>

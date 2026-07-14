@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>06. 내장객체-실습 — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · WORKSHEET 06</span>
+  <h1 class="title">06. 내장객체 — 실습</h1>
+  <p class="subtitle">toFixed·Date·난수 연습 + 오늘의 추천 영화 &amp; 갱신일 문자열 미션</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>📝 실습 안내</h3><ul>
+    <li>교안 「06. 내장객체」을 참고하며 순서대로 풉니다.</li>
+    <li>🌱기초 → 🌿응용 → 🌳도전 순서로 어려워지고, 마지막 🎬미션은 index.html/main.js에 실제 기능을 쌓는 누적 과제입니다.</li>
+    <li>막히면 힌트 → 그래도 막히면 정답을 보고, 정답을 덮고 다시 한 번 직접 작성해보세요.</li></ul></div><article class="problem">
+    <div class="p-head"><span class="p-no">Q1</span><h3 class="p-title">평균 평점 소수 첫째 자리</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">평점 평균을 보기 좋게 표시하세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>세 평점의 평균을 구한다</li><li>toFixed(1)로 소수 첫째 자리까지 표시한다</li><li>toFixed의 결과에 +1을 해보고 왜 이상한 결과가 나오는지 설명한다</li></ul></div>
+    <span class="mini-label">시작 코드</span><pre class="code">const ratings = [9.8, 9.5, 9.2];</pre>
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const ratings = [9.8, 9.5, 9.2];
+const avg = (ratings[0] + ratings[1] + ratings[2]) / 3;
+console.log(avg.toFixed(1));       <span class="c">// <span class="s">"9.5"</span></span>
+console.log(avg.toFixed(1) + 1);   <span class="c">// <span class="s">"9.51"</span> — toFixed는 문자열이라 연결됨!</span>
+console.log(Number(avg.toFixed(1)) + 1); <span class="c">// 10.5 — 숫자로 되돌린 뒤 계산</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q2</span><h3 class="p-title">오늘 날짜 정보 출력</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">Date 객체에서 정보를 꺼내보세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>new Date()로 현재 날짜 객체를 만든다</li><li>연 / 월 / 일 / 요일 숫자를 각각 출력한다 (월은 +1 보정)</li><li>요일 숫자를 ["일","월","화","수","목","금","토"] 배열로 한글 요일로 바꿔 출력한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">getDay()는 0(일요일)~6(토요일)을 리턴하므로 배열 인덱스로 쓰기 딱 좋습니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const now = new Date();
+console.log(now.getFullYear());
+console.log(now.getMonth() + 1);   <span class="c">// 0부터 시작하므로 +1</span>
+console.log(now.getDate());
+
+const dayNames = [<span class="s">"일"</span>, <span class="s">"월"</span>, <span class="s">"화"</span>, <span class="s">"수"</span>, <span class="s">"목"</span>, <span class="s">"금"</span>, <span class="s">"토"</span>];
+console.log(dayNames[now.getDay()] + <span class="s">"요일"</span>);</pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q3</span><h3 class="p-title">주사위 함수 만들기</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">정수 난수 공식을 함수로 만들어보세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>function rollDice() — 1~6 정수를 리턴하는 함수를 만든다</li><li>for문으로 10번 굴려 결과를 출력한다</li><li>function randomBetween(min, max) 로 일반화한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">function rollDice() {
+  return Math.floor(Math.random() * 6) + 1;
+}
+for (let i = 0; i &lt; 10; i++) console.log(rollDice());
+
+function randomBetween(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+console.log(randomBetween(1, 45)); <span class="c">// 로또 번호처럼 1~45</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q4</span><h3 class="p-title">디데이 계산기</h3><span class="badge tree">🌳 도전</span></div>
+    <p class="p-desc">getTime()으로 두 날짜의 차이를 계산하세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>openDay = new Date("2026-12-25") 개봉일을 만든다</li><li>getTime() 차이(밀리초)를 구한다</li><li>밀리초를 일 단위로 환산해 "개봉까지 D-n" 형태로 출력한다 (1일 = 1000*60*60*24, Math.ceil 사용)</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">밀리초 → 초(÷1000) → 분(÷60) → 시(÷60) → 일(÷24) 순으로 나눕니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const openDay = new Date(<span class="s">"2026-12-25"</span>);
+const now = new Date();
+
+const diffMs = openDay.getTime() - now.getTime();
+const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+console.log(<span class="s">`개봉까지 D-${diffDays}`</span>);</pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q5</span><h3 class="p-title">오늘의 추천 영화 + 갱신일</h3><span class="badge mission">🎬 index.html 미션</span></div>
+    <p class="p-desc">5장에서 만든 movies 객체 배열을 활용해, 11장에서 화면에 붙일 두 가지 재료를 main.js에 만듭니다.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>function pickTodayMovie() — movies에서 무작위 1편을 리턴하는 함수를 만든다 (Math.random + Math.floor + length)</li><li>리턴된 영화의 제목과 평점 배지(삼항연산자)를 콘솔에 출력한다</li><li>function getUpdateText() — "2026.7.13 기준" 형태의 갱신일 문자열을 리턴하는 함수를 만든다 (월 +1 보정!)</li><li>두 함수를 각각 호출해 결과를 확인한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// main.js (이어서 작성)</span>
+function pickTodayMovie() {
+  const idx = Math.floor(Math.random() * movies.length);
+  return movies[idx];
+}
+
+const today = pickTodayMovie();
+const badge = today.rating ? <span class="s">`⭐ ${today.rating}`</span> : <span class="s">"개봉 예정"</span>;
+console.log(<span class="s">`오늘의 추천: ${today.title} ${badge}`</span>);
+
+function getUpdateText() {
+  const now = new Date();
+  return <span class="s">`${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()} 기준`</span>;
+}
+console.log(getUpdateText()); <span class="c">// 예: 2026.7.13 기준</span></pre></div></details>
+  </article>
+</main>
+<footer class="end">06. 내장객체 — 실습지 · 교안: 06. 내장객체.html</footer>
+</body>
+</html>

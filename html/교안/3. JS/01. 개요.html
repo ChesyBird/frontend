@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>01. 개요.html — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · CHAPTER 01</span>
+  <h1 class="title">01. 개요</h1>
+  <p class="subtitle">웹의 구조 속에서 자바스크립트가 하는 일, 그리고 코드를 작성·실행하는 방법</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>🎯 학습 목표</h3><ul><li>☐ 클라이언트-서버 구조와 요청/응답 흐름을 설명할 수 있다</li><li>☐ HTML·CSS·자바스크립트의 역할 차이를 설명할 수 있다</li><li>☐ script 태그로 자바스크립트를 작성하고 개발자 도구로 확인할 수 있다</li><li>☐ 외부 .js 파일을 만들어 HTML에 연결할 수 있다</li></ul></div><section class="sec"><div class="sec-head"><span class="sec-no">01-1</span><h2>클라이언트-서버 구조</h2></div><p class="body">웹은 <b>클라이언트(브라우저)</b>가 요청(Request)을 보내고 <b>서버</b>가 응답(Response)을 돌려주는 구조로 동작합니다. 이때 서로 약속된 통신 규칙을 <b>프로토콜</b>이라고 합니다.</p>
+<table class="ref">
+  <thead><tr><th>프로토콜</th><th>역할</th></tr></thead>
+  <tbody><tr><td class="mono">HTTP</td><td>하이퍼텍스트 전송 규약 — 웹 페이지를 주고받는 기본 통신</td></tr>
+<tr><td class="mono">FTP</td><td>대량의 파일을 전송/수신하기 위한 파일 전송 규약</td></tr>
+<tr><td class="mono">TELNET</td><td>원격지에서 서버 컴퓨터를 원격 제어하기 위한 규약</td></tr></tbody></table>
+<p class="body">우리가 10장에서 배울 <code class='i'>fetch</code>도 결국 이 HTTP 요청/응답을 자바스크립트로 직접 보내는 기능입니다.</p></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">01-2</span><h2>클라이언트 언어와 서버 언어</h2></div><table class="ref">
+  <thead><tr><th>클라이언트 언어</th><th>역할</th></tr></thead>
+  <tbody><tr><td class="mono">HTML</td><td>웹 문서의 <b>뼈대</b>를 만드는 마크업 언어</td></tr>
+<tr><td class="mono">CSS</td><td>뼈대를 꾸미는 <b>옷</b> — 디자인/레이아웃</td></tr>
+<tr><td class="mono">JavaScript</td><td><b>동작(기능)</b> — 브라우저에서 실행되는 인터프리터 방식 프로그래밍 언어</td></tr>
+<tr><td class="mono">jQuery</td><td>자바스크립트 기반 라이브러리 (존 레식 창안) — 복잡한 JS 코드를 짧게 쓰도록 개선</td></tr></tbody></table>
+<table class="ref">
+  <thead><tr><th>서버 언어</th><th>특징</th></tr></thead>
+  <tbody><tr><td class="mono">JSP</td><td>자바 기반, 톰캣 컨테이너 위에서 실행 — 운영체제 구애받지 않음</td></tr>
+<tr><td class="mono">ASP</td><td>윈도우 IIS 서버에서 작동, MS-SQL과 연동</td></tr>
+<tr><td class="mono">PHP</td><td>리눅스+아파치에서 동작, 그누보드 등 사이트 빌더의 기본 언어</td></tr>
+<tr><td class="mono">Node.js</td><td>자바스크립트로 서버를 만드는 실행 환경 — 실시간 서버 구축 용이</td></tr></tbody></table>
+<div class="box imp"><div class="box-title">⭐ HTML = 뼈대, CSS = 옷, JS = 동작</div><div class="box-body"><p class="body">같은 index.html이라도 <b>자바스크립트가 붙는 순간</b> 클릭에 반응하고, 데이터를 받아 화면을 스스로 그리는 살아있는 페이지가 됩니다. 이 과정의 최종 목표가 바로 그것입니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">01-3</span><h2>자바스크립트란</h2></div><p class="body">자바스크립트(JavaScript)는 웹 브라우저에서 가장 많이 사용하는 <b>인터프리터 방식의 객체지향 프로그래밍 언어</b>로, <b>ECMA(ECMAScript) 표준</b>을 따르는 대표적인 웹 기술입니다.</p>
+<table class="ref">
+  <thead><tr><th>용어</th><th>의미</th></tr></thead>
+  <tbody><tr><td>인터프리터 방식</td><td>코드를 한 줄씩 읽으며 바로 실행 (별도 컴파일 과정 없음)</td></tr>
+<tr><td>객체지향</td><td>데이터와 기능을 '객체'라는 단위로 묶어 다루는 방식 (5장에서 학습)</td></tr>
+<tr><td>ECMAScript</td><td>자바스크립트의 표준 명세. ES6(2015)부터 let/const 등 최신 문법 도입</td></tr></tbody></table>
+<div class="box warn"><div class="box-title">⚠️ 자바(Java)와 자바스크립트(JavaScript)는 전혀 다른 언어</div><div class="box-body"><p class="body">이름만 비슷할 뿐 문법·용도·실행 환경이 모두 다릅니다. 마케팅 목적으로 비슷한 이름이 붙었을 뿐입니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">01-4</span><h2>개발자 도구와 console.log</h2></div><p class="body">브라우저마다 <b>개발자 도구(Developer Tools)</b>가 있으며, 크롬에서는 <b>F12</b> 키(또는 우클릭 → 검사)로 엽니다.</p>
+<p class="body"><code class='i'>console.log()</code>는 브라우저 화면이 아니라 개발자 도구의 <b>Console 패널</b>에 값을 출력하며, 스크립트를 디버깅할 때 가장 자주 사용합니다.</p>
+<pre class="code">console.log(<span class="s">"무비 컬렉션 시작!"</span>);
+console.log(1 + 2);</pre>
+<div class="out"><span class="out-label">실행 결과</span><pre>무비 컬렉션 시작!
+3</pre></div>
+<div class="box imp"><div class="box-title">⭐ 이 과정의 모든 확인은 console.log부터</div><div class="box-body"><p class="body">1~6장까지는 결과를 대부분 콘솔로 확인하고, 8장(DOM)부터 화면에 그리기 시작합니다. <b>F12 → Console</b>을 여는 습관을 지금 들이세요.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">01-5</span><h2>script 태그 — 작성 위치와 방법</h2></div><p class="body">자바스크립트는 HTML의 <code class='i'>&lt;script&gt;&lt;/script&gt;</code> 태그 안에 작성합니다. <code class='i'>type</code> 속성은 기본값이라 생략 가능합니다.</p>
+<pre class="code">&lt;script&gt;
+  <span class="c">// 여기에 자바스크립트 코드 작성</span>
+&lt;/script&gt;</pre>
+<p class="body"><code class='i'>&lt;script&gt;</code>는 <code class='i'>&lt;head&gt;</code>와 <code class='i'>&lt;body&gt;</code> 어디에나 작성할 수 있지만, 위치에 따라 <b>실행 시점</b>이 달라집니다.</p>
+<div class="box warn"><div class="box-title">⚠️ script 위치가 중요한 이유</div><div class="box-body"><p class="body">브라우저는 HTML을 위에서 아래로 읽습니다. <code class='i'>&lt;head&gt;</code>에서 스크립트가 아직 만들어지지 않은 태그를 선택하려 하면 <b>null</b>이 나옵니다. 그래서 실무에서는 <b>&lt;/body&gt; 닫히기 직전</b>에 script를 두는 것이 기본입니다. (우리 index.html도 이 방식)</p></div></div>
+<p class="body">과거에 쓰이던 <code class='i'>language</code> 속성은 폐기되었고, <code class='i'>charset</code> 속성은 meta 태그가 대신하므로 쓸 필요가 없습니다.</p></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">01-6</span><h2>외부 .js 파일 분리와 연결</h2></div><p class="body">코드가 길어지면 HTML 안에 두지 않고 <b>별도의 .js 파일</b>로 분리한 뒤 <code class='i'>src</code> 속성으로 연결합니다. 유지보수와 재사용에 유리하고, 이 과정에서도 <b>main.js</b> 파일 하나에 기능을 계속 쌓아갈 것입니다.</p>
+<pre class="code">&lt;!-- index.html : &lt;/body&gt; 닫히기 직전 --&gt;
+&lt;script src=<span class="s">"main.js"</span>&gt;&lt;/script&gt;</pre>
+<div class="box warn"><div class="box-title">⚠️ src를 쓰면 태그 안의 코드는 무시됩니다</div><div class="box-body"><p class="body"><code class='i'>&lt;script src="main.js"&gt;console.log(1)&lt;/script&gt;</code>처럼 써도 안쪽 코드는 실행되지 않습니다. 외부 파일 연결용 태그와 직접 작성용 태그는 분리하세요.</p></div></div>
+<div class="box link"><div class="box-title">🔗 index.html 연결 포인트</div><div class="box-body"><p class="body">실습 마지막 미션에서 <b>main.js를 만들어 index.html에 연결</b>합니다. 이 파일이 11장까지 계속 자라나 최종 프로젝트가 됩니다.</p></div></div></section>
+</main>
+<footer class="end">01. 개요 — 교안 · 짝꿍 실습지: 01. 개요-실습.html</footer>
+</body>
+</html>

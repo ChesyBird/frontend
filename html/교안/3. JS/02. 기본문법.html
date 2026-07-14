@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>02. 기본문법.html — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · CHAPTER 02</span>
+  <h1 class="title">02. 기본문법</h1>
+  <p class="subtitle">주석 · 변수 · 자료형 · 형변환 · 연산자 · 제어문 — 모든 장의 기초가 되는 문법</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>🎯 학습 목표</h3><ul><li>☐ var / let / const 의 차이를 설명하고 상황에 맞게 쓸 수 있다</li><li>☐ typeof로 자료형을 확인하고, 문자열↔숫자 형변환을 할 수 있다</li><li>☐ 연산자 우선순위를 알고 조건식을 만들 수 있다</li><li>☐ if / switch / for / while 로 흐름을 제어할 수 있다</li></ul></div><section class="sec"><div class="sec-head"><span class="sec-no">02-1</span><h2>주석 처리</h2></div><table class="ref">
+  <thead><tr><th>종류</th><th>작성 방법</th></tr></thead>
+  <tbody><tr><td>JS 한 줄 주석</td><td><code class='i'>//</code> 로 시작</td></tr>
+<tr><td>JS 여러 줄 주석</td><td><code class='i'>/*</code> 로 시작하고 <code class='i'>*/</code> 로 끝남 (중첩 불가)</td></tr>
+<tr><td>HTML 주석</td><td><code class='i'>&lt;!--</code> 로 시작하고 <code class='i'>--&gt;</code> 로 끝남 — HTML 태그 영역에서 사용</td></tr></tbody></table>
+<pre class="code">var today = new Date();   <span class="c">// 한 줄 주석: 현재 날짜 가져오기</span>
+/* 여러 줄 주석:
+   현재 날짜를 가져와 화면에 표시하는 스크립트 */</pre></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-2</span><h2>변수 — var, 그리고 let과 const</h2></div><p class="body">변수는 값을 담는 이름표입니다. 전통적으로 <code class='i'>var</code>로 선언했고, 원본 교재들도 var 기준으로 설명하지만, <b>지금 작성하는 코드는 let/const가 표준</b>입니다.</p>
+<table class="ref">
+  <thead><tr><th>형식</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">변수명 = 값;</td><td>var 없이 선언하면 <b>전역변수</b>로 간주 (window 객체의 멤버) — 사용 금지 습관!</td></tr>
+<tr><td class="mono">var 변수명 = 값;</td><td>함수 단위 유효범위. 재선언 허용(위험). 레거시 코드 읽을 때 필요</td></tr>
+<tr><td class="mono">let 변수명 = 값;</td><td>블록({ }) 단위 유효범위. 재선언 불가, <b>재할당 가능</b></td></tr>
+<tr><td class="mono">const 변수명 = 값;</td><td>블록 단위. 재선언·<b>재할당 모두 불가</b>. 선언과 동시에 값 필수</td></tr></tbody></table>
+<pre class="code">var a = 1;  var a = 2;   <span class="c">// var: 재선언해도 오류 없음 (버그의 원인)</span>
+let b = 1;  b = 2;       <span class="c">// let: 재할당 OK</span>
+const c = 1;
+<span class="c">// c = 2;                // TypeError: Assignment to constant variable.</span></pre>
+<div class="box imp"><div class="box-title">⭐ 이 과정의 규칙</div><div class="box-body"><p class="body"><b>기본은 const, 값이 바뀌어야 할 때만 let.</b> var는 '읽을 줄만 알면' 됩니다. 레거시 교재·현장 코드에 var가 많으니 동작(재선언 허용, 함수 스코프)은 알아두세요.</p></div></div>
+<p class="body"><b>명명 규칙</b> — ① 영문 대/소문자·숫자·_·$ 사용 가능 ② 첫 글자에 숫자 불가 ③ 예약어 불가 ④ 대소문자 구별 ⑤ 두 단어 결합 시 <b>낙타봉 표기법(camelCase)</b> 권장 (예: movieTitle) ⑥ 생성자 함수는 대문자로 시작(5장).</p></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-3</span><h2>자료형과 typeof</h2></div><p class="body">자바스크립트는 선언 시 자료형을 지정하지 않으므로, 자료형 확인에는 <code class='i'>typeof</code> 연산자를 사용합니다.</p>
+<table class="ref">
+  <thead><tr><th>typeof 결과</th><th>예시</th></tr></thead>
+  <tbody><tr><td class="mono">"string"</td><td>typeof "스텔라 오디세이"</td></tr>
+<tr><td class="mono">"number"</td><td>typeof 9.2</td></tr>
+<tr><td class="mono">"boolean"</td><td>typeof true</td></tr>
+<tr><td class="mono">"object"</td><td>typeof { title: '...' } , typeof [1,2,3]</td></tr>
+<tr><td class="mono">"undefined"</td><td>typeof 초기값없는변수</td></tr>
+<tr><td class="mono">"function"</td><td>typeof console.log</td></tr></tbody></table>
+<div class="box warn"><div class="box-title">⚠️ typeof의 유명한 함정 2가지</div><div class="box-body"><p class="body">① <code class='i'>typeof null</code>은 <b>"object"</b>가 나옵니다(언어 초기 설계의 오류가 표준으로 굳어짐). ② 배열도 "object"로 나오므로 배열 판별은 <code class='i'>Array.isArray()</code>를 씁니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-4</span><h2>문자열(String)과 자주 쓰는 메서드</h2></div><p class="body">문자열은 " " 또는 ' '로 묶인 값이며, ES6부터는 백틱( ` )을 쓰는 <b>템플릿 리터럴</b>로 변수를 문자열 안에 <code class='i'>${ }</code>로 끼워 넣을 수 있습니다.</p>
+<pre class="code">const title = <span class="s">"스텔라 오디세이"</span>;
+const rating = 9.2;
+console.log(<span class="s">`⭐ ${rating} · ${title}`</span>);</pre>
+<div class="out"><span class="out-label">실행 결과</span><pre>⭐ 9.2 · 스텔라 오디세이</pre></div>
+<table class="ref">
+  <thead><tr><th>메서드/속성</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">length</td><td>글자 개수 (메서드 아닌 속성 — 괄호 없음)</td></tr>
+<tr><td class="mono">toUpperCase() / toLowerCase()</td><td>모든 문자를 대문자/소문자로 변환한 새 문자열 리턴</td></tr>
+<tr><td class="mono">indexOf(값)</td><td>찾는 문자가 처음 나오는 위치(0부터) 리턴, 없으면 -1</td></tr>
+<tr><td class="mono">lastIndexOf(값)</td><td>뒤에서부터 찾은 위치 리턴</td></tr>
+<tr><td class="mono">includes(값)</td><td>포함 여부를 true/false로 리턴 — <b>검색 기능의 핵심</b></td></tr>
+<tr><td class="mono">charAt(위치)</td><td>해당 위치의 문자 리턴</td></tr>
+<tr><td class="mono">substring(시작, 끝)</td><td>일부분만 잘라 리턴 (끝 위치는 미포함)</td></tr>
+<tr><td class="mono">split(구분자)</td><td>구분자로 쪼갠 <b>문자열 배열</b> 리턴</td></tr>
+<tr><td class="mono">trim()</td><td>앞뒤 공백 제거 — 검색어 입력값 정리에 사용</td></tr></tbody></table>
+<div class="box link"><div class="box-title">🔗 index.html 연결 포인트</div><div class="box-body"><p class="body">9장의 <b>영화 제목 검색 필터</b>는 결국 <code class='i'>title.includes(검색어)</code> 한 줄이 핵심입니다. 여기서 미리 손에 익혀두세요.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-5</span><h2>숫자(number)와 기타 자료형</h2></div><table class="ref">
+  <thead><tr><th>Math 메서드</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">Math.abs(x)</td><td>절대값</td></tr>
+<tr><td class="mono">Math.random()</td><td>0 이상 1 미만의 난수 (소수)</td></tr>
+<tr><td class="mono">Math.round(x)</td><td>반올림</td></tr>
+<tr><td class="mono">Math.floor(x)</td><td>내림 (소수점 버림)</td></tr>
+<tr><td class="mono">Math.ceil(x)</td><td>올림</td></tr></tbody></table>
+<p class="body"><b>NaN</b>(Not a Number)은 숫자가 아닌 데이터를 숫자처럼 연산했을 때 나오는 값입니다. 기타 자료형으로는 true/false 두 값을 갖는 <b>논리값(Boolean)</b>, new로 만든 사용자 객체와 내장 객체를 포함하는 <b>객체(Object)</b>, 선언되지 않았거나 값이 없는 <b>undefined</b>, 함수를 담는 <b>function</b> 자료형이 있습니다.</p></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-6</span><h2>데이터 형변환</h2></div><p class="body"><b>숫자 → 문자열</b>: 숫자와 문자열을 <code class='i'>+</code> 연산하면 문자열이 우선되어 숫자가 문자열로 바뀝니다(연결). 강제 변환은 <code class='i'>String()</code>.</p>
+<p class="body"><b>문자열 → 숫자</b>: +를 제외한 사칙연산(-, *, /)에서는 숫자가 우선되어 문자열이 숫자로 바뀝니다. 강제 변환은 <code class='i'>Number()</code>, <code class='i'>parseInt()</code>, <code class='i'>parseFloat()</code>.</p>
+<pre class="code">console.log(<span class="s">"10"</span> + 5);        <span class="c">// <span class="s">"105"</span>  (+는 문자열 연결이 우선!)</span>
+console.log(<span class="s">"10"</span> - 5);        <span class="c">// 5      (-는 숫자 연산)</span>
+console.log(Number(<span class="s">"9.2"</span>));   <span class="c">// 9.2</span>
+console.log(parseInt(<span class="s">"120분"</span>)); <span class="c">// 120   (숫자로 시작하면 읽을 수 있는 데까지)</span>
+console.log(Number(<span class="s">"120분"</span>));   <span class="c">// NaN   (Number는 전체가 숫자여야 함)</span>
+console.log(parseFloat(<span class="s">"9.2점"</span>)); <span class="c">// 9.2</span></pre>
+<div class="box warn"><div class="box-title">⚠️ input 값은 항상 문자열</div><div class="box-body"><p class="body">나중에 검색창·폼에서 읽어오는 <code class='i'>value</code>는 <b>무조건 문자열</b>입니다. 숫자로 계산하려면 반드시 Number()/parseInt()로 변환하세요. "10" + 5 = "105" 사고가 실무 단골 버그입니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-7</span><h2>연산자 종류와 우선순위</h2></div><table class="ref">
+  <thead><tr><th>구분 (우선순위 높은 순)</th><th>연산자</th><th>설명</th></tr></thead>
+  <tbody><tr><td>① 최우선</td><td>( ) [ ] .</td><td>괄호 · 배열 접근 · 속성 접근</td></tr>
+<tr><td>② 단항</td><td>++ -- ! +부호 -부호</td><td>값 하나에만 적용</td></tr>
+<tr><td>③ 산술</td><td>* / % 그다음 + -</td><td>곱셈류가 덧셈류보다 먼저</td></tr>
+<tr><td>④ 관계(비교)</td><td>&gt; &lt; &gt;= &lt;= == != === !==</td><td>크기·동등 비교</td></tr>
+<tr><td>⑤ 논리</td><td>&amp;&amp; 그다음 ||</td><td>AND가 OR보다 먼저</td></tr>
+<tr><td>⑥ 삼항</td><td>조건 ? 값1 : 값2</td><td>if/else의 한 줄 표현</td></tr>
+<tr><td>⑦ 대입</td><td>= += -= *= /= %=</td><td>가장 마지막에 수행</td></tr></tbody></table>
+<div class="box imp"><div class="box-title">⭐ == 말고 === 를 쓰세요</div><div class="box-body"><p class="body"><code class='i'>==</code>는 형변환 후 비교해서 <code class='i'>"5" == 5</code>가 true가 됩니다. <code class='i'>===</code>는 <b>값과 자료형을 모두</b> 비교합니다. 이 과정에서는 항상 === / !== 를 사용합니다.</p></div></div>
+<p class="body"><b>삼항연산자</b>는 「조건 ? 참일 때 값 : 거짓일 때 값」 형태로, 값이 있고 없음에 따라 다른 결과를 만들 때 매우 자주 씁니다.</p>
+<pre class="code">const rating = 9.2;
+const badge = rating ? <span class="s">`⭐ ${rating}`</span> : <span class="s">""</span>;  <span class="c">// 평점 있으면 배지, 없으면 빈 문자열</span>
+console.log(badge);</pre>
+<div class="out"><span class="out-label">실행 결과</span><pre>⭐ 9.2</pre></div>
+<div class="box link"><div class="box-title">🔗 index.html 연결 포인트</div><div class="box-body"><p class="body">이 삼항연산자 패턴이 그대로 <b>카드 오른쪽 상단 평점 배지</b>가 됩니다. 4장에서 makeCard() 함수 안에 넣고, 8장에서 화면으로 확인합니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-8</span><h2>제어문 — 조건문 · 반복문 · 분기문</h2></div><p class="body"><b>조건문</b>: if / if~else / if~else if~else / switch / 짧은 조건문(&amp;&amp;, ||)</p>
+<pre class="code">const rating = 8.7;
+if (rating &gt;= 9.0) {
+  console.log(<span class="s">"명작"</span>);
+} else if (rating &gt;= 7.0) {
+  console.log(<span class="s">"볼만함"</span>);
+} else {
+  console.log(<span class="s">"비추"</span>);
+}</pre>
+<div class="out"><span class="out-label">실행 결과</span><pre>볼만함</pre></div>
+<p class="body"><b>반복문</b>: for / while / do~while / for in (객체·배열 순회, 5장에서 자세히)</p>
+<pre class="code">for (let i = 1; i &lt;= 3; i++) {
+  console.log(i + <span class="s">"번 좌석"</span>);
+}
+
+let seats = 3;
+while (seats &gt; 0) {
+  seats--;              <span class="c">// 이 줄을 빼먹으면 무한루프!</span>
+  console.log(<span class="s">"예매 완료, 남은 좌석 "</span> + seats);
+}</pre>
+<p class="body"><b>분기문</b>: <code class='i'>break</code>(반복 즉시 종료), <code class='i'>continue</code>(이번 회차만 건너뜀)</p>
+<div class="box warn"><div class="box-title">⚠️ do~while은 최소 1번은 실행</div><div class="box-body"><p class="body">while은 조건을 먼저 검사하지만, do~while은 <b>일단 한 번 실행한 뒤</b> 조건을 검사합니다.</p></div></div></section>
+</main>
+<footer class="end">02. 기본문법 — 교안 · 짝꿍 실습지: 02. 기본문법-실습.html</footer>
+</body>
+</html>

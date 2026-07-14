@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>04. 함수-실습 — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · WORKSHEET 04</span>
+  <h1 class="title">04. 함수 — 실습</h1>
+  <p class="subtitle">함수 3형태·호이스팅·콜백 연습 + 카드 HTML을 만드는 makeCard() 미션</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>📝 실습 안내</h3><ul>
+    <li>교안 「04. 함수」을 참고하며 순서대로 풉니다.</li>
+    <li>🌱기초 → 🌿응용 → 🌳도전 순서로 어려워지고, 마지막 🎬미션은 index.html/main.js에 실제 기능을 쌓는 누적 과제입니다.</li>
+    <li>막히면 힌트 → 그래도 막히면 정답을 보고, 정답을 덮고 다시 한 번 직접 작성해보세요.</li></ul></div><article class="problem">
+    <div class="p-head"><span class="p-no">Q1</span><h3 class="p-title">함수 3형태로 같은 기능 만들기</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">"무비 컬렉션에 오신 것을 환영합니다"를 출력하는 함수를 세 가지 방식으로 작성하세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>선언적 함수 welcome1()을 만들고 호출한다</li><li>익명 함수를 변수 welcome2에 담아 호출한다</li><li>즉시실행함수로 같은 문장을 정의와 동시에 출력한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">function welcome1() {
+  console.log(<span class="s">"무비 컬렉션에 오신 것을 환영합니다"</span>);
+}
+welcome1();
+
+const welcome2 = function () {
+  console.log(<span class="s">"무비 컬렉션에 오신 것을 환영합니다"</span>);
+};
+welcome2();
+
+(function () {
+  console.log(<span class="s">"무비 컬렉션에 오신 것을 환영합니다"</span>);
+})();</pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q2</span><h3 class="p-title">매개변수 규칙 결과 예측</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">인자가 많거나 적을 때의 동작을 예측하세요.</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">function info(title, rating) {
+  return title + <span class="s">" / "</span> + rating;
+}
+console.log(info(<span class="s">"도시의 밤"</span>, 9.8, <span class="s">"SF"</span>));
+console.log(info(<span class="s">"도시의 밤"</span>));
+console.log(info());</pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>세 줄의 출력 결과를 예측하고 실행해서 확인한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// <span class="s">"도시의 밤 / 9.8"</span>          (초과 인자 <span class="s">"SF"</span>는 무시)</span>
+<span class="c">// <span class="s">"도시의 밤 / undefined"</span>    (rating 미전달 → undefined)</span>
+<span class="c">// <span class="s">"undefined / undefined"</span></span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q3</span><h3 class="p-title">호이스팅 결과 예측</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">실행하기 전에 각 줄의 결과(정상/오류 종류)를 예측하세요.</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">console.log(a);      <span class="c">// ①</span>
+var a = 10;
+
+console.log(b);      <span class="c">// ②</span>
+let b = 20;
+
+hello();             <span class="c">// ③</span>
+function hello() { console.log(<span class="s">"hi"</span>); }
+
+bye();               <span class="c">// ④</span>
+const bye = function () { console.log(<span class="s">"bye"</span>); };</pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>①~④의 결과를 각각 예측한다 (정상 출력 / undefined / 오류명)</li><li>실행해서 확인하고 틀린 것은 교안 04-7로 복습한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">「무엇이 끌어올려지는가」— 함수 전체인지, 선언만인지, 접근 금지인지를 구분하세요.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// ① undefined       (var: 선언만 호이스팅)</span>
+<span class="c">// ② ReferenceError  (let: 초기화 전 접근 금지, TDZ)</span>
+<span class="c">// ③ <span class="s">"hi"</span> 정상 출력  (선언적 함수: 전체 호이스팅)</span>
+<span class="c">// ④ ReferenceError  (const라 접근 자체가 오류)</span>
+<span class="c">//    ※ var bye 였다면 TypeError: bye is not a function</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q4</span><h3 class="p-title">가변인자로 평점 평균 구하기</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">영화 평점을 몇 개를 넘기든 평균을 계산하는 함수를 만드세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>function average() 를 매개변수 없이 선언한다</li><li>arguments를 for문으로 순회해 합계를 구한다</li><li>합계 / arguments.length 를 리턴한다</li><li>average(9.8, 9.5, 9.2) 와 average(8, 9) 로 테스트한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">function average() {
+  let total = 0;
+  for (let i = 0; i &lt; arguments.length; i++) {
+    total += arguments[i];
+  }
+  return total / arguments.length;
+}
+console.log(average(9.8, 9.5, 9.2)); <span class="c">// 9.5</span>
+console.log(average(8, 9));          <span class="c">// 8.5</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q5</span><h3 class="p-title">콜백 함수 만들기</h3><span class="badge tree">🌳 도전</span></div>
+    <p class="p-desc">배열의 각 요소에 '원하는 처리'를 적용하는 함수를 직접 만들어 forEach의 원리를 이해합니다.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>function each(arr, callback) 을 선언한다 — arr을 for문으로 돌며 callback(요소, 인덱스)을 호출</li><li>each(["도시의 밤","여름의 문"], function(title, i){ console.log(i, title); }) 로 테스트한다</li><li>내장 forEach로도 같은 결과를 내보고 비교한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">function each(arr, callback) {
+  for (let i = 0; i &lt; arr.length; i++) {
+    callback(arr[i], i);
+  }
+}
+
+each([<span class="s">"도시의 밤"</span>, <span class="s">"여름의 문"</span>], function (title, i) {
+  console.log(i, title);
+});
+
+[<span class="s">"도시의 밤"</span>, <span class="s">"여름의 문"</span>].forEach(function (title, i) {
+  console.log(i, title);   <span class="c">// 동일한 결과 — forEach의 정체!</span>
+});</pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q6</span><h3 class="p-title">makeCard() — 카드 HTML 문자열 함수</h3><span class="badge mission">🎬 index.html 미션</span></div>
+    <p class="p-desc">index.html 카드 한 장의 HTML을 그대로 리턴하는 함수를 main.js에 만듭니다. 2장의 <b>삼항연산자 평점 배지</b>가 여기에 들어갑니다. (출력은 아직 콘솔로 — 8장에서 이 함수가 화면을 그립니다!)</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">&lt;!-- index.html의 카드 구조 (참고) --&gt;
+&lt;article class=<span class="s">"card rounded-lg overflow-hidden flex-2"</span> data-rating=<span class="s">"9.2"</span>&gt;
+  &lt;img class=<span class="s">"w-100 h-300px object-cover"</span> src=<span class="s">"..."</span> alt=<span class="s">"..."</span>&gt;
+  &lt;div class=<span class="s">"card-body bg-white px-3 py-5 fs-lg"</span>&gt;
+    &lt;h3&gt;스텔라 오디세이&lt;/h3&gt;
+    &lt;p class=<span class="s">"genre text-gray"</span>&gt;SF · 액션&lt;/p&gt;
+    &lt;span class=<span class="s">"badge"</span>&gt;NEW&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/article&gt;</pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>function makeCard(title, genre, rating, img) 를 선언한다</li><li>rating이 있으면 <span class="rating-badge">⭐ 평점</span>, 없으면 빈 문자열이 되는 badge 변수를 삼항연산자로 만든다</li><li>위 카드 구조의 HTML 문자열을 템플릿 리터럴로 만들어 리턴한다 (badge는 article 여는 태그 바로 다음에)</li><li>makeCard("스텔라 오디세이", "SF · 액션", 9.2, "poster.jpg") 결과와, rating에 null을 넣은 결과를 콘솔로 비교한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">함수에 값을 넣으면 HTML이 나온다 — 이 감각이 8장 동적 렌더링의 전부입니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// main.js (이어서 작성)</span>
+function makeCard(title, genre, rating, img) {
+  const badge = rating
+    ? <span class="s">`&lt;span class="rating-badge"&gt;⭐ ${rating}&lt;/span&gt;`</span>
+    : <span class="s">""</span>;
+  return `
+    &lt;article class=<span class="s">"card rounded-lg overflow-hidden flex-2"</span> data-rating=<span class="s">"${rating}"</span>&gt;
+      ${badge}
+      &lt;img class=<span class="s">"w-100 h-300px object-cover"</span> src=<span class="s">"${img}"</span> alt=<span class="s">"${title} 포스터"</span>&gt;
+      &lt;div class=<span class="s">"card-body bg-white px-3 py-5 fs-lg"</span>&gt;
+        &lt;h3&gt;${title}&lt;/h3&gt;
+        &lt;p class=<span class="s">"genre text-gray"</span>&gt;${genre}&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;`;
+}
+
+console.log(makeCard(<span class="s">"스텔라 오디세이"</span>, <span class="s">"SF · 액션"</span>, 9.2, <span class="s">"poster.jpg"</span>));
+console.log(makeCard(<span class="s">"은하수 특급"</span>, <span class="s">"SF"</span>, null, <span class="s">"poster2.jpg"</span>)); <span class="c">// 배지 없음</span></pre></div></details>
+  </article>
+</main>
+<footer class="end">04. 함수 — 실습지 · 교안: 04. 함수.html</footer>
+</body>
+</html>

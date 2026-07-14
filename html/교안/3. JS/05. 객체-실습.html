@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>05. 객체-실습 — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · WORKSHEET 05</span>
+  <h1 class="title">05. 객체 — 실습</h1>
+  <p class="subtitle">객체·생성자·prototype 연습 + 영화 데이터를 완전한 객체 배열로 재설계하는 미션</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>📝 실습 안내</h3><ul>
+    <li>교안 「05. 객체」을 참고하며 순서대로 풉니다.</li>
+    <li>🌱기초 → 🌿응용 → 🌳도전 순서로 어려워지고, 마지막 🎬미션은 index.html/main.js에 실제 기능을 쌓는 누적 과제입니다.</li>
+    <li>막히면 힌트 → 그래도 막히면 정답을 보고, 정답을 덮고 다시 한 번 직접 작성해보세요.</li></ul></div><article class="problem">
+    <div class="p-head"><span class="p-no">Q1</span><h3 class="p-title">영화 객체 만들기</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">영화 한 편을 객체로 표현해보세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>title, genre, rating 속성을 가진 movie 객체를 만든다</li><li>점 표기법으로 제목을, 대괄호 표기법으로 평점을 출력한다</li><li>for...in으로 모든 속성을 `키 : 값` 형태로 출력한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const movie = { title: <span class="s">"도시의 밤"</span>, genre: <span class="s">"느와르"</span>, rating: 9.8 };
+console.log(movie.title);
+console.log(movie[<span class="s">'rating'</span>]);
+
+for (const key in movie) {
+  console.log(key + <span class="s">" : "</span> + movie[key]);
+}</pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q2</span><h3 class="p-title">속성 추가·삭제와 in 확인</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">객체를 동적으로 수정해보세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>rating 속성(8.7)을 추가한다</li><li>"rating" in movie 결과를 출력한다</li><li>delete로 rating을 삭제한 뒤 다시 in 결과를 출력한다</li></ul></div>
+    <span class="mini-label">시작 코드</span><pre class="code">const movie = { title: <span class="s">"여름의 문"</span> };</pre>
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const movie = { title: <span class="s">"여름의 문"</span> };
+movie.rating = 8.7;
+console.log(<span class="s">'rating'</span> in movie);  <span class="c">// true</span>
+delete movie.rating;
+console.log(<span class="s">'rating'</span> in movie);  <span class="c">// false</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q3</span><h3 class="p-title">this로 메서드 만들기</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">객체 안에서 자기 속성을 사용하는 메서드를 작성하세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>title, rating 속성과 intro 메서드를 가진 movie 객체를 만든다</li><li>intro는 `${this.title} (평점 ${this.rating})` 를 리턴한다</li><li>movie.intro() 결과를 출력한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">메서드 안에서 자신의 속성을 부를 때는 반드시 this를 붙입니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const movie = {
+  title: <span class="s">"파랑의 계절"</span>,
+  rating: 9.5,
+  intro: function () {
+    return <span class="s">`${this.title} (평점 ${this.rating})`</span>;
+  },
+};
+console.log(movie.intro()); <span class="c">// 파랑의 계절 (평점 9.5)</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q4</span><h3 class="p-title">생성자 함수 + prototype</h3><span class="badge tree">🌳 도전</span></div>
+    <p class="p-desc">Movie 생성자를 만들고, 메서드는 prototype에 한 번만 저장하세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>function Movie(title, genre, rating) 생성자를 작성한다 (this로 속성 저장)</li><li>Movie.prototype.getBadge 메서드를 추가한다 — rating이 있으면 "⭐ 평점", 없으면 "" 리턴(삼항연산자)</li><li>new로 영화 2개(하나는 rating null)를 만들어 getBadge() 결과를 비교한다</li><li>두 객체의 getBadge가 같은 함수인지 === 로 확인한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">function Movie(title, genre, rating) {
+  this.title = title;
+  this.genre = genre;
+  this.rating = rating;
+}
+Movie.prototype.getBadge = function () {
+  return this.rating ? <span class="s">`⭐ ${this.rating}`</span> : <span class="s">""</span>;
+};
+
+const a = new Movie(<span class="s">"도시의 밤"</span>, <span class="s">"느와르"</span>, 9.8);
+const b = new Movie(<span class="s">"은하수 특급"</span>, <span class="s">"SF"</span>, null);
+console.log(a.getBadge());              <span class="c">// ⭐ 9.8</span>
+console.log(b.getBadge());              <span class="c">// (빈 문자열)</span>
+console.log(a.getBadge === b.getBadge); <span class="c">// true — prototype 공유!</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q5</span><h3 class="p-title">movies 객체 배열 완성</h3><span class="badge mission">🎬 index.html 미션</span></div>
+    <p class="p-desc">3장의 배열 2개(titles/ratings)를 <b>객체 배열 하나</b>로 재설계합니다. 이 데이터가 8~11장 내내 화면을 그리는 원본이 됩니다. (기존 titles/ratings 코드는 주석 처리)</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>main.js에 movies 객체 배열을 만든다 — 영화 6편, 각 영화는 title / genre / rating / img / isNew 속성</li><li>rating이 null인 개봉 예정작을 1편 포함한다 (배지 미션용!)</li><li>img는 "https://picsum.photos/seed/movie번호/300/400" 형태로 각기 다르게</li><li>forEach로 `제목 - 장르 - 평점` 6줄을 출력한다 (rating null이면 "개봉 예정")</li><li>4장의 makeCard를 makeCard(movie) 형태(객체 하나 받기)로 수정하고, movies[0]으로 테스트한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">매개변수 4개를 넘기던 것이 객체 하나로 바뀌면, 속성이 늘어나도 함수 시그니처를 안 바꿔도 됩니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// main.js — 이 데이터가 프로젝트의 원본!</span>
+const movies = [
+  { title: <span class="s">"도시의 밤"</span>,     genre: <span class="s">"느와르"</span>,    rating: 9.8,  img: <span class="s">"https:<span class="c">//picsum.photos/seed/movie1/300/400"</span>, isNew: false },</span>
+  { title: <span class="s">"파랑의 계절"</span>,   genre: <span class="s">"로맨스"</span>,    rating: 9.5,  img: <span class="s">"https:<span class="c">//picsum.photos/seed/movie2/300/400"</span>, isNew: false },</span>
+  { title: <span class="s">"스텔라 오디세이"</span>, genre: <span class="s">"SF · 액션"</span>, rating: 9.2,  img: <span class="s">"https:<span class="c">//picsum.photos/seed/movie3/300/400"</span>, isNew: true  },</span>
+  { title: <span class="s">"마지막 항해"</span>,   genre: <span class="s">"어드벤처"</span>,  rating: 9.0,  img: <span class="s">"https:<span class="c">//picsum.photos/seed/movie4/300/400"</span>, isNew: false },</span>
+  { title: <span class="s">"여름의 문"</span>,     genre: <span class="s">"드라마"</span>,    rating: 8.7,  img: <span class="s">"https:<span class="c">//picsum.photos/seed/movie5/300/400"</span>, isNew: false },</span>
+  { title: <span class="s">"은하수 특급"</span>,   genre: <span class="s">"SF"</span>,        rating: null, img: <span class="s">"https:<span class="c">//picsum.photos/seed/movie6/300/400"</span>, isNew: true  },</span>
+];
+
+movies.forEach(function (m) {
+  const label = m.rating ? m.rating : <span class="s">"개봉 예정"</span>;
+  console.log(<span class="s">`${m.title} - ${m.genre} - ${label}`</span>);
+});
+
+<span class="c">// makeCard를 객체 하나를 받도록 수정</span>
+function makeCard(movie) {
+  const badge = movie.rating
+    ? <span class="s">`&lt;span class="rating-badge"&gt;⭐ ${movie.rating}&lt;/span&gt;`</span>
+    : <span class="s">""</span>;
+  const newBadge = movie.isNew ? <span class="s">`&lt;span class="badge"&gt;NEW&lt;/span&gt;`</span> : <span class="s">""</span>;
+  return `
+    &lt;article class=<span class="s">"card rounded-lg overflow-hidden flex-2"</span> data-rating=<span class="s">"${movie.rating}"</span>&gt;
+      ${badge}
+      &lt;img class=<span class="s">"w-100 h-300px object-cover"</span> src=<span class="s">"${movie.img}"</span> alt=<span class="s">"${movie.title} 포스터"</span>&gt;
+      &lt;div class=<span class="s">"card-body bg-white px-3 py-5 fs-lg"</span>&gt;
+        &lt;h3&gt;${movie.title}&lt;/h3&gt;
+        &lt;p class=<span class="s">"genre text-gray"</span>&gt;${movie.genre}&lt;/p&gt;
+        ${newBadge}
+      &lt;/div&gt;
+    &lt;/article&gt;`;
+}
+console.log(makeCard(movies[0]));</pre></div></details>
+  </article>
+</main>
+<footer class="end">05. 객체 — 실습지 · 교안: 05. 객체.html</footer>
+</body>
+</html>

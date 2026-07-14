@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>06. 내장객체.html — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · CHAPTER 06</span>
+  <h1 class="title">06. 내장객체</h1>
+  <p class="subtitle">자바스크립트가 기본으로 제공하는 객체들 — Object · Number · String · Date · Math</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>🎯 학습 목표</h3><ul><li>☐ 모든 객체가 Object를 상속한다는 구조를 이해한다</li><li>☐ Number의 toFixed 등 숫자 표시 메서드를 쓸 수 있다</li><li>☐ Date 객체로 날짜를 만들고 년/월/일을 꺼낼 수 있다</li><li>☐ Math.random과 Math.floor를 조합해 정수 난수를 만들 수 있다</li></ul></div><section class="sec"><div class="sec-head"><span class="sec-no">06-1</span><h2>Object 객체</h2></div><p class="body">모든 기본 내장 객체는 <b>Object 객체를 상속</b>합니다. 즉 모든 객체는 Object의 메서드를 기본으로 가지고 있습니다.</p>
+<table class="ref">
+  <thead><tr><th>메서드</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">hasOwnProperty(name)</td><td>객체가 name 속성을 (상속 말고) 직접 갖고 있는지 확인</td></tr>
+<tr><td class="mono">toString()</td><td>객체를 문자열로 변환</td></tr>
+<tr><td class="mono">toLocaleString()</td><td>지역/언어 설정에 맞는 문자열로 변환 — 예: 숫자 천 단위 콤마</td></tr>
+<tr><td class="mono">valueOf()</td><td>객체의 원시 값을 나타냄</td></tr>
+<tr><td class="mono">constructor</td><td>객체를 만든 생성자 함수를 가리키는 속성</td></tr></tbody></table>
+<pre class="code">const movie = { title: <span class="s">"도시의 밤"</span> };
+console.log(movie.hasOwnProperty(<span class="s">'title'</span>));  <span class="c">// true</span>
+console.log((1234567).toLocaleString());     <span class="c">// <span class="s">"1,234,567"</span></span></pre></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">06-2</span><h2>Number 객체</h2></div><table class="ref">
+  <thead><tr><th>메서드</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">toFixed(자릿수)</td><td>고정 소수점 표기 — <b>문자열</b>을 리턴!</td></tr>
+<tr><td class="mono">toExponential()</td><td>지수 표기 문자열</td></tr>
+<tr><td class="mono">toPrecision(n)</td><td>길이에 따라 지수/고정 소수점 표기 문자열</td></tr></tbody></table>
+<table class="ref">
+  <thead><tr><th>속성</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">Number.MAX_VALUE / MIN_VALUE</td><td>표현 가능한 최대/최소(0에 가장 가까운 양수) 숫자</td></tr>
+<tr><td class="mono">Number.NaN</td><td>숫자로 나타낼 수 없는 값</td></tr>
+<tr><td class="mono">Number.POSITIVE_INFINITY / NEGATIVE_INFINITY</td><td>양/음의 무한대</td></tr></tbody></table>
+<pre class="code">const avg = (9.8 + 9.5 + 9.2) / 3;
+console.log(avg);              <span class="c">// 9.499999999999998</span>
+console.log(avg.toFixed(1));   <span class="c">// <span class="s">"9.5"</span></span></pre>
+<div class="box warn"><div class="box-title">⚠️ toFixed는 문자열을 리턴</div><div class="box-body"><p class="body"><code class='i'>avg.toFixed(1) + 1</code>은 <b>"9.51"</b>이 됩니다(문자열 연결). 계산을 이어가려면 <code class='i'>Number(avg.toFixed(1))</code>로 되돌리세요.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">06-3</span><h2>String 객체의 HTML 관련 메서드 (레거시)</h2></div><p class="body">String 객체에는 문자열을 태그로 감싸 리턴하는 메서드들이 있습니다: <code class='i'>bold()</code>(&lt;b&gt;), <code class='i'>italics()</code>(&lt;i&gt;), <code class='i'>link(url)</code>(&lt;a href&gt;), <code class='i'>fontcolor(색)</code>, <code class='i'>big()</code>, <code class='i'>small()</code>, <code class='i'>sub()</code>, <code class='i'>sup()</code> 등.</p>
+<div class="box warn"><div class="box-title">⚠️ 전부 deprecated(폐기 예정) — 시험·레거시 코드용 지식</div><div class="box-body"><p class="body">이 메서드들이 만드는 &lt;font&gt;, &lt;big&gt;, &lt;blink&gt; 태그 자체가 HTML 표준에서 퇴출되었습니다. 실무에서는 <b>템플릿 리터럴로 직접 태그를 조립</b>합니다(4장 makeCard처럼). '옛 교재에 나오는 이유'만 알아두세요.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">06-4</span><h2>Date 객체</h2></div><p class="body">날짜를 관리하는 객체로, new 키워드로 생성합니다.</p>
+<pre class="code">const now = new Date();                    <span class="c">// 현재 날짜·시간</span>
+const day1 = new Date(2026, 6, 13);        <span class="c">// 2026년 7월 13일 (월은 0부터!)</span>
+const day2 = new Date(<span class="s">'2026-07-13'</span>);       <span class="c">// 문자열로도 생성 가능</span></pre>
+<table class="ref">
+  <thead><tr><th>메서드 (get/set 쌍)</th><th>설명 · 범위</th></tr></thead>
+  <tbody><tr><td class="mono">getFullYear()</td><td>연도 (예: 2026)</td></tr>
+<tr><td class="mono">getMonth()</td><td>월 — <b>0(1월) ~ 11(12월)</b> ⚠️</td></tr>
+<tr><td class="mono">getDate()</td><td>일 (1 ~ 31)</td></tr>
+<tr><td class="mono">getDay()</td><td>요일 — <b>0(일요일) ~ 6(토요일)</b> · setDay는 없음</td></tr>
+<tr><td class="mono">getHours() / getMinutes() / getSeconds()</td><td>시(0~23) / 분(0~59) / 초(0~59)</td></tr>
+<tr><td class="mono">getTime()</td><td>1970-01-01 기준 경과 밀리초 — 날짜 간 차이 계산에 사용</td></tr></tbody></table>
+<div class="box warn"><div class="box-title">⚠️ getMonth()는 0부터</div><div class="box-body"><p class="body">7월이면 <b>6</b>이 나옵니다. 화면에 표시할 때는 <code class='i'>getMonth() + 1</code>을 잊지 마세요. 신입 개발자 단골 버그 1위입니다.</p></div></div>
+<pre class="code">const now = new Date();
+const dateText = <span class="s">`${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()} 기준`</span>;
+console.log(dateText);   <span class="c">// 예: 2026.7.13 기준</span></pre></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">06-5</span><h2>Math 객체 활용 — 정수 난수 공식</h2></div><p class="body">2장에서 본 Math 메서드 중 <code class='i'>Math.random()</code>(0 이상 1 미만 소수)과 <code class='i'>Math.floor()</code>(내림)를 조합하면 <b>범위 내 정수 난수</b>를 만들 수 있습니다.</p>
+<pre class="code"><span class="c">// 0 ~ (n-1) 정수: Math.floor(Math.random() * n)</span>
+const idx = Math.floor(Math.random() * 6);   <span class="c">// 0~5 — 배열 인덱스로 딱!</span>
+
+<span class="c">// min ~ max 정수: Math.floor(Math.random() * (max - min + 1)) + min</span>
+const dice = Math.floor(Math.random() * 6) + 1; <span class="c">// 1~6</span></pre>
+<div class="box link"><div class="box-title">🔗 index.html 연결 포인트</div><div class="box-body"><p class="body">「오늘의 추천 영화」 기능 = <code class='i'>movies[Math.floor(Math.random() * movies.length)]</code> 한 줄입니다. 실습 미션에서 만들고, 11장에서 화면에 붙입니다.</p></div></div></section>
+</main>
+<footer class="end">06. 내장객체 — 교안 · 짝꿍 실습지: 06. 내장객체-실습.html</footer>
+</body>
+</html>
