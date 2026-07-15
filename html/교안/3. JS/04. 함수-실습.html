@@ -110,7 +110,43 @@ welcome2();
 })();</pre></div></details>
   </article>
 <article class="problem">
-    <div class="p-head"><span class="p-no">Q2</span><h3 class="p-title">매개변수 규칙 결과 예측</h3><span class="badge seed">🌱 기초</span></div>
+    <div class="p-head"><span class="p-no">Q2</span><h3 class="p-title">화살표 함수로 바꿔쓰기</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">교안 04-3의 생략 규칙을 적용해, 아래 함수들을 화살표 함수로 바꿔보세요.</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">function double(n) { return n * 2; }
+
+function makeBadge(rating) {
+  const symbol = rating &gt;= 9 ? <span class="s">"🏆"</span> : <span class="s">"⭐"</span>;
+  return <span class="s">`${symbol} ${rating}`</span>;
+}</pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>double을 매개변수 괄호 생략 + 중괄호/return 생략 형태의 화살표 함수로 바꾼다</li><li>makeBadge는 본문이 여러 줄이므로 중괄호와 return을 그대로 유지한 화살표 함수로 바꾼다</li><li>두 함수를 각각 호출해서 원본과 결과가 같은지 확인한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">본문이 식 하나뿐이면 중괄호와 return을 함께 지워야 합니다 — 중괄호만 남기고 return을 빼먹으면 undefined가 나옵니다(04-3 실수 사례 참고).</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const double = n =&gt; n * 2;              <span class="c">// 매개변수 1개 + 식 1개 → 최대 축약</span>
+console.log(double(5));                 <span class="c">// 10</span>
+
+const makeBadge = (rating) =&gt; {          <span class="c">// 여러 줄이라 중괄호+return 필요</span>
+  const symbol = rating &gt;= 9 ? <span class="s">"🏆"</span> : <span class="s">"⭐"</span>;
+  return <span class="s">`${symbol} ${rating}`</span>;
+};
+console.log(makeBadge(9.5));             <span class="c">// <span class="s">"🏆 9.5"</span></span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q3</span><h3 class="p-title">매개변수 기본값 활용</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">교안 04-5를 참고해 기본값이 있는 함수를 작성하세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>function makeTicket(title, count = 1) 함수를 만든다 — count 기본값은 1</li><li>`${title} ${count}매` 형태의 문자열을 리턴한다</li><li>makeTicket("스텔라 오디세이") 와 makeTicket("스텔라 오디세이", 3) 을 각각 호출해 결과를 비교한다</li><li>makeTicket("스텔라 오디세이", undefined) 도 호출해보고, 기본값이 적용되는지 확인한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">function makeTicket(title, count = 1) {
+  return <span class="s">`${title} ${count}매`</span>;
+}
+
+console.log(makeTicket(<span class="s">"스텔라 오디세이"</span>));            <span class="c">// <span class="s">"스텔라 오디세이 1매"</span></span>
+console.log(makeTicket(<span class="s">"스텔라 오디세이"</span>, 3));         <span class="c">// <span class="s">"스텔라 오디세이 3매"</span></span>
+console.log(makeTicket(<span class="s">"스텔라 오디세이"</span>, undefined)); <span class="c">// <span class="s">"스텔라 오디세이 1매"</span> (undefined도 기본값 적용)</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q4</span><h3 class="p-title">매개변수 규칙 결과 예측</h3><span class="badge seed">🌱 기초</span></div>
     <p class="p-desc">인자가 많거나 적을 때의 동작을 예측하세요.</p>
     <span class="mini-label">주어진 코드/데이터</span><pre class="code">function info(title, rating) {
   return title + <span class="s">" / "</span> + rating;
@@ -126,7 +162,29 @@ console.log(info());</pre>
 <span class="c">// <span class="s">"undefined / undefined"</span></span></pre></div></details>
   </article>
 <article class="problem">
-    <div class="p-head"><span class="p-no">Q3</span><h3 class="p-title">호이스팅 결과 예측</h3><span class="badge sprout">🌿 응용</span></div>
+    <div class="p-head"><span class="p-no">Q5</span><h3 class="p-title">return 빠뜨린 함수 고치기</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">console.log만 있고 return이 없어서 결과를 못 쓰는 흔한 실수를 직접 고쳐보세요.</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">function getTotal(price, count) {
+  const total = price * count;
+  console.log(total);    <span class="c">// 화면엔 잘 나오지만...</span>
+}
+
+const receipt = getTotal(5000, 3);
+console.log(<span class="s">`영수증: ${receipt}원`</span>);</pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>위 코드를 그대로 실행해 receipt가 무엇으로 나오는지 확인한다 (undefined인 이유를 한 줄로 적는다)</li><li>getTotal 함수에 return을 추가해서 receipt가 15000이 나오도록 고친다</li><li>console.log(total)은 지우지 않고 return과 함께 남겨둬도 되는 이유를 생각해본다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">console.log는 '보여주기'이고 return은 '함수 밖으로 값을 전달하기'입니다. 둘은 전혀 다른 일을 합니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">function getTotal(price, count) {
+  const total = price * count;
+  console.log(total);      <span class="c">// 디버깅용으로 남겨둬도 무방</span>
+  return total;            <span class="c">// 이 줄이 없어서 undefined였음!</span>
+}
+
+const receipt = getTotal(5000, 3);
+console.log(<span class="s">`영수증: ${receipt}원`</span>);   <span class="c">// <span class="s">"영수증: 15000원"</span> ✅</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q6</span><h3 class="p-title">호이스팅 결과 예측</h3><span class="badge sprout">🌿 응용</span></div>
     <p class="p-desc">실행하기 전에 각 줄의 결과(정상/오류 종류)를 예측하세요.</p>
     <span class="mini-label">주어진 코드/데이터</span><pre class="code">console.log(a);      <span class="c">// ①</span>
 var a = 10;
@@ -149,7 +207,7 @@ const bye = function () { console.log(<span class="s">"bye"</span>); };</pre>
 <span class="c">//    ※ var bye 였다면 TypeError: bye is not a function</span></pre></div></details>
   </article>
 <article class="problem">
-    <div class="p-head"><span class="p-no">Q4</span><h3 class="p-title">가변인자로 평점 평균 구하기</h3><span class="badge sprout">🌿 응용</span></div>
+    <div class="p-head"><span class="p-no">Q7</span><h3 class="p-title">가변인자로 평점 평균 구하기</h3><span class="badge sprout">🌿 응용</span></div>
     <p class="p-desc">영화 평점을 몇 개를 넘기든 평균을 계산하는 함수를 만드세요.</p>
     
     <div class="task"><span class="mini-label">할 일</span><ul><li>function average() 를 매개변수 없이 선언한다</li><li>arguments를 for문으로 순회해 합계를 구한다</li><li>합계 / arguments.length 를 리턴한다</li><li>average(9.8, 9.5, 9.2) 와 average(8, 9) 로 테스트한다</li></ul></div>
@@ -166,7 +224,32 @@ console.log(average(9.8, 9.5, 9.2)); <span class="c">// 9.5</span>
 console.log(average(8, 9));          <span class="c">// 8.5</span></pre></div></details>
   </article>
 <article class="problem">
-    <div class="p-head"><span class="p-no">Q5</span><h3 class="p-title">콜백 함수 만들기</h3><span class="badge tree">🌳 도전</span></div>
+    <div class="p-head"><span class="p-no">Q8</span><h3 class="p-title">콜백 전달 vs 즉시 실행 구분</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">교안 04-7의 실수 사례를 직접 재현하고 고쳐보세요.</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">function run(callback) {
+  console.log(<span class="s">"작업 시작"</span>);
+  callback();
+}
+
+function sayDone() {
+  console.log(<span class="s">"완료!"</span>);
+}
+
+run(sayDone());   <span class="c">// 괄호가 붙어있음!</span></pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>위 코드를 그대로 실행해서 출력 순서를 확인한다 (예상과 다를 것)</li><li>왜 "완료!"가 먼저 출력되는지 한 줄로 설명한다</li><li>run(sayDone)으로 괄호를 빼서 고치고, 정상 순서(작업 시작 → 완료!)가 되는지 확인한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">괄호 유무 하나로 '전달'과 '실행'이 완전히 달라집니다 — 콜백으로 넘길 때는 괄호를 붙이지 않습니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// 문제 상황: run(sayDone())</span>
+<span class="c">// → sayDone()이 먼저 그 자리에서 실행되어 <span class="s">"완료!"</span> 출력</span>
+<span class="c">// → run에는 sayDone()의 리턴값(undefined)이 전달됨</span>
+<span class="c">// → run 안의 callback()은 undefined() 호출이라 TypeError 발생</span>
+
+<span class="c">// 고친 버전</span>
+run(sayDone);   <span class="c">// 괄호 없이 이름만 전달</span>
+<span class="c">// <span class="s">"작업 시작"</span> → <span class="s">"완료!"</span>  순서로 정상 출력 ✅</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q9</span><h3 class="p-title">콜백 함수 만들기</h3><span class="badge tree">🌳 도전</span></div>
     <p class="p-desc">배열의 각 요소에 '원하는 처리'를 적용하는 함수를 직접 만들어 forEach의 원리를 이해합니다.</p>
     
     <div class="task"><span class="mini-label">할 일</span><ul><li>function each(arr, callback) 을 선언한다 — arr을 for문으로 돌며 callback(요소, 인덱스)을 호출</li><li>each(["도시의 밤","여름의 문"], function(title, i){ console.log(i, title); }) 로 테스트한다</li><li>내장 forEach로도 같은 결과를 내보고 비교한다</li></ul></div>
@@ -187,7 +270,7 @@ each([<span class="s">"도시의 밤"</span>, <span class="s">"여름의 문"</s
 });</pre></div></details>
   </article>
 <article class="problem">
-    <div class="p-head"><span class="p-no">Q6</span><h3 class="p-title">makeCard() — 카드 HTML 문자열 함수</h3><span class="badge mission">🎬 index.html 미션</span></div>
+    <div class="p-head"><span class="p-no">Q10</span><h3 class="p-title">makeCard() — 카드 HTML 문자열 함수</h3><span class="badge mission">🎬 index.html 미션</span></div>
     <p class="p-desc">index.html 카드 한 장의 HTML을 그대로 리턴하는 함수를 main.js에 만듭니다. 2장의 <b>삼항연산자 평점 배지</b>가 여기에 들어갑니다. (출력은 아직 콘솔로 — 8장에서 이 함수가 화면을 그립니다!)</p>
     <span class="mini-label">주어진 코드/데이터</span><pre class="code">&lt;!-- index.html의 카드 구조 (참고) --&gt;
 &lt;article class=<span class="s">"card rounded-lg overflow-hidden flex-2"</span> data-rating=<span class="s">"9.2"</span>&gt;
