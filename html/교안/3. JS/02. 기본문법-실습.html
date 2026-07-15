@@ -109,7 +109,7 @@ console.log(<span class="s">"10"</span> + 5);
 console.log(<span class="s">"10"</span> - 5);
 console.log(Number(<span class="s">"120분"</span>));
 console.log(parseInt(<span class="s">"120분"</span>));</pre>
-    <div class="task"><span class="mini-label">할 일</span><ul><li>6줄의 출력 결과를 각각 예측한 뒤 실행해서 채점한다</li><li>틀린 항목은 교안 02-6을 다시 읽고 이유를 적는다</li></ul></div>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>6줄의 출력 결과를 각각 예측한 뒤 실행해서 채점한다</li><li>틀린 항목은 교안 02-7을 다시 읽고 이유를 적는다</li></ul></div>
     
     
     <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// <span class="s">"string"</span></span>
@@ -120,7 +120,73 @@ console.log(parseInt(<span class="s">"120분"</span>));</pre>
 <span class="c">// 120     ← parseInt()는 앞에서부터 읽을 수 있는 만큼</span></pre></div></details>
   </article>
 <article class="problem">
-    <div class="p-head"><span class="p-no">Q3</span><h3 class="p-title">연산자 우선순위 계산</h3><span class="badge sprout">🌿 응용</span></div>
+    <div class="p-head"><span class="p-no">Q3</span><h3 class="p-title">템플릿 리터럴로 바꿔쓰기</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">+ 연결 방식으로 된 코드를 백틱(템플릿 리터럴)으로 바꿔 써보세요. 교안 02-5 참고.</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">const title = <span class="s">"은하수 특급"</span>;
+const genre = <span class="s">"SF"</span>;
+const rating = 9.6;
+
+console.log(<span class="s">"제목: "</span> + title + <span class="s">" / 장르: "</span> + genre + <span class="s">" / 평점: "</span> + rating);</pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>위 console.log 한 줄을 템플릿 리터럴(백틱 + ${ })로 다시 작성한다</li><li>평점에 10을 곱한 값도 ${} 안에서 직접 계산해 함께 출력한다</li><li>실수로 큰따옴표(\"...${title}...\")를 써보고, ${title}이 계산되지 않고 글자 그대로 나오는 것을 확인한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">백틱은 키보드에서 숫자 1 왼쪽에 있는 키(`)입니다. 작은따옴표(')와 혼동하지 마세요.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const title = <span class="s">"은하수 특급"</span>;
+const genre = <span class="s">"SF"</span>;
+const rating = 9.6;
+
+console.log(<span class="s">`제목: ${title} / 장르: ${genre} / 평점: ${rating} / 평점x10: ${rating * 10}`</span>);
+
+<span class="c">// 큰따옴표로 쓰면:</span>
+console.log(<span class="s">"제목: ${title}"</span>);   <span class="c">// <span class="s">"제목: ${title}"</span> ← 글자 그대로 출력 (계산 안 됨)</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q4</span><h3 class="p-title">형변환 함정 예측하기</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">교안 02-7의 함정 목록을 보기 전에 먼저 결과를 예측해보세요.</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">console.log(Number(<span class="s">""</span>));
+console.log(Number(null));
+console.log(Number(undefined));
+console.log(Number(<span class="s">" 9 "</span>));
+console.log(<span class="s">"1"</span> + 1 + 1);
+console.log(1 + 1 + <span class="s">"1"</span>);
+console.log(Boolean(<span class="s">"0"</span>));
+console.log(parseInt(<span class="s">"FF"</span>, 16));</pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>8줄의 결과를 각각 예측한 뒤 실행해서 채점한다</li><li>틀린 항목은 왜 그런지 한 줄로 설명을 적는다 (암묵적 변환인지 명시적 변환인지 구분)</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">Number(null)과 Number(undefined)의 결과가 다르다는 것이 가장 헷갈리는 포인트입니다 — null은 0, undefined는 NaN.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// 0        ← 빈 문자열은 0</span>
+<span class="c">// 0        ← null은 0</span>
+<span class="c">// NaN      ← undefined는 NaN (null과 다름!)</span>
+<span class="c">// 9        ← 앞뒤 공백은 무시</span>
+<span class="c">// <span class="s">"111"</span>    ← 첫 +부터 문자열 연결로 확정</span>
+<span class="c">// <span class="s">"21"</span>     ← 숫자 1+1=2 먼저 계산 후 문자열 <span class="s">"1"</span>과 연결</span>
+<span class="c">// true     ← 문자열 <span class="s">"0"</span>은 falsy 아님(truthy)</span>
+<span class="c">// 255      ← 16진수 <span class="s">"FF"</span> = 십진수 255</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q5</span><h3 class="p-title">Falsy 값 판별하기</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">교안 02-13의 falsy 6가지(false, 0, "", null, undefined, NaN)를 기억하며 결과를 예측하세요.</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">const values = [0, 1, <span class="s">""</span>, <span class="s">"0"</span>, null, undefined, NaN, [], {}, <span class="s">"안녕"</span>];
+
+values.forEach(function (v) {
+  console.log(v, <span class="s">"→"</span>, v ? <span class="s">"truthy"</span> : <span class="s">"falsy"</span>);
+});</pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>10개 값 중 falsy로 판별되는 것이 몇 개인지 먼저 예측한다</li><li>실행해서 확인하고, 예상과 다른 것(특히 문자열 "0", 빈 배열, 빈 객체)에 표시한다</li><li>falsy 6가지를 손으로 직접 적어본다 (암기 확인)</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">falsy는 딱 6개(false 포함)뿐입니다. 그 외에는 전부 truthy — '있어 보이면 truthy'라고 기억하세요.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// 0        → falsy</span>
+<span class="c">// 1        → truthy</span>
+<span class="c">// <span class="s">""</span>       → falsy</span>
+<span class="c">// <span class="s">"0"</span>      → truthy   ⚠️ 문자열이라 글자가 있음!</span>
+<span class="c">// null     → falsy</span>
+<span class="c">// undefined→ falsy</span>
+<span class="c">// NaN      → falsy</span>
+<span class="c">// []       → truthy   ⚠️ 빈 배열도 truthy!</span>
+<span class="c">// {}       → truthy   ⚠️ 빈 객체도 truthy!</span>
+<span class="c">// <span class="s">"안녕"</span>   → truthy</span>
+<span class="c">// → falsy는 총 5개 (0, <span class="s">""</span>, null, undefined, NaN)</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q6</span><h3 class="p-title">연산자 우선순위 계산</h3><span class="badge sprout">🌿 응용</span></div>
     <p class="p-desc">괄호 없이 계산 순서를 따져 결과를 예측하세요.</p>
     <span class="mini-label">주어진 코드/데이터</span><pre class="code">console.log(2 + 3 * 4);
 console.log((2 + 3) * 4);
@@ -137,12 +203,12 @@ console.log(7 % 2 === 1);</pre>
 <span class="c">// true  (산술 % 가 비교 === 보다 먼저 → 1 === 1)</span></pre></div></details>
   </article>
 <article class="problem">
-    <div class="p-head"><span class="p-no">Q4</span><h3 class="p-title">평점 등급 나누기 (if / switch)</h3><span class="badge sprout">🌿 응용</span></div>
-    <p class="p-desc">같은 로직을 두 가지 방식으로 작성해보세요.</p>
+    <div class="p-head"><span class="p-no">Q7</span><h3 class="p-title">평점 등급 나누기 (if / switch)</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">같은 로직을 두 가지 방식으로 작성해보세요. 교안 02-14의 문법 구조(조건식 자리, case/break/default)를 그대로 따라 씁니다.</p>
     
-    <div class="task"><span class="mini-label">할 일</span><ul><li>rating이 9.0 이상 "명작", 7.0 이상 "볼만함", 그 외 "비추"를 출력하는 if~else if~else 작성</li><li>genre 값("action"/"romance"/"scifi")에 따라 "액션"/"로맨스"/"SF"를 출력하는 switch 작성 (default: "기타")</li></ul></div>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>rating이 9.0 이상 "명작", 7.0 이상 "볼만함", 그 외 "비추"를 출력하는 if~else if~else 작성</li><li>genre 값("action"/"romance"/"scifi")에 따라 "액션"/"로맨스"/"SF"를 출력하는 switch 작성 (default: "기타")</li><li>switch의 break를 일부러 하나 지워보고, 어떤 case까지 줄줄이 실행되는지(fall-through) 관찰한 뒤 다시 되돌린다</li></ul></div>
     
-    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">switch에서 break를 빼먹으면 아래 case까지 줄줄이 실행됩니다(fall-through).</div></details>
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">switch에서 break를 빼먹으면 아래 case까지 줄줄이 실행됩니다(fall-through). if는 조건식 자리에 비교/논리 연산자 결과(true/false)가 들어간다는 것을 02-14에서 다시 확인하세요.</div></details>
     <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const rating = 9.4;
 if (rating &gt;= 9.0)      console.log(<span class="s">"명작"</span>);
 else if (rating &gt;= 7.0) console.log(<span class="s">"볼만함"</span>);
@@ -157,7 +223,22 @@ switch (genre) {
 }</pre></div></details>
   </article>
 <article class="problem">
-    <div class="p-head"><span class="p-no">Q5</span><h3 class="p-title">구구단 짝수 단만 출력</h3><span class="badge tree">🌳 도전</span></div>
+    <div class="p-head"><span class="p-no">Q8</span><h3 class="p-title">for문 구조 3요소 뜯어보기</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">교안 02-15의 초기식·조건식·증감식을 직접 바꿔가며 동작 차이를 관찰합니다.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li><code class='i'>for (let i = 1; i &lt;= 5; i++)</code> 를 그대로 실행해 1~5가 출력됨을 확인한다</li><li>초기식만 <code class='i'>let i = 3</code>으로 바꿔 실행 결과를 예측 후 확인한다</li><li>증감식만 <code class='i'>i += 2</code>로 바꿔 실행 결과를 예측 후 확인한다</li><li>조건식만 <code class='i'>i &lt; 5</code>로 바꿔(&lt;=가 아님) 5가 출력되는지 안 되는지 확인한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">조건식은 '이 값이면 실행해도 되는가'를 매번 먼저 검사합니다. <= 와 < 한 글자 차이가 결과를 완전히 바꿉니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">for (let i = 1; i &lt;= 5; i++) console.log(i);   <span class="c">// 1 2 3 4 5</span>
+
+for (let i = 3; i &lt;= 5; i++) console.log(i);   <span class="c">// 3 4 5 (시작점만 바뀜)</span>
+
+for (let i = 1; i &lt;= 5; i += 2) console.log(i); <span class="c">// 1 3 5 (2씩 증가)</span>
+
+for (let i = 1; i &lt; 5; i++) console.log(i);     <span class="c">// 1 2 3 4 (5는 조건 거짓이라 제외!)</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q9</span><h3 class="p-title">구구단 짝수 단만 출력</h3><span class="badge tree">🌳 도전</span></div>
     <p class="p-desc">중첩 반복문과 continue를 함께 사용해보세요.</p>
     
     <div class="task"><span class="mini-label">할 일</span><ul><li>2단부터 9단까지 출력하되, 홀수 단은 continue로 건너뛴다</li><li>각 단은 `2 x 1 = 2` 형태로 1~9까지 출력한다 (템플릿 리터럴 사용)</li></ul></div>
@@ -171,12 +252,12 @@ switch (genre) {
 }</pre></div></details>
   </article>
 <article class="problem">
-    <div class="p-head"><span class="p-no">Q6</span><h3 class="p-title">영화 1편 변수화 + 삼항연산자 배지</h3><span class="badge mission">🎬 index.html 미션</span></div>
+    <div class="p-head"><span class="p-no">Q10</span><h3 class="p-title">영화 1편 변수화 + 삼항연산자 배지</h3><span class="badge mission">🎬 index.html 미션</span></div>
     <p class="p-desc">index.html 카드에 하드코딩된 영화 정보를 main.js의 변수로 옮기고, <b>평점이 있으면 배지 문자열, 없으면 빈 문자열</b>을 만드는 삼항연산자를 작성합니다. (아직 화면은 안 바꿉니다 — 콘솔로만!)</p>
     
     <div class="task"><span class="mini-label">할 일</span><ul><li>main.js에 movieTitle(제목), movieGenre(장르), movieRating(평점 9.2) 변수를 const로 선언한다</li><li>평점 등급(명작/볼만함/비추)을 if문으로 콘솔에 출력한다</li><li>const ratingBadge = movieRating ? `⭐ ${movieRating}` : ""; 를 작성한다</li><li>movieRating을 null로 바꿔보고 ratingBadge가 빈 문자열이 되는 것도 확인한다</li></ul></div>
     
-    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">null은 조건식에서 false로 취급됩니다(거짓 같은 값). 그래서 rating ? A : B 패턴이 동작합니다.</div></details>
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">02-13에서 배운 falsy 값 6가지 중 하나가 null입니다. rating이 falsy(null)면 : 뒤의 빈 문자열이, truthy(9.2)면 ? 뒤의 배지 문자열이 선택됩니다.</div></details>
     <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// main.js (이어서 작성)</span>
 const movieTitle = <span class="s">"스텔라 오디세이"</span>;
 const movieGenre = <span class="s">"SF · 액션"</span>;

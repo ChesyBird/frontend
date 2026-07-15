@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>02. 기본문법.html — 무비 컬렉션 JS 과정</title>
+<title>02. 기본문법 — 무비 컬렉션 JS 과정</title>
 <style>
   :root{
     --ink:#1B2333; --ink-soft:#4A5568;
@@ -85,7 +85,7 @@
   <p class="subtitle">주석 · 변수 · 자료형 · 형변환 · 연산자 · 제어문 — 모든 장의 기초가 되는 문법</p>
 </div></header>
 <main class="wrap">
-<div class="goal"><h3>🎯 학습 목표</h3><ul><li>☐ var / let / const 의 차이를 설명하고 상황에 맞게 쓸 수 있다</li><li>☐ typeof로 자료형을 확인하고, 문자열↔숫자 형변환을 할 수 있다</li><li>☐ 연산자 우선순위를 알고 조건식을 만들 수 있다</li><li>☐ if / switch / for / while 로 흐름을 제어할 수 있다</li></ul></div><section class="sec"><div class="sec-head"><span class="sec-no">02-1</span><h2>주석 처리</h2></div><table class="ref">
+<div class="goal"><h3>🎯 학습 목표</h3><ul><li>☐ var / let / const 의 차이를 설명하고 상황에 맞게 쓸 수 있다</li><li>☐ typeof로 자료형을 확인하고, 문자열↔숫자 형변환을 할 수 있다</li><li>☐ 대입·비교·논리 연산자 각각의 동작을 설명하고 쓸 수 있다</li><li>☐ falsy(거짓 같은 값) 6가지를 외우고 조건식에서의 동작을 예측할 수 있다</li><li>☐ if / switch 조건문과 for / while 반복문을 문법 구조대로 작성할 수 있다</li></ul></div><section class="sec"><div class="sec-head"><span class="sec-no">02-1</span><h2>주석 처리</h2></div><table class="ref">
   <thead><tr><th>종류</th><th>작성 방법</th></tr></thead>
   <tbody><tr><td>JS 한 줄 주석</td><td><code class='i'>//</code> 로 시작</td></tr>
 <tr><td>JS 여러 줄 주석</td><td><code class='i'>/*</code> 로 시작하고 <code class='i'>*/</code> 로 끝남 (중첩 불가)</td></tr>
@@ -93,7 +93,7 @@
 <pre class="code">var today = new Date();   <span class="c">// 한 줄 주석: 현재 날짜 가져오기</span>
 /* 여러 줄 주석:
    현재 날짜를 가져와 화면에 표시하는 스크립트 */</pre></section>
-<section class="sec"><div class="sec-head"><span class="sec-no">02-2</span><h2>변수 — var, 그리고 let과 const</h2></div><p class="body">변수는 값을 담는 이름표입니다. 전통적으로 <code class='i'>var</code>로 선언했고, 원본 교재들도 var 기준으로 설명하지만, <b>지금 작성하는 코드는 let/const가 표준</b>입니다.</p>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-2</span><h2>변수 — var, 그리고 let과 const</h2></div><p class="body">변수는 값을 담는 이름표입니다. 전통적으로 <code class='i'>var</code>로 선언했지만, <b>지금 작성하는 코드는 let/const가 표준</b>입니다.</p>
 <table class="ref">
   <thead><tr><th>형식</th><th>설명</th></tr></thead>
   <tbody><tr><td class="mono">변수명 = 값;</td><td>var 없이 선언하면 <b>전역변수</b>로 간주 (window 객체의 멤버) — 사용 금지 습관!</td></tr>
@@ -106,21 +106,114 @@ const c = 1;
 <span class="c">// c = 2;                // TypeError: Assignment to constant variable.</span></pre>
 <div class="box imp"><div class="box-title">⭐ 이 과정의 규칙</div><div class="box-body"><p class="body"><b>기본은 const, 값이 바뀌어야 할 때만 let.</b> var는 '읽을 줄만 알면' 됩니다. 레거시 교재·현장 코드에 var가 많으니 동작(재선언 허용, 함수 스코프)은 알아두세요.</p></div></div>
 <p class="body"><b>명명 규칙</b> — ① 영문 대/소문자·숫자·_·$ 사용 가능 ② 첫 글자에 숫자 불가 ③ 예약어 불가 ④ 대소문자 구별 ⑤ 두 단어 결합 시 <b>낙타봉 표기법(camelCase)</b> 권장 (예: movieTitle) ⑥ 생성자 함수는 대문자로 시작(5장).</p></section>
-<section class="sec"><div class="sec-head"><span class="sec-no">02-3</span><h2>자료형과 typeof</h2></div><p class="body">자바스크립트는 선언 시 자료형을 지정하지 않으므로, 자료형 확인에는 <code class='i'>typeof</code> 연산자를 사용합니다.</p>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-3</span><h2>자료형이란</h2></div><p class="body">자료형(Data Type)은 <b>값이 어떤 종류인지</b>를 나타냅니다. 자바스크립트는 크게 <b>원시 자료형(Primitive Type)</b>과 <b>참조 자료형(Reference Type)</b> 두 그룹으로 나뉩니다.</p>
+<table class="ref">
+  <thead><tr><th>구분</th><th>포함하는 자료형</th><th>특징</th></tr></thead>
+  <tbody><tr><td>원시 자료형</td><td>문자열, 숫자, 불리언, undefined, null</td><td>값 자체를 <b>변수에 직접 저장</b>. 변수를 복사하면 값도 통째로 복사됨</td></tr>
+<tr><td>참조 자료형</td><td>객체, 배열, 함수</td><td>값이 저장된 <b>위치(주소)를 저장</b>. 변수를 복사하면 같은 대상을 가리키게 됨 (5장에서 자세히)</td></tr></tbody></table>
+<p class="body"><b>① 문자열(String)</b> — 따옴표(<code class='i'>" "</code>, <code class='i'>' '</code>, 백틱 <code class='i'>` `</code>)로 감싼 텍스트입니다.</p>
+<pre class="code">const title = <span class="s">"스텔라 오디세이"</span>;
+const genre = <span class="s">'SF · 액션'</span>;</pre>
+<p class="body"><b>② 숫자(Number)</b> — 자바스크립트는 정수/실수를 <b>구분하지 않고</b> 숫자는 전부 Number 하나입니다 (다른 언어의 int, float이 따로 없음).</p>
+<pre class="code">const rating = 9;      <span class="c">// 정수</span>
+const avg = 9.2;       <span class="c">// 실수 — 둘 다 자료형은 똑같이 <span class="s">"number"</span></span></pre>
+<p class="body"><b>③ 불리언(Boolean)</b> — <code class='i'>true</code> 또는 <code class='i'>false</code>, 딱 두 값만 가지는 자료형입니다. 조건문의 결과가 바로 이것입니다.</p>
+<pre class="code">const isNewRelease = true;
+const isSoldOut = false;</pre>
+<p class="body"><b>④ undefined</b> — <b>값을 아직 할당하지 않은 상태</b>를 뜻합니다. 변수를 선언만 하고 값을 안 넣으면 자바스크립트가 자동으로 넣어주는 값입니다 — 내가 직접 넣는 경우는 거의 없습니다.</p>
+<pre class="code">let director;
+console.log(director);   <span class="c">// undefined (선언만 하고 값을 안 넣음)</span></pre>
+<p class="body"><b>⑤ null</b> — <b>값이 의도적으로 '없음'</b>임을 <b>내가 직접 표시</b>할 때 씁니다. undefined와 비슷해 보이지만 성격이 다릅니다.</p>
+<table class="ref">
+  <thead><tr><th></th><th>undefined</th><th>null</th></tr></thead>
+  <tbody><tr><td>의미</td><td>값이 아직 없음 (자동)</td><td>값이 없다고 <b>내가 명시</b> (수동)</td></tr>
+<tr><td>누가 넣나</td><td>자바스크립트가 자동으로</td><td>개발자가 직접 대입</td></tr>
+<tr><td>이 과정 사용처</td><td>거의 안 씀 (변수 선언 직후 상태일 뿐)</td><td>"평점 없음" 같은 <b>의도적 빈 값</b>을 표현 (05장 movies 데이터)</td></tr></tbody></table>
+<pre class="code">let director;              <span class="c">// 아직 선언만 함</span>
+console.log(director);     <span class="c">// undefined — <span class="s">"값이 있는지조차 모름"</span></span>
+
+let comingSoonRating = null; <span class="c">// <span class="s">"평점이 없다"</span>는 것을 내가 확실히 표시</span>
+console.log(comingSoonRating); <span class="c">// null — <span class="s">"값이 없다는 걸 확실히 안다"</span></span></pre>
+<p class="body"><b>⑥ 객체(Object)</b> — 다른 값들을 묶어서 담는 자료형입니다. <b>배열도, 함수도 자바스크립트 안에서는 전부 객체의 한 종류</b>입니다 (자세한 내용은 03장 배열, 04장 함수, 05장 객체에서).</p>
+<pre class="code">const movie = { title: <span class="s">"스텔라 오디세이"</span>, rating: 9.2 }; <span class="c">// 객체</span>
+const genres = [<span class="s">"SF"</span>, <span class="s">"액션"</span>];                            <span class="c">// 배열도 객체</span></pre></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-4</span><h2>typeof로 자료형 확인하기</h2></div><p class="body">자바스크립트는 변수 선언 시 자료형을 지정하지 않기 때문에(<b>동적 타입 언어</b>), 지금 이 값이 무슨 자료형인지 코드로 직접 확인하려면 <code class='i'>typeof</code> 연산자를 씁니다.</p>
 <table class="ref">
   <thead><tr><th>typeof 결과</th><th>예시</th></tr></thead>
   <tbody><tr><td class="mono">"string"</td><td>typeof "스텔라 오디세이"</td></tr>
 <tr><td class="mono">"number"</td><td>typeof 9.2</td></tr>
 <tr><td class="mono">"boolean"</td><td>typeof true</td></tr>
-<tr><td class="mono">"object"</td><td>typeof { title: '...' } , typeof [1,2,3]</td></tr>
 <tr><td class="mono">"undefined"</td><td>typeof 초기값없는변수</td></tr>
+<tr><td class="mono">"object"</td><td>typeof null , typeof { title: '...' } , typeof [1,2,3]</td></tr>
 <tr><td class="mono">"function"</td><td>typeof console.log</td></tr></tbody></table>
-<div class="box warn"><div class="box-title">⚠️ typeof의 유명한 함정 2가지</div><div class="box-body"><p class="body">① <code class='i'>typeof null</code>은 <b>"object"</b>가 나옵니다(언어 초기 설계의 오류가 표준으로 굳어짐). ② 배열도 "object"로 나오므로 배열 판별은 <code class='i'>Array.isArray()</code>를 씁니다.</p></div></div></section>
-<section class="sec"><div class="sec-head"><span class="sec-no">02-4</span><h2>문자열(String)과 자주 쓰는 메서드</h2></div><p class="body">문자열은 " " 또는 ' '로 묶인 값이며, ES6부터는 백틱( ` )을 쓰는 <b>템플릿 리터럴</b>로 변수를 문자열 안에 <code class='i'>${ }</code>로 끼워 넣을 수 있습니다.</p>
-<pre class="code">const title = <span class="s">"스텔라 오디세이"</span>;
-const rating = 9.2;
-console.log(<span class="s">`⭐ ${rating} · ${title}`</span>);</pre>
+<div class="box warn"><div class="box-title">⚠️ typeof의 유명한 함정 2가지</div><div class="box-body"><p class="body">① <code class='i'>typeof null</code>은 <b>"object"</b>가 나옵니다(언어 초기 설계의 오류가 표준으로 굳어짐 — null은 원시형인데 결과는 object로 나오는 유일한 예외). ② 배열도 "object"로 나오므로 배열인지 정확히 판별하려면 <code class='i'>Array.isArray()</code>를 씁니다.</p></div></div>
+<div class="box warn">
+    <div class="box-title">🙋 학생들이 자주 틀리는 부분 — null과 undefined 혼동</div>
+    <div class="box-body">
+      <span class="mini-label" style="color:var(--warn)">❌ 이렇게 쓰면 안 됩니다</span>
+      <pre class="code"><span class="c">// <span class="s">"평점이 아직 없는 개봉 예정작"</span>을 표현하려는 코드</span>
+const movie = { title: <span class="s">"은하수 특급"</span>, rating: undefined };  <span class="c">// undefined를 직접 대입</span>
+
+if (movie.rating === null) {
+  console.log(<span class="s">"평점 없음"</span>);
+} else {
+  console.log(<span class="s">"평점: "</span> + movie.rating);   <span class="c">// 여기로 빠짐 — <span class="s">"평점: undefined"</span> ❌</span>
+}</pre>
+      <span class="mini-label" style="color:#166534">✅ 이렇게 고칩니다</span>
+      <pre class="code"><span class="c">// <span class="s">"값이 의도적으로 없음"</span>은 null로 명확히 표시</span>
+const movie = { title: <span class="s">"은하수 특급"</span>, rating: null };
+
+if (movie.rating === null) {
+  console.log(<span class="s">"평점 없음"</span>);   <span class="c">// ✅ 의도대로 동작</span>
+} else {
+  console.log(<span class="s">"평점: "</span> + movie.rating);
+}</pre>
+      <p class="body" style="margin-top:8px">undefined는 <b>"아직 값을 안 넣었다"</b>는 자바스크립트의 자동 표시이고, null은 <b>"값이 없다는 걸 개발자가 확정했다"</b>는 의도적 표시입니다. 데이터를 직접 설계할 때(05장 movies처럼) '값 없음'을 표현하려면 undefined가 아니라 <b>null을 명시적으로 대입</b>하는 것이 이 과정의 규칙입니다.</p>
+    </div>
+  </div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-5</span><h2>문자열(String)과 자주 쓰는 메서드</h2></div><p class="body">문자열은 <code class='i'>" "</code>(큰따옴표) 또는 <code class='i'>' '</code>(작은따옴표)로 감싼 텍스트입니다. 둘 중 아무거나 써도 되지만, 한 문자열 안에서는 <b>같은 종류로 짝을 맞춰야</b> 합니다.</p>
+<pre class="code">const title1 = <span class="s">"스텔라 오디세이"</span>;
+const title2 = <span class="s">'스텔라 오디세이'</span>;   <span class="c">// 결과는 동일</span></pre>
+<p class="body"><b>문자열 연결(옛날 방식)</b>: <code class='i'>+</code> 연산자로 문자열과 변수를 이어 붙일 수 있습니다.</p>
+<pre class="code">const rating = 9.2;
+const title = <span class="s">"스텔라 오디세이"</span>;
+console.log(<span class="s">"⭐ "</span> + rating + <span class="s">" · "</span> + title);</pre>
 <div class="out"><span class="out-label">실행 결과</span><pre>⭐ 9.2 · 스텔라 오디세이</pre></div>
+<div class="box warn"><div class="box-title">⚠️ + 연결 방식의 불편함</div><div class="box-body"><p class="body">변수가 늘어날수록 <code class='i'>+</code>와 따옴표가 계속 반복되어 <b>어디서 문자열이 끝나고 변수가 시작하는지 읽기 어려워집니다.</b> 따옴표 하나만 빠져도 오류가 나기 쉽습니다.</p></div></div>
+<p class="body"><b>템플릿 리터럴(Template Literal, 백틱 사용)</b> — ES6부터 생긴 문자열 작성법으로, <b>백틱(`)</b>으로 감싸고 그 안에서 <code class='i'>${ }</code> 자리에 변수나 계산식을 바로 넣을 수 있습니다.</p>
+<pre class="code">const rating = 9.2;
+const title = <span class="s">"스텔라 오디세이"</span>;
+
+console.log(<span class="s">`⭐ ${rating} · ${title}`</span>);        <span class="c">// 변수를 그대로 삽입</span>
+console.log(<span class="s">`평점 두 배: ${rating * 2}`</span>);       <span class="c">// 계산식도 바로 삽입 가능!</span></pre>
+<div class="out"><span class="out-label">실행 결과</span><pre>⭐ 9.2 · 스텔라 오디세이
+평점 두 배: 18.4</pre></div>
+<table class="ref">
+  <thead><tr><th></th><th>+ 연결 (옛날 방식)</th><th>템플릿 리터럴 (백틱)</th></tr></thead>
+  <tbody><tr><td>감싸는 기호</td><td>" " 또는 ' '</td><td>` ` (백틱, 키보드 숫자1 왼쪽)</td></tr>
+<tr><td>변수 삽입</td><td>"..." + 변수 + "..."</td><td>`...${변수}...`</td></tr>
+<tr><td>여러 줄 문자열</td><td>\n을 직접 넣어야 함</td><td>그냥 줄바꿔서 쓰면 됨</td></tr>
+<tr><td>가독성</td><td>변수가 많아지면 복잡</td><td>글의 흐름을 그대로 유지</td></tr></tbody></table>
+<p class="body"><b>여러 줄 문자열</b>도 템플릿 리터럴의 장점입니다 — 백틱 안에서는 실제로 줄바꿈한 그대로 출력됩니다.</p>
+<pre class="code">const summary = `제목: ${title}
+평점: ${rating}
+한줄평: 올해 최고의 SF!`;
+console.log(summary);</pre>
+<div class="box warn">
+    <div class="box-title">🙋 학생들이 자주 틀리는 부분 — 일반 따옴표에 ${ }를 쓰는 실수</div>
+    <div class="box-body">
+      <span class="mini-label" style="color:var(--warn)">❌ 이렇게 쓰면 안 됩니다</span>
+      <pre class="code">const rating = 9.2;
+console.log(<span class="s">"평점: ${rating}"</span>);   <span class="c">// 큰따옴표를 씀!</span>
+<span class="c">// 출력: <span class="s">"평점: ${rating}"</span>  ← 글자 그대로 출력됨, 계산 안 됨!</span></pre>
+      <span class="mini-label" style="color:#166534">✅ 이렇게 고칩니다</span>
+      <pre class="code">const rating = 9.2;
+console.log(<span class="s">`평점: ${rating}`</span>);   <span class="c">// 백틱을 씀</span>
+<span class="c">// 출력: <span class="s">"평점: 9.2"</span>  ✅</span></pre>
+      <p class="body" style="margin-top:8px"><code class='i'>${ }</code> 문법은 <b>백틱(`) 안에서만</b> 동작합니다. 큰따옴표나 작은따옴표 안에 <code class='i'>${ }</code>를 쓰면 그냥 <b>글자 그대로</b> 출력될 뿐 계산되지 않습니다 — 감싸는 기호를 백틱으로 바꿨는지 항상 확인하세요.</p>
+    </div>
+  </div>
+<p class="body">이 과정에서는 앞으로 변수를 문자열에 섞을 때 <b>항상 템플릿 리터럴(백틱)을 기본으로</b> 사용합니다.</p>
 <table class="ref">
   <thead><tr><th>메서드/속성</th><th>설명</th></tr></thead>
   <tbody><tr><td class="mono">length</td><td>글자 개수 (메서드 아닌 속성 — 괄호 없음)</td></tr>
@@ -133,7 +226,7 @@ console.log(<span class="s">`⭐ ${rating} · ${title}`</span>);</pre>
 <tr><td class="mono">split(구분자)</td><td>구분자로 쪼갠 <b>문자열 배열</b> 리턴</td></tr>
 <tr><td class="mono">trim()</td><td>앞뒤 공백 제거 — 검색어 입력값 정리에 사용</td></tr></tbody></table>
 <div class="box link"><div class="box-title">🔗 index.html 연결 포인트</div><div class="box-body"><p class="body">9장의 <b>영화 제목 검색 필터</b>는 결국 <code class='i'>title.includes(검색어)</code> 한 줄이 핵심입니다. 여기서 미리 손에 익혀두세요.</p></div></div></section>
-<section class="sec"><div class="sec-head"><span class="sec-no">02-5</span><h2>숫자(number)와 기타 자료형</h2></div><table class="ref">
+<section class="sec"><div class="sec-head"><span class="sec-no">02-6</span><h2>숫자(number)와 기타 자료형</h2></div><table class="ref">
   <thead><tr><th>Math 메서드</th><th>설명</th></tr></thead>
   <tbody><tr><td class="mono">Math.abs(x)</td><td>절대값</td></tr>
 <tr><td class="mono">Math.random()</td><td>0 이상 1 미만의 난수 (소수)</td></tr>
@@ -141,32 +234,257 @@ console.log(<span class="s">`⭐ ${rating} · ${title}`</span>);</pre>
 <tr><td class="mono">Math.floor(x)</td><td>내림 (소수점 버림)</td></tr>
 <tr><td class="mono">Math.ceil(x)</td><td>올림</td></tr></tbody></table>
 <p class="body"><b>NaN</b>(Not a Number)은 숫자가 아닌 데이터를 숫자처럼 연산했을 때 나오는 값입니다. 기타 자료형으로는 true/false 두 값을 갖는 <b>논리값(Boolean)</b>, new로 만든 사용자 객체와 내장 객체를 포함하는 <b>객체(Object)</b>, 선언되지 않았거나 값이 없는 <b>undefined</b>, 함수를 담는 <b>function</b> 자료형이 있습니다.</p></section>
-<section class="sec"><div class="sec-head"><span class="sec-no">02-6</span><h2>데이터 형변환</h2></div><p class="body"><b>숫자 → 문자열</b>: 숫자와 문자열을 <code class='i'>+</code> 연산하면 문자열이 우선되어 숫자가 문자열로 바뀝니다(연결). 강제 변환은 <code class='i'>String()</code>.</p>
-<p class="body"><b>문자열 → 숫자</b>: +를 제외한 사칙연산(-, *, /)에서는 숫자가 우선되어 문자열이 숫자로 바뀝니다. 강제 변환은 <code class='i'>Number()</code>, <code class='i'>parseInt()</code>, <code class='i'>parseFloat()</code>.</p>
-<pre class="code">console.log(<span class="s">"10"</span> + 5);        <span class="c">// <span class="s">"105"</span>  (+는 문자열 연결이 우선!)</span>
-console.log(<span class="s">"10"</span> - 5);        <span class="c">// 5      (-는 숫자 연산)</span>
-console.log(Number(<span class="s">"9.2"</span>));   <span class="c">// 9.2</span>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-7</span><h2>데이터 형변환</h2></div><p class="body">형변환은 값의 자료형을 바꾸는 것으로, <b>명시적 형변환</b>(내가 직접 함수로 바꿈)과 <b>암묵적 형변환</b>(연산자가 자동으로 바꿔줌) 두 가지가 있습니다. 암묵적 변환은 편리하지만 <b>예상 못 한 결과</b>의 원인이 되므로, 언제 어떻게 바뀌는지 정확히 알아야 합니다.</p>
+<table class="ref">
+  <thead><tr><th>구분</th><th>의미</th><th>예시</th></tr></thead>
+  <tbody><tr><td>암묵적 형변환</td><td>연산자가 <b>자동으로</b> 바꿈 (내가 시키지 않음)</td><td>"10" + 5 → "105" (자동으로 문자열화)</td></tr>
+<tr><td>명시적 형변환</td><td>함수로 <b>내가 직접</b> 바꿈</td><td>Number("10") → 10</td></tr></tbody></table>
+<p class="body"><b>① 숫자 → 문자열</b>: 숫자와 문자열을 <code class='i'>+</code> 연산하면 문자열이 우선되어 숫자가 문자열로 바뀝니다(암묵적, 연결). 명시적 변환은 <code class='i'>String()</code>.</p>
+<p class="body"><b>② 문자열 → 숫자</b>: +를 제외한 사칙연산(-, *, /)에서는 숫자가 우선되어 문자열이 숫자로 바뀝니다(암묵적). 명시적 변환은 <code class='i'>Number()</code>, <code class='i'>parseInt()</code>, <code class='i'>parseFloat()</code>.</p>
+<pre class="code">console.log(<span class="s">"10"</span> + 5);        <span class="c">// <span class="s">"105"</span>  (+는 문자열 연결이 우선! — 암묵적)</span>
+console.log(<span class="s">"10"</span> - 5);        <span class="c">// 5      (-는 숫자 연산 — 암묵적)</span>
+console.log(Number(<span class="s">"9.2"</span>));   <span class="c">// 9.2    (명시적)</span>
 console.log(parseInt(<span class="s">"120분"</span>)); <span class="c">// 120   (숫자로 시작하면 읽을 수 있는 데까지)</span>
 console.log(Number(<span class="s">"120분"</span>));   <span class="c">// NaN   (Number는 전체가 숫자여야 함)</span>
 console.log(parseFloat(<span class="s">"9.2점"</span>)); <span class="c">// 9.2</span></pre>
-<div class="box warn"><div class="box-title">⚠️ input 값은 항상 문자열</div><div class="box-body"><p class="body">나중에 검색창·폼에서 읽어오는 <code class='i'>value</code>는 <b>무조건 문자열</b>입니다. 숫자로 계산하려면 반드시 Number()/parseInt()로 변환하세요. "10" + 5 = "105" 사고가 실무 단골 버그입니다.</p></div></div></section>
-<section class="sec"><div class="sec-head"><span class="sec-no">02-7</span><h2>연산자 종류와 우선순위</h2></div><table class="ref">
+<p class="body"><code class='i'>parseInt()</code>는 인자를 2개 받을 수 있습니다 — 두 번째 인자로 <b>진법(radix)</b>을 지정하면 그 진법 기준으로 해석합니다.</p>
+<pre class="code">console.log(parseInt(<span class="s">"10"</span>));      <span class="c">// 10  (기본은 10진수)</span>
+console.log(parseInt(<span class="s">"10"</span>, 2));   <span class="c">// 2   (2진수 <span class="s">"10"</span> = 십진수 2)</span>
+console.log(parseInt(<span class="s">"FF"</span>, 16));  <span class="c">// 255 (16진수 <span class="s">"FF"</span> = 십진수 255)</span>
+console.log(parseInt(<span class="s">"777"</span>, 8));  <span class="c">// 511 (8진수 <span class="s">"777"</span> = 십진수 511)</span></pre>
+<p class="body"><b>③ 불리언으로 변환</b>: 명시적 변환은 <code class='i'>Boolean()</code>. 결과는 02-13에서 배울 <b>falsy 6가지(false,0,"",null,undefined,NaN)는 false, 나머지는 전부 true</b> 규칙을 그대로 따릅니다.</p>
+<pre class="code">console.log(Boolean(0));      <span class="c">// false</span>
+console.log(Boolean(<span class="s">""</span>));     <span class="c">// false</span>
+console.log(Boolean(<span class="s">"0"</span>));    <span class="c">// true   ⚠️ 문자열 <span class="s">"0"</span>은 truthy!</span>
+console.log(Boolean(null));   <span class="c">// false</span>
+console.log(Boolean(123));    <span class="c">// true</span>
+console.log(Boolean([]));     <span class="c">// true   ⚠️ 빈 배열도 truthy!</span></pre>
+<p class="body"><b>④ 불리언 → 숫자 / 문자열</b>: 반대 방향 변환도 있습니다. true는 1, false는 0으로 취급됩니다.</p>
+<pre class="code">console.log(Number(true));    <span class="c">// 1</span>
+console.log(Number(false));   <span class="c">// 0</span>
+console.log(true + 1);        <span class="c">// 2      (true → 1로 암묵적 변환 후 덧셈)</span>
+console.log(String(true));    <span class="c">// <span class="s">"true"</span> (문자열로)</span></pre>
+<p class="body"><b>⑤ toString() 메서드</b>: 숫자·불리언 등에 직접 붙여서 문자열로 바꾸는 명시적 방법. 숫자에서는 진법을 인자로 줄 수도 있습니다.</p>
+<pre class="code">console.log((255).toString());     <span class="c">// <span class="s">"255"</span></span>
+console.log((255).toString(16));   <span class="c">// <span class="s">"ff"</span>  (16진수 문자열로)</span>
+console.log((10).toString(2));     <span class="c">// <span class="s">"1010"</span> (2진수 문자열로)</span></pre>
+<div class="box warn"><div class="box-title">⚠️ 형변환의 유명한 함정들 — 결과를 예측하기 어려운 경우</div><div class="box-body"><p class="body"><code class="i">Number("") → 0  (빈 문자열은 0이지 NaN이 아님!)</code><br><code class="i">Number(null) → 0  (null은 0)</code><br><code class="i">Number(undefined) → NaN  (undefined는 NaN — null과 다름!)</code><br><code class="i">Number(" 9 ") → 9  (앞뒤 공백은 자동으로 무시됨)</code><br><code class="i">"1" + 1 + 1 → "111"  (첫 +부터 문자열 연결로 확정되면 뒤도 전부 문자열)</code><br><code class="i">1 + 1 + "1" → "21"  (숫자끼리 먼저 계산된 후에 문자열과 연결)</code></p></div></div>
+<p class="body"><b>input 값은 항상 문자열</b>: 나중에 검색창·폼에서 읽어오는 <code class='i'>value</code>는 <b>무조건 문자열</b>입니다. 숫자로 계산하려면 반드시 Number()/parseInt()로 변환하세요. "10" + 5 = "105" 사고가 실무 단골 버그입니다.</p>
+<div class="box warn">
+    <div class="box-title">🙋 학생들이 자주 틀리는 부분 — 장바구니 합계 계산기</div>
+    <div class="box-body">
+      <span class="mini-label" style="color:var(--warn)">❌ 이렇게 쓰면 안 됩니다</span>
+      <pre class="code"><span class="c">// 두 상품 가격을 입력창 2개에서 읽어와 합계를 구하려는 코드</span>
+const price1 = <span class="s">"5000"</span>;   <span class="c">// 첫 번째 input.value (문자열!)</span>
+const price2 = <span class="s">"3000"</span>;   <span class="c">// 두 번째 input.value (문자열!)</span>
+
+const total = price1 + price2;
+console.log(<span class="s">`합계: ${total}원`</span>);
+<span class="c">// 기대: <span class="s">"합계: 8000원"</span></span>
+<span class="c">// 실제: <span class="s">"합계: 50003000원"</span>  ← 두 문자열이 그냥 이어붙여짐!</span></pre>
+      <span class="mini-label" style="color:#166534">✅ 이렇게 고칩니다</span>
+      <pre class="code">const price1 = <span class="s">"5000"</span>;
+const price2 = <span class="s">"3000"</span>;
+
+const total = Number(price1) + Number(price2);  <span class="c">// 계산 전 반드시 변환!</span>
+console.log(<span class="s">`합계: ${total}원`</span>);   <span class="c">// <span class="s">"합계: 8000원"</span> ✅</span></pre>
+      <p class="body" style="margin-top:8px">덧셈(+)은 <b>피연산자 중 하나라도 문자열이면 무조건 연결</b>을 선택합니다. 곱셈(*)·뺄셈(-)은 자동으로 숫자 변환을 해주지만 +만 예외라서, <b>+를 쓸 때는 반드시 숫자인지 직접 확인하는 습관</b>이 필요합니다.</p>
+    </div>
+  </div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-8</span><h2>연산자의 종류와 역할 (개요)</h2></div><p class="body">연산자는 <b>값을 계산하거나 비교하거나 저장</b>하는 기호입니다. 역할에 따라 크게 5가지로 나뉘고, 이후 절에서 하나씩 자세히 다룹니다.</p>
+<table class="ref">
+  <thead><tr><th>종류</th><th>대표 기호</th><th>하는 일</th></tr></thead>
+  <tbody><tr><td class="mono">산술 연산자</td><td>+ - * / %</td><td>숫자를 계산한다 (사칙연산 + 나머지)</td></tr>
+<tr><td class="mono">대입 연산자</td><td>= += -= *= /= %=</td><td>오른쪽 값을 왼쪽 변수에 <b>저장</b>한다</td></tr>
+<tr><td class="mono">비교 연산자</td><td>> < >= <= == != === !==</td><td>두 값을 비교해 <b>true/false</b>를 만든다</td></tr>
+<tr><td class="mono">논리 연산자</td><td>&amp;&amp; || !</td><td>여러 조건을 <b>연결·반전</b>한다</td></tr>
+<tr><td class="mono">삼항 연산자</td><td>조건 ? A : B</td><td>if/else를 <b>한 줄</b>로 표현한다</td></tr></tbody></table>
+<table class="ref">
   <thead><tr><th>구분 (우선순위 높은 순)</th><th>연산자</th><th>설명</th></tr></thead>
   <tbody><tr><td>① 최우선</td><td>( ) [ ] .</td><td>괄호 · 배열 접근 · 속성 접근</td></tr>
 <tr><td>② 단항</td><td>++ -- ! +부호 -부호</td><td>값 하나에만 적용</td></tr>
 <tr><td>③ 산술</td><td>* / % 그다음 + -</td><td>곱셈류가 덧셈류보다 먼저</td></tr>
-<tr><td>④ 관계(비교)</td><td>&gt; &lt; &gt;= &lt;= == != === !==</td><td>크기·동등 비교</td></tr>
+<tr><td>④ 비교</td><td>&gt; &lt; &gt;= &lt;= == != === !==</td><td>크기·동등 비교</td></tr>
 <tr><td>⑤ 논리</td><td>&amp;&amp; 그다음 ||</td><td>AND가 OR보다 먼저</td></tr>
 <tr><td>⑥ 삼항</td><td>조건 ? 값1 : 값2</td><td>if/else의 한 줄 표현</td></tr>
 <tr><td>⑦ 대입</td><td>= += -= *= /= %=</td><td>가장 마지막에 수행</td></tr></tbody></table>
-<div class="box imp"><div class="box-title">⭐ == 말고 === 를 쓰세요</div><div class="box-body"><p class="body"><code class='i'>==</code>는 형변환 후 비교해서 <code class='i'>"5" == 5</code>가 true가 됩니다. <code class='i'>===</code>는 <b>값과 자료형을 모두</b> 비교합니다. 이 과정에서는 항상 === / !== 를 사용합니다.</p></div></div>
-<p class="body"><b>삼항연산자</b>는 「조건 ? 참일 때 값 : 거짓일 때 값」 형태로, 값이 있고 없음에 따라 다른 결과를 만들 때 매우 자주 씁니다.</p>
+<div class="box imp"><div class="box-title">⭐ 우선순위를 다 외울 필요는 없습니다</div><div class="box-body"><p class="body">헷갈리면 <b>괄호 ( )</b>를 쓰세요. <code class='i'>a + b * c</code>가 헷갈리면 <code class='i'>a + (b * c)</code>로 명확하게 쓰는 것이 실무에서도 더 좋은 습관입니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-9</span><h2>대입 연산자</h2></div><p class="body"><b>대입 연산자</b>는 오른쪽 값을 계산해서 왼쪽 변수에 <b>저장</b>합니다. <code class='i'>=</code>는 수학의 '같다'가 아니라 <b>'담아라'는 명령</b>이라는 점이 중요합니다 (같다는 비교 연산자인 === 로 표현).</p>
+<table class="ref">
+  <thead><tr><th>연산자</th><th>의미</th><th>풀어쓰면</th></tr></thead>
+  <tbody><tr><td class="mono">x = 5</td><td>x에 5를 저장</td><td>—</td></tr>
+<tr><td class="mono">x += 5</td><td>x에 5를 더해서 다시 저장</td><td>x = x + 5</td></tr>
+<tr><td class="mono">x -= 5</td><td>x에서 5를 빼서 다시 저장</td><td>x = x - 5</td></tr>
+<tr><td class="mono">x *= 5</td><td>x에 5를 곱해서 다시 저장</td><td>x = x * 5</td></tr>
+<tr><td class="mono">x /= 5</td><td>x를 5로 나눠서 다시 저장</td><td>x = x / 5</td></tr>
+<tr><td class="mono">x %= 5</td><td>x를 5로 나눈 나머지를 저장</td><td>x = x % 5</td></tr></tbody></table>
+<pre class="code">let seats = 30;
+seats = seats - 1;   <span class="c">// 기본형</span>
+seats -= 1;          <span class="c">// 복합 대입 (같은 결과, 더 짧게)</span>
+console.log(seats);  <span class="c">// 28</span></pre>
+<div class="out"><span class="out-label">실행 결과</span><pre>28</pre></div>
+<div class="box warn"><div class="box-title">⚠️ = 와 == 와 === 는 완전히 다른 연산자</div><div class="box-body"><p class="body"><code class='i'>=</code>(대입, 저장) / <code class='i'>==</code>(느슨한 비교) / <code class='i'>===</code>(엄격한 비교) — 셋을 헷갈려서 <code class='i'>if (x = 5)</code>처럼 쓰면 <b>비교가 아니라 대입</b>이 되어버리는 버그가 납니다. 조건식 안에서는 항상 ===를 쓰는 걸 규칙으로 삼으세요.</p></div></div>
+<div class="box warn">
+    <div class="box-title">🙋 학생들이 자주 틀리는 부분 — 로그인 성공 여부 확인</div>
+    <div class="box-body">
+      <span class="mini-label" style="color:var(--warn)">❌ 이렇게 쓰면 안 됩니다</span>
+      <pre class="code"><span class="c">// 아이디가 <span class="s">"admin"</span>인지 확인하려는 코드</span>
+const userId = <span class="s">"guest"</span>;
+
+if (userId = <span class="s">"admin"</span>) {        <span class="c">// = 하나! (대입)</span>
+  console.log(<span class="s">"관리자 로그인!"</span>);
+}
+<span class="c">// userId가 <span class="s">"guest"</span>인데도 <span class="s">"관리자 로그인!"</span>이 출력됩니다</span>
+<span class="c">// → if(userId = <span class="s">"admin"</span>)은 userId에 <span class="s">"admin"</span>을 대입해버리고,</span>
+<span class="c">//   대입된 결과(<span class="s">"admin"</span>, truthy)를 조건으로 판단하기 때문!</span></pre>
+      <span class="mini-label" style="color:#166534">✅ 이렇게 고칩니다</span>
+      <pre class="code">const userId = <span class="s">"guest"</span>;
+
+if (userId === <span class="s">"admin"</span>) {      <span class="c">// === 두 개! (비교)</span>
+  console.log(<span class="s">"관리자 로그인!"</span>);
+} else {
+  console.log(<span class="s">"일반 사용자"</span>);    <span class="c">// guest이므로 이게 출력됨 ✅</span>
+}</pre>
+      <p class="body" style="margin-top:8px">=(1개)은 저장, ===(3개)는 비교입니다. 조건식 괄호 안에 = 이 하나만 있다면 십중팔구 오타입니다 — 저장하면서 그 값 자체가 truthy라서 조건문이 항상 실행되는 것처럼 보이는, 매우 찾기 어려운 버그입니다.</p>
+    </div>
+  </div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-10</span><h2>비교 연산자</h2></div><p class="body"><b>비교 연산자</b>는 두 값의 크기나 동등함을 비교해서 결과를 <b>항상 true 또는 false</b>로 돌려줍니다. 조건문(02-14)의 재료가 됩니다.</p>
+<table class="ref">
+  <thead><tr><th>연산자</th><th>이름</th><th>예시</th><th>결과</th></tr></thead>
+  <tbody><tr><td class="mono">&gt;</td><td>크다</td><td>9 &gt; 5</td><td>true</td></tr>
+<tr><td class="mono">&lt;</td><td>작다</td><td>9 &lt; 5</td><td>false</td></tr>
+<tr><td class="mono">&gt;=</td><td>크거나 같다</td><td>5 &gt;= 5</td><td>true</td></tr>
+<tr><td class="mono">&lt;=</td><td>작거나 같다</td><td>4 &lt;= 5</td><td>true</td></tr>
+<tr><td class="mono">==</td><td>느슨한 비교 (값만 비교, 형변환 O)</td><td>"5" == 5</td><td>true ⚠️</td></tr>
+<tr><td class="mono">!=</td><td>느슨한 다름 비교</td><td>"5" != 5</td><td>false ⚠️</td></tr>
+<tr><td class="mono">===</td><td>엄격한 비교 (값+타입 비교) ⭐</td><td>"5" === 5</td><td>false</td></tr>
+<tr><td class="mono">!==</td><td>엄격한 다름 비교 ⭐</td><td>"5" !== 5</td><td>true</td></tr></tbody></table>
+<pre class="code">console.log(9.2 &gt; 7.0);      <span class="c">// true</span>
+console.log(<span class="s">"5"</span> == 5);       <span class="c">// true  — 문자열 <span class="s">"5"</span>를 숫자로 바꿔서 비교</span>
+console.log(<span class="s">"5"</span> === 5);      <span class="c">// false — 타입(문자열 vs 숫자)이 다름</span>
+console.log(9.2 !== 9.2);    <span class="c">// false</span></pre>
+<div class="box imp"><div class="box-title">⭐ 이 과정의 규칙: 비교는 항상 === / !== 만 사용</div><div class="box-body"><p class="body">==는 타입이 달라도 형변환해서 비교하기 때문에 예상 못 한 결과가 자주 나옵니다. <b>=== 와 !== 만 쓰면 이런 실수를 원천 차단</b>할 수 있습니다.</p></div></div>
+<div class="box warn">
+    <div class="box-title">🙋 학생들이 자주 틀리는 부분 — 장르 코드로 영화 걸러내기</div>
+    <div class="box-body">
+      <span class="mini-label" style="color:var(--warn)">❌ 이렇게 쓰면 안 됩니다</span>
+      <pre class="code"><span class="c">// select의 value(문자열)와 영화 데이터의 genreId(숫자)를 비교하려는 코드</span>
+const selectedGenre = <span class="s">"1"</span>;        <span class="c">// &lt;select&gt;의 value는 항상 문자열!</span>
+const movie = { title: <span class="s">"스텔라 오디세이"</span>, genreId: 1 };  <span class="c">// 데이터는 숫자</span>
+
+if (selectedGenre === movie.genreId) {   <span class="c">// <span class="s">"1"</span> === 1 → false!</span>
+  console.log(<span class="s">"장르 일치!"</span>);
+} else {
+  console.log(<span class="s">"장르 다름"</span>);   <span class="c">// 실제로는 같은 장르인데 여기로 빠짐 ❌</span>
+}</pre>
+      <span class="mini-label" style="color:#166534">✅ 이렇게 고칩니다</span>
+      <pre class="code">const selectedGenre = <span class="s">"1"</span>;
+const movie = { title: <span class="s">"스텔라 오디세이"</span>, genreId: 1 };
+
+if (Number(selectedGenre) === movie.genreId) {   <span class="c">// 비교 전에 타입을 맞춤</span>
+  console.log(<span class="s">"장르 일치!"</span>);   <span class="c">// ✅ 정상 출력</span>
+}</pre>
+      <p class="body" style="margin-top:8px">===를 쓰는 것 자체는 옳았지만, <b>비교하려는 두 값의 타입이 애초에 다르면</b> === 도 항상 false를 반환합니다. "규칙: ===만 쓴다"에서 한 걸음 더 나아가, <b>비교 전에 두 값의 타입을 맞추는 습관</b>이 필요합니다 — HTML의 select/input 값은 항상 문자열이라는 것을 특히 기억하세요.</p>
+    </div>
+  </div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-11</span><h2>논리 연산자</h2></div><p class="body"><b>논리 연산자</b>는 여러 개의 참/거짓을 <b>연결하거나 뒤집습니다.</b> 조건을 두 개 이상 합칠 때 사용합니다.</p>
+<table class="ref">
+  <thead><tr><th>연산자</th><th>이름</th><th>동작 규칙</th></tr></thead>
+  <tbody><tr><td class="mono">&amp;&amp;</td><td>AND (그리고)</td><td><b>둘 다 true</b>일 때만 true</td></tr>
+<tr><td class="mono">||</td><td>OR (또는)</td><td><b>하나라도 true</b>면 true</td></tr>
+<tr><td class="mono">!</td><td>NOT (반전)</td><td>true↔false를 뒤집음</td></tr></tbody></table>
+<table class="ref">
+  <thead><tr><th>A</th><th>B</th><th>A &amp;amp;&amp;amp; B</th><th>A || B</th></tr></thead>
+  <tbody><tr><td>true</td><td>true</td><td>true</td><td>true</td></tr>
+<tr><td>true</td><td>false</td><td>false</td><td>true</td></tr>
+<tr><td>false</td><td>true</td><td>false</td><td>true</td></tr>
+<tr><td>false</td><td>false</td><td>false</td><td>false</td></tr></tbody></table>
+<pre class="code">const rating = 9.2;
+const isNewRelease = true;
+
+console.log(rating &gt;= 9.0 &amp;&amp; isNewRelease);  <span class="c">// true &amp;&amp; true  → true</span>
+console.log(rating &gt;= 9.5 || isNewRelease);  <span class="c">// false || true → true</span>
+console.log(!isNewRelease);                  <span class="c">// false (반전)</span></pre>
+<div class="box warn"><div class="box-title">⚠️ &amp;&amp; 와 || 는 평가를 도중에 멈춥니다 (단락 평가)</div><div class="box-body"><p class="body"><code class='i'>false && 아무거나</code>는 왼쪽이 false인 순간 오른쪽을 보지도 않고 바로 false입니다. <code class='i'>true || 아무거나</code>도 마찬가지로 오른쪽을 확인하지 않습니다. 그래서 <code class='i'>user && user.name</code>처럼 <b>user가 없을 때 오류 없이 멈추게 하는 안전장치</b>로도 자주 씁니다.</p></div></div>
+<div class="box warn">
+    <div class="box-title">🙋 학생들이 자주 틀리는 부분 — 무료 관람 조건 판별 (괄호 누락)</div>
+    <div class="box-body">
+      <span class="mini-label" style="color:var(--warn)">❌ 이렇게 쓰면 안 됩니다</span>
+      <pre class="code"><span class="c">// <span class="s">"SF 장르이면서 평점 9 이상"</span> 이거나 <span class="s">"무료 쿠폰 보유"</span>면 무료 관람</span>
+const genre = <span class="s">"드라마"</span>, rating = 6.0, hasCoupon = true;
+
+const isFree = genre === <span class="s">"SF"</span> &amp;&amp; rating &gt;= 9 || hasCoupon;
+console.log(isFree);   <span class="c">// true — 의도는 맞았지만 우연일 뿐, 위험한 코드!</span>
+<span class="c">// &amp;&amp;가 ||보다 먼저 계산되어</span>
+<span class="c">// (genre===<span class="s">"SF"</span> &amp;&amp; rating&gt;=9) || hasCoupon  으로 해석됨</span>
+<span class="c">// → 쿠폰만 있으면 장르·평점과 무관하게 항상 true가 되어버림</span></pre>
+      <span class="mini-label" style="color:#166534">✅ 이렇게 고칩니다</span>
+      <pre class="code">const genre = <span class="s">"드라마"</span>, rating = 6.0, hasCoupon = true;
+
+<span class="c">// <span class="s">"괄호"</span>로 원하는 그룹을 명확히 지정</span>
+const isFree = (genre === <span class="s">"SF"</span> &amp;&amp; rating &gt;= 9) || hasCoupon;
+console.log(isFree);   <span class="c">// 결과는 같지만, 의도가 코드에 명확히 드러남 ✅</span></pre>
+      <p class="body" style="margin-top:8px">이 예시는 결과가 우연히 같았지만, <b>조건이 3개 이상 섞이면 괄호 없이는 의도와 다르게 그룹지어지기 쉽습니다.</b> &&와 ||를 함께 쓸 때는 <b>항상 괄호로 그룹을 명시</b>하는 것을 규칙으로 삼으세요 — 02-8 우선순위 표를 외우는 것보다 훨씬 안전합니다.</p>
+    </div>
+  </div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-12</span><h2>삼항 연산자</h2></div><p class="body"><b>삼항연산자</b>는 「조건 ? 참일 때 값 : 거짓일 때 값」 형태로, 아주 간단한 if/else를 한 줄로 줄여 씁니다.</p>
 <pre class="code">const rating = 9.2;
 const badge = rating ? <span class="s">`⭐ ${rating}`</span> : <span class="s">""</span>;  <span class="c">// 평점 있으면 배지, 없으면 빈 문자열</span>
 console.log(badge);</pre>
 <div class="out"><span class="out-label">실행 결과</span><pre>⭐ 9.2</pre></div>
-<div class="box link"><div class="box-title">🔗 index.html 연결 포인트</div><div class="box-body"><p class="body">이 삼항연산자 패턴이 그대로 <b>카드 오른쪽 상단 평점 배지</b>가 됩니다. 4장에서 makeCard() 함수 안에 넣고, 8장에서 화면으로 확인합니다.</p></div></div></section>
-<section class="sec"><div class="sec-head"><span class="sec-no">02-8</span><h2>제어문 — 조건문 · 반복문 · 분기문</h2></div><p class="body"><b>조건문</b>: if / if~else / if~else if~else / switch / 짧은 조건문(&amp;&amp;, ||)</p>
+<div class="box warn"><div class="box-title">⚠️ 삼항연산자는 '간단할 때만' — 조건이 복잡하면 if/else로</div><div class="box-body"><p class="body">삼항연산자를 중첩해서 쓰면(<code class='i'>a ? b ? 1 : 2 : 3</code>) 읽기 매우 어려워집니다. 값 하나를 결정하는 간단한 상황에만 쓰고, 복잡한 분기는 02-14의 if/else를 쓰세요.</p></div></div>
+<div class="box link"><div class="box-title">🔗 index.html 연결 포인트</div><div class="box-body"><p class="body">이 삼항연산자 패턴이 그대로 <b>카드 오른쪽 상단 평점 배지</b>가 됩니다. 단, 이 코드가 왜 동작하는지 이해하려면 다음 절의 <b>falsy 개념이 반드시 필요</b>합니다 — rating이 <code class='i'>?</code> 앞에 바로 오는 이유를 다음 절에서 설명합니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-13</span><h2>⚠️ Truthy와 Falsy — 조건식이 진짜로 보는 것</h2></div><p class="body">자바스크립트의 조건식(if, 삼항연산자, &amp;&amp;, ||)은 <b>true/false가 아닌 값</b>이 와도 동작합니다. 이때 자바스크립트는 그 값을 <b>true 취급(truthy)</b>할지 <b>false 취급(falsy)</b>할지 <b>자동으로 판단</b>합니다.</p>
+<div class="box imp"><div class="box-title">⭐ Falsy(거짓 취급) 값은 아래 6가지가 전부입니다 — 통째로 외우세요</div><div class="box-body"><p class="body"><code class="i">false</code> · <code class="i">0</code> · <code class="i">""</code> (빈 문자열) · <code class="i">null</code> · <code class="i">undefined</code> · <code class="i">NaN</code><br>이 6개를 <b>제외한 모든 값</b>은 Truthy(참 취급)입니다. 문자열 <code class="i">"0"</code>, 빈 배열 <code class="i">[]</code>, 빈 객체 <code class="i">{}</code>조차 <b>Truthy</b>입니다(글자·구조가 있으니까요) — 초보자가 가장 자주 틀리는 함정입니다.</p></div></div>
+<pre class="code">if (0)   console.log(<span class="s">"A"</span>); else console.log(<span class="s">"A는 falsy라 실행 안 됨"</span>);
+if (<span class="s">""</span>)  console.log(<span class="s">"B"</span>); else console.log(<span class="s">"B는 falsy라 실행 안 됨"</span>);
+if (<span class="s">"0"</span>) console.log(<span class="s">"C, 문자열 '0'은 truthy!"</span>);   <span class="c">// 실행됨!</span>
+if ([])  console.log(<span class="s">"D, 빈 배열도 truthy!"</span>);        <span class="c">// 실행됨!</span>
+if (null) console.log(<span class="s">"E"</span>); else console.log(<span class="s">"E는 falsy라 실행 안 됨"</span>);</pre>
+<div class="out"><span class="out-label">실행 결과</span><pre>A는 falsy라 실행 안 됨
+B는 falsy라 실행 안 됨
+C, 문자열 '0'은 truthy!
+D, 빈 배열도 truthy!
+E는 falsy라 실행 안 됨</pre></div>
+<p class="body">이제 02-12의 배지 코드를 다시 보면: <code class='i'>rating ? A : B</code>에서 rating이 <b>9.2(truthy)면 A</b>, rating이 <b>0이나 null, undefined(falsy)면 B</b>가 선택됩니다. <code class='i'>rating !== null</code>처럼 길게 쓰지 않고 <b>값 자체를 조건에 바로 넣을 수 있는 이유</b>가 바로 이 falsy/truthy 규칙입니다.</p>
+<div class="box warn"><div class="box-title">⚠️ 숫자 0은 falsy — '개봉 예정(평점 0)'과 '평점 없음(null)'을 구분해야 할 때 조심</div><div class="box-body"><p class="body">평점이 <b>진짜 0점</b>인 영화가 있다면 <code class='i'>rating ? A : B</code>는 0도 falsy라 B로 빠집니다. 이런 경우엔 <code class='i'>rating !== null &amp;&amp; rating !== undefined</code>처럼 <b>명확한 비교</b>를 써야 합니다. 이 과정의 movies 데이터는 '평점 없음'을 항상 <code class='i'>null</code>로만 표현하기로 약속해서 이 문제를 피합니다.</p></div></div>
+<div class="box warn">
+    <div class="box-title">🙋 학생들이 자주 틀리는 부분 — 평점 0점 vs 평점 없음 구분</div>
+    <div class="box-body">
+      <span class="mini-label" style="color:var(--warn)">❌ 이렇게 쓰면 안 됩니다</span>
+      <pre class="code"><span class="c">// 관객 혹평으로 실제 평점이 0.0점인 영화가 있다고 가정</span>
+const movie = { title: <span class="s">"최악의 영화"</span>, rating: 0 };
+
+const badge = movie.rating ? <span class="s">`⭐ ${movie.rating}`</span> : <span class="s">"평점 없음"</span>;
+console.log(badge);   <span class="c">// <span class="s">"평점 없음"</span> ❌ — 0점도 엄연히 평점이 매겨진 것인데!</span>
+<span class="c">// rating이 0(falsy)이라서 무조건 : 뒤로 빠져버림</span></pre>
+      <span class="mini-label" style="color:#166534">✅ 이렇게 고칩니다</span>
+      <pre class="code">const movie = { title: <span class="s">"최악의 영화"</span>, rating: 0 };
+
+<span class="c">// truthy/falsy가 아니라 <span class="s">"값이 존재하는가"</span>를 직접 물어봄</span>
+const badge = (movie.rating !== null &amp;&amp; movie.rating !== undefined)
+  ? <span class="s">`⭐ ${movie.rating}`</span>
+  : <span class="s">"평점 없음"</span>;
+console.log(badge);   <span class="c">// <span class="s">"⭐ 0"</span> ✅ — 0점이라는 사실이 정확히 표시됨</span></pre>
+      <p class="body" style="margin-top:8px">삼항연산자에 값을 <b>그대로</b> 넣는 패턴(<code class='i'>rating ? A : B</code>)은 편리하지만, <b>0이 의미 있는 값인 상황(평점, 개수, 순위 등)</b>에서는 falsy 함정에 걸립니다. '값이 있다/없다'를 판단할 땐 truthy가 아니라 <code class='i'>!== null</code> 비교를 쓰는 습관이 안전합니다.</p>
+    </div>
+  </div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-14</span><h2>조건문 작성 방법</h2></div><p class="body">조건문은 <b>조건에 따라 다른 코드를 실행</b>합니다. 조건식 자리에는 비교/논리 연산자로 만든 값(또는 02-13의 truthy/falsy 값)이 들어갑니다.</p>
+<p class="body"><b>① if — 조건이 참일 때만 실행</b></p>
+<pre class="code">if (조건식) {
+  <span class="c">// 조건식이 truthy일 때 실행</span>
+}
+
+if (rating &gt;= 9.0) {
+  console.log(<span class="s">"명작"</span>);
+}</pre>
+<p class="body"><b>② if ~ else — 참/거짓 둘 중 하나</b></p>
+<pre class="code">if (조건식) {
+  <span class="c">// 참일 때</span>
+} else {
+  <span class="c">// 거짓일 때</span>
+}</pre>
+<p class="body"><b>③ if ~ else if ~ else — 여러 조건을 순서대로 검사</b> (위에서부터 처음 맞는 조건 하나만 실행되고 나머지는 건너뜀)</p>
 <pre class="code">const rating = 8.7;
 if (rating &gt;= 9.0) {
   console.log(<span class="s">"명작"</span>);
@@ -176,9 +494,76 @@ if (rating &gt;= 9.0) {
   console.log(<span class="s">"비추"</span>);
 }</pre>
 <div class="out"><span class="out-label">실행 결과</span><pre>볼만함</pre></div>
-<p class="body"><b>반복문</b>: for / while / do~while / for in (객체·배열 순회, 5장에서 자세히)</p>
+<p class="body"><b>④ switch — 하나의 값을 여러 경우와 비교</b>할 때 if~else if를 대체. <code class='i'>case</code>마다 <code class='i'>break</code>로 반드시 끝내야 다음 case로 새지 않습니다.</p>
+<pre class="code">switch (genre) {
+  case <span class="s">"action"</span>:
+    console.log(<span class="s">"액션"</span>);
+    break;              <span class="c">// 없으면 아래 case까지 줄줄이 실행됨!</span>
+  case <span class="s">"romance"</span>:
+    console.log(<span class="s">"로맨스"</span>);
+    break;
+  default:              <span class="c">// 어떤 case에도 안 맞을 때</span>
+    console.log(<span class="s">"기타"</span>);
+}</pre>
+<div class="box warn"><div class="box-title">⚠️ switch의 break 누락은 실무 단골 버그</div><div class="box-body"><p class="body">break를 빼먹으면 일치한 case부터 <b>그 아래 모든 case가 조건 확인 없이 실행</b>됩니다(fall-through). 의도한 게 아니라면 각 case 끝에 반드시 break를 쓰세요.</p></div></div>
+<div class="box warn">
+    <div class="box-title">🙋 학생들이 자주 틀리는 부분 — 장르 이름 표시 (break 누락)</div>
+    <div class="box-body">
+      <span class="mini-label" style="color:var(--warn)">❌ 이렇게 쓰면 안 됩니다</span>
+      <pre class="code">const genre = <span class="s">"action"</span>;
+switch (genre) {
+  case <span class="s">"action"</span>:
+    console.log(<span class="s">"액션"</span>);        <span class="c">// break 없음!</span>
+  case <span class="s">"romance"</span>:
+    console.log(<span class="s">"로맨스"</span>);      <span class="c">// break 없음!</span>
+  case <span class="s">"scifi"</span>:
+    console.log(<span class="s">"SF"</span>);
+    break;
+  default:
+    console.log(<span class="s">"기타"</span>);
+}
+<span class="c">// 출력: <span class="s">"액션"</span> <span class="s">"로맨스"</span> <span class="s">"SF"</span>  — 3줄이 다 나와버림!</span>
+<span class="c">// case <span class="s">"action"</span>이 맞는 순간, break가 없어서 아래 case들을 조건 확인 없이 계속 실행</span></pre>
+      <span class="mini-label" style="color:#166534">✅ 이렇게 고칩니다</span>
+      <pre class="code">const genre = <span class="s">"action"</span>;
+switch (genre) {
+  case <span class="s">"action"</span>:
+    console.log(<span class="s">"액션"</span>);
+    break;                     <span class="c">// 여기서 확실히 탈출</span>
+  case <span class="s">"romance"</span>:
+    console.log(<span class="s">"로맨스"</span>);
+    break;
+  case <span class="s">"scifi"</span>:
+    console.log(<span class="s">"SF"</span>);
+    break;
+  default:
+    console.log(<span class="s">"기타"</span>);
+}
+<span class="c">// 출력: <span class="s">"액션"</span>  ✅ 딱 한 줄만</span></pre>
+      <p class="body" style="margin-top:8px">switch를 처음 배울 때 가장 많이 하는 실수입니다. <b>case를 쓸 때마다 반사적으로 break를 함께 쓰는 습관</b>을 들이세요. (여러 case가 같은 동작을 공유해야 할 때만 의도적으로 break를 생략합니다 — 이건 심화 활용입니다)</p>
+    </div>
+  </div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">02-15</span><h2>반복문(제어문) 작성 방법</h2></div><p class="body">반복문은 <b>같은 코드를 여러 번</b> 실행합니다. 반복을 특정 조건까지로 제한하는 것이 핵심이라, '제어문'이라고도 부릅니다.</p>
+<p class="body"><b>① for — 몇 번 반복할지 미리 알 때</b> 가장 많이 씁니다. 소괄호 안 3부분을 각각 이해하는 것이 핵심입니다.</p>
+<pre class="code">for (초기식; 조건식; 증감식) {
+  <span class="c">// 조건식이 true인 동안 반복 실행</span>
+}</pre>
+<table class="ref">
+  <thead><tr><th>구성 요소</th><th>역할</th><th>이번 예시</th></tr></thead>
+  <tbody><tr><td class="mono">초기식</td><td>반복을 시작하기 전 <b>딱 한 번만</b> 실행</td><td>let i = 1  (i를 1로 시작)</td></tr>
+<tr><td class="mono">조건식</td><td>매 반복 <b>시작 전</b>에 검사 — false면 반복 종료</td><td>i &lt;= 3  (3 이하인 동안)</td></tr>
+<tr><td class="mono">증감식</td><td>매 반복이 <b>끝날 때마다</b> 실행</td><td>i++  (1씩 증가)</td></tr></tbody></table>
 <pre class="code">for (let i = 1; i &lt;= 3; i++) {
   console.log(i + <span class="s">"번 좌석"</span>);
+}
+<span class="c">// 진행 순서: i=1(실행) → i++ → i=2(실행) → i++ → i=3(실행) → i++ → i=4는 조건 거짓이라 종료</span></pre>
+<div class="out"><span class="out-label">실행 결과</span><pre>1번 좌석
+2번 좌석
+3번 좌석</pre></div>
+<p class="body"><b>② while — 몇 번 반복할지 모르고, 조건이 유지되는 동안 계속</b>할 때. 조건을 <b>먼저</b> 검사합니다.</p>
+<pre class="code">while (조건식) {
+  <span class="c">// 실행할 코드</span>
+  <span class="c">// 조건을 언젠가 false로 만드는 코드가 반드시 있어야 함!</span>
 }
 
 let seats = 3;
@@ -186,8 +571,46 @@ while (seats &gt; 0) {
   seats--;              <span class="c">// 이 줄을 빼먹으면 무한루프!</span>
   console.log(<span class="s">"예매 완료, 남은 좌석 "</span> + seats);
 }</pre>
-<p class="body"><b>분기문</b>: <code class='i'>break</code>(반복 즉시 종료), <code class='i'>continue</code>(이번 회차만 건너뜀)</p>
-<div class="box warn"><div class="box-title">⚠️ do~while은 최소 1번은 실행</div><div class="box-body"><p class="body">while은 조건을 먼저 검사하지만, do~while은 <b>일단 한 번 실행한 뒤</b> 조건을 검사합니다.</p></div></div></section>
+<p class="body"><b>③ do ~ while — 일단 한 번 실행하고 나서</b> 조건을 검사. while과 달리 <b>조건이 처음부터 거짓이어도 최소 1번은 실행</b>됩니다.</p>
+<pre class="code">let count = 0;
+do {
+  console.log(<span class="s">"최소 1번은 실행:"</span>, count);
+  count++;
+} while (count &lt; 0);   <span class="c">// 조건이 처음부터 거짓이지만 이미 1번 실행됨</span></pre>
+<p class="body"><b>④ break / continue — 반복 흐름 제어</b></p>
+<table class="ref">
+  <thead><tr><th>키워드</th><th>동작</th></tr></thead>
+  <tbody><tr><td class="mono">break</td><td>반복문을 <b>즉시 완전히 종료</b>하고 빠져나감</td></tr>
+<tr><td class="mono">continue</td><td><b>이번 회차만 건너뛰고</b> 다음 반복으로 넘어감</td></tr></tbody></table>
+<pre class="code">for (let i = 1; i &lt;= 5; i++) {
+  if (i === 3) continue;   <span class="c">// 3만 건너뜀</span>
+  if (i === 5) break;      <span class="c">// 5에서 완전히 종료</span>
+  console.log(i);
+}
+<span class="c">// 출력: 1, 2, 4   (3은 건너뛰고, 5는 도달 전에 종료)</span></pre>
+<div class="box warn"><div class="box-title">⚠️ while / do-while은 무한루프 주의</div><div class="box-body"><p class="body">조건을 언젠가 <b>false로 만드는 코드</b>(예: seats--, count++)를 빼먹으면 브라우저가 멈춥니다. for문은 증감식이 강제로 보이는 위치에 있어 상대적으로 안전합니다.</p></div></div>
+<div class="box warn">
+    <div class="box-title">🙋 학생들이 자주 틀리는 부분 — 배열을 for문으로 순회할 때 &lt;= 실수</div>
+    <div class="box-body">
+      <span class="mini-label" style="color:var(--warn)">❌ 이렇게 쓰면 안 됩니다</span>
+      <pre class="code">const titles = [<span class="s">"도시의 밤"</span>, <span class="s">"파랑의 계절"</span>, <span class="s">"스텔라 오디세이"</span>];   <span class="c">// length = 3</span>
+
+for (let i = 0; i &lt;= titles.length; i++) {   <span class="c">// &lt;= 를 씀 (실수!)</span>
+  console.log(titles[i]);
+}
+<span class="c">// <span class="s">"도시의 밤"</span> <span class="s">"파랑의 계절"</span> <span class="s">"스텔라 오디세이"</span> undefined</span>
+<span class="c">// ↑ i가 3일 때 titles[3]은 존재하지 않아 undefined가 출력됨</span>
+<span class="c">// (인덱스는 0,1,2까지만 있는데 &lt;=titles.length는 3까지 돌아버림)</span></pre>
+      <span class="mini-label" style="color:#166534">✅ 이렇게 고칩니다</span>
+      <pre class="code">const titles = [<span class="s">"도시의 밤"</span>, <span class="s">"파랑의 계절"</span>, <span class="s">"스텔라 오디세이"</span>];
+
+for (let i = 0; i &lt; titles.length; i++) {    <span class="c">// &lt; 사용 (표준!)</span>
+  console.log(titles[i]);
+}
+<span class="c">// <span class="s">"도시의 밤"</span> <span class="s">"파랑의 계절"</span> <span class="s">"스텔라 오디세이"</span>  ✅ 딱 3줄</span></pre>
+      <p class="body" style="margin-top:8px">배열의 인덱스는 <b>0부터 (length-1)까지</b>입니다. length 자체는 '개수'이지 '마지막 인덱스'가 아니라서, 배열을 순회하는 for문은 <b>거의 항상 &lt; titles.length</b>를 씁니다(&lt;= 가 아님). 좌석 번호(1번부터 n번까지)처럼 <b>실제로 n까지 포함해야 하는 경우</b>에만 &lt;=를 씁니다 — 두 경우를 헷갈리지 않는 것이 핵심입니다.</p>
+    </div>
+  </div></section>
 </main>
 <footer class="end">02. 기본문법 — 교안 · 짝꿍 실습지: 02. 기본문법-실습.html</footer>
 </body>
