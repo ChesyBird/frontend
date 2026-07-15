@@ -20,3 +20,4 @@ else {
 const ratingBadge = movieRating ? `⭐${movieRating}` : "";
 console.log(`오늘의 영화:: ${movieTitle} ⭐${movieRating}`)
 
+

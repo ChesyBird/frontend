@@ -169,6 +169,77 @@
             console.log("falsey하지 않은 값은 true로 처리되어요")
         }
 
+        /*
+        반복문
+
+        for(초기식; 조건식; 증강식;){
+        
+        }
+
+        초기식: 변수 초기화(처음 한번 실행)
+        조건식: 조건이 참이면 코드블럭이 실행
+        증강식: 변수의 값을 증가 또는 감소시킴
+        조건이 참이면 코드블럭 실행
+        조건이 참이 아니면 코드블럭 탈출(반복문 종료)
+
+        ~1부터 10까지 1씩 증가하면서 값을 출력
+        */
+    
+        // 반복문
+        for(let i=0; i<10; i++){ //i+2 2씩 증가
+            // 홀수 짝수 판별
+            //  + - * / %(나머지 연산자)
+            if(i%2 == 0){
+                console.log(i);
+            }
+        }
+        
+        let dan = 2;
+        // 1~9
+        console.log("2단 출력")
+        for(i=1; i<10; i++){
+            console.log(`${dan}x${i}=${dan*i}`)
+        }
+
+        // 이중포문을 이용해서 2단부터 9단까지 출력하기
+
+        // break: 반복문을 탈출할때 사용
+        // continue: 현재의 문장만 건너뛰기
+        //          아래 코드를 사용하지 않고 증감식으로 넘어감
+        console.log("2단부터 9단까지")
+        for(dan=2; dan<10; dan++){
+            // if(dan > 3){
+            //     // 반복문 종료
+            //     break;
+            // }
+
+            if(dan%2 ==0){
+                continue;
+            }
+
+            // dan은 2부터 9까지 출력
+            console.log(dan + "단")
+            for(i=1; i<10; i++){
+                console.log(`${dan}*${i}=${dan*i}`);
+            }
+        }
+
+        // while(조건): 조건이 참이면 실행
+        console.log('while문을 사용해서 10까지 출력해보기')
+        let num = 1;
+        while(num <= 10){
+            console.log(num);
+            num = num + 1;
+            // num += 1;
+            // num ++;
+        }
+
+        while(true){
+            if(num > 10){
+                break;
+            }
+        }
+    
 
     </script>
     <!--자바스크립트 외부문서를 연결하는 방법-->
