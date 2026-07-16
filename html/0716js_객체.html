@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+
+        <!-- 화면의 요소를 스크립트로 선택할 때, 위치가 매우 중요해진다.  -->
+        <h1>로또 생성기</h1>
+        <button class="lotto_btn">로또 생성</button>
+        <div class="box">    </div>
+    <script>
+         const title = ["도시의 밤", "파랑의 계절", "스텔라 오디세이","마지막 항해", "여름의 문", "은하수 특급"];
+        const rating = [9.8, 9.5, 9.2, 9.0, 8.7, null];
+
+        for(let i=0; i<title.length; i++){
+            let rate =  rating[i] ? rating[i] : "개봉 예정";
+            console.log(`${title[i]} - ${rate}`);
+        }
+
+        title.forEach(
+            // 배열의 요소들을 순회하면서 (0번부터 끝까지)
+            // 배열이 가지고있는 요소의 값, 배열이 가지고있는 요소의 방번호
+            (item,idx) => {
+                // 삼항연산자 - 제어문을 간단하게 작성
+                // 조건 ? 참 : 거짓
+                let status = rating[idx] == null ? "개봉 예정" : rating[idx];
+
+                console.log(`${item} - ${status}`);
+                //console.log(item,idx);
+                //console.log(rating[idx]);
+            }
+        )
+
+        // 함수의 호이스팅: 자바스크립트를 실행하기 전에 선언부를 먼저 훑어 메모리에 등록
+        // 1. 함수의 호이스팅- 함수 자체가
+        // 2. 변수의 호이스팅- 변수의 선언부가 끌어올려진다.
+        //run();
+
+        // for(let ratings in rating)
+
+        //익명의 함수: 이름이 없으니까 변수에 저장해서 사용한다!
+        let sayDone = () => {
+            console.log("작업이 완료되었습니다.")
+        }
+        // 함수는 이름()을 불러줘야 실행된다.
+        // ()가 비어있는 경우: 매개변수를 전달해서 함수를 실행한다.
+        sayDone()
+
+        // 함수를 작성할 때 매개변수에 초기값을 지정할 수 있다.
+        function run(callback=sayDone){ //콜백함수
+            //console.log(callback);
+            callback();
+        }
+
+        // 함수를 매개변수로 전달하는 방법
+        // 1. 익명의 함수로 전달: 함수 자체를 전달한다
+        run(
+            () =>{
+                console.log("작업이 완료되었습니다.");
+            }
+        )
+
+        // 2. 변수로 전달
+        //⭐run(sayDone()); 괄호를 붙이면 실행결과 반환값이 나온다. -> 반환값이 없기에 undefined가 나온다.
+        run(sayDone);
+
+        /*
+        로또 만들기
+        1. 무작위수 추출
+            Math.random() :0부터 1 사이의 무작위 수를 추출
+            범위를 잡아준다. *범위+1
+        2. 배열에 저장할 경우 중복이 발생하는 문제가 있음
+        3. Set: 중복을 허용하지 않음
+        4.6개의 임의의 수를 추출해서 저장하고 출력하기
+        */
+
+        // 문자_문자: 스네이크 표기법
+        // abcDefg: 카멜 표기법
+        let lotto_btn = document.querySelector(".lotto_btn");
+
+        lotto_btn.addEventListener(
+            'click',
+            ()=>{
+                make_lotto();
+            }
+        )
+        
+        function make_lotto(){
+            let lotto = new Set() ;
+            // lotto.size : 요소의 갯수
+            // while(조건) : 조건이 참이면 실행
+            // lotto.size<6
+            while(true){
+                // 형변환 parseInt: 정수부분만 추출
+                let num = parseInt(Math.random() *47 +1)
+                lotto.add(num);
+                // break를 이용해서 탈출시키기
+                if(lotto.size == 6){
+                    break;
+                }
+
+            }
+            // 로또 번호를 화면에 출력
+            console.log( "box", document.querySelector(".box") );
+            // querySelector: 선택자를 이용해서 화면에 있는 요소를 하나 선택. 
+            // querySelectorAll: 
+            let box = document.querySelector(".box");
+            lotto.forEach(
+                (item, idx)=>{
+                    console.log(item);
+                    box.innerHTML += item + " ";
+                }
+            );
+            // 반복문이 끝나면 줄바꿈
+            box.innerHTML += "<br>"
+        }
+
+        /* function 이름 () {
+
+        }
+        */
+
+        // 객체: 데이터와 기능의 집합
+        // 속성은 키와 값으로 이루어져 있다
+        // {키 : '값', ....}
+        // 문자열인 경우 키는 그냥 작성, 값은 문자열 처리
+        let movie = {
+            title : "Moana",
+            genre : "Fantasy",
+            rating : 9.2,
+            play : function(){
+                console.log(this.title + "play")
+            }
+        }
+
+        // 객체의 속성을 호출하는 방법
+        // 1. 객체의 이름. 으로 접근
+        movie.title
+        // 2. ['속성명']으로 접근 : 속성명을 모르는 경우, 속성명에 띄어쓰기가 있는 경우
+        movie['genre']
+
+        // for in : 객체인 경우, 객체가 가지고 있는 속성의 key값을 꺼내옵니다.
+        for(key in movie){
+            console.log(key); //key 출력
+            console.log(movie[key]); //value 출력
+        }
+
+        let movie_str = JSON.stringify(movie) // Json형식의 문자열로 변환
+        let obj = JSON.parse(movie_str) // Json형식의 문자열 -> js object로 변환
+
+    </script>    
+
+</body>
+</html>
