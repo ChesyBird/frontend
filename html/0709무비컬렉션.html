@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>무비 컬렉션 — CSS 선택자 연습</title>
-  <link rel="stylesheet" href="styles.css">
+  <!-- <link rel="stylesheet" href="styles.css"> -->
   <link rel="stylesheet" href="/css/basic.css">
   <link rel="stylesheet" href="/css/component.css">
 
@@ -21,6 +21,84 @@
       padding-left: 30px;
     }
   </style>
+
+  <!-- 스크립트 작성 -->
+   <!-- src 속성을 이용해서 외부 문서로 연결할 경우 태그안에 스크립트 실행 안됨!!  -->
+  <script src=""></script>
+  <script>
+    //선택자를 이용해서 요소를 선택
+    //무조건 하나만, 여러개 선택 시 querySelectorAll()사용
+    //요소가 화면에 올라오기 전에 스크립트가 실행되면 화면의 요소를 선택할 수 없다!
+    let grid = document.querySelector('.grid');
+    console.log('바로 선택', grid);
+
+    // --> load 이벤트가 발생하면 실행될 수 있도록 처리
+    //load: 리소스 로드 완료 - 화면이 모두 불러들여지면 실행
+    window.addEventListener('load', function(){
+      //순서에 상관 없이 실행할 수 있음
+      let grid = document.querySelector('.grid');
+      console.log('load이벤트를 통해 선택', grid);
+      // grid.innerText = '텍스트 입력';
+
+      //서버로부터 데이터를 받아와야 함
+      //여러개의 객체를 담은 배열을 만들기
+      //객체는 key:value 형태
+      let movie = {title : 'Malleficent', genre : 'Fantasy', rating : 9.2, img : 'https://picsum.photos/seed/movie3/300/400'}
+
+      //요소 초기화
+      grid.innerHTML = '';
+      //함수룰 호출
+      //6번 호출(i가 0부터 5까지 반복실행)
+
+      for(let i=0; i<6; i++){
+        grid.innerHTML += make_card(movie) ;
+        console.log(i);
+      }
+
+      //배열을 이용해서 6편의 영화를 카드로 만들어 화면에 출력
+      let arr = ['일', '이', '삼'];
+      let arr1 = [1, 2, 3];
+      let arr2 = [{},{},{}];
+      const movies = [
+        { title: "도시의 밤",     genre: "느와르",    rating: 9.8,  img: "https://picsum.photos/seed/movie1/300/400", isNew: false },
+        { title: "파랑의 계절",   genre: "로맨스",    rating: 9.5,  img: "https://picsum.photos/seed/movie2/300/400", isNew: false },
+        { title: "스텔라 오디세이", genre: "SF · 액션", rating: 9.2,  img: "https://picsum.photos/seed/movie3/300/400", isNew: true  },
+        { title: "마지막 항해",   genre: "어드벤처",  rating: 9.0,  img: "https://picsum.photos/seed/movie4/300/400", isNew: false },
+        { title: "여름의 문",     genre: "드라마",    rating: 8.7,  img: "https://picsum.photos/seed/movie5/300/400", isNew: false },
+        { title: "은하수 특급",   genre: "SF",        rating: null, img: "https://picsum.photos/seed/movie6/300/400", isNew: true  }
+      ]
+
+      grid.innerHTML = '';
+      movies.forEach(function(item, index){
+        //item: 배열의 요소
+        //index: 배열의 방번호
+        console.log(item);
+        grid.innerHTML += make_card(item);
+      })
+
+    })
+    //1장의 카드를 만들어서 반환
+    function make_card(movie){
+      //매개변수로 전달된 객체를 로그로 남겨보기: 잘 들어갔는지 확인!
+      console.log(movie);
+      //객체가 가지고 있는 내용을 확인(키로 접근)
+      console.log(movie.title);
+      //속성 이름을 []를 이용해서 접근하는 경우: []안의 문자열을 홑따옴표로 감싼다
+      //키값을 모르는 경우/키값에 공백이 있는 경우
+      console.log(movie['genre']);
+      console.log(movie.rating);
+      console.log(movie.img);
+      return `
+        <article class="card  border rounded-lg overflow-hidden flex-2" data-rating="${movie.rating}">
+        <img class="w-100 h-300px object-cover" src="${movie.img}" alt="${movie.title} 포스터">
+        <div class="card-body bg-white px-3 py-5 fs-lg">
+          <h3>${movie.title}</h3>
+          <p class="genre text-gray mb-20px">${movie.genre}</p>
+          <span class="badge">NEW</span>
+        </div>
+      </article>` 
+    }
+  </script>
 </head>
 <body class="bg-light">
 
