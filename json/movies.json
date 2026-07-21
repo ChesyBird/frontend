@@ -1,0 +1,44 @@
+[
+    {
+        "title": "도시의 밤",
+        "genre": "느와르",
+        "rating": 9.8,
+        "img": "https://picsum.photos/seed/movie1/300/400",
+        "isNew": false
+    },
+    {
+        "title": "파랑의 계절",
+        "genre": "로맨스",
+        "rating": 9.5,
+        "img": "https://picsum.photos/seed/movie2/300/400",
+        "isNew": false
+    },
+    {
+        "title": "스텔라 오디세이",
+        "genre": "SF · 액션",
+        "rating": 9.2,
+        "img": "https://picsum.photos/seed/movie3/300/400",
+        "isNew": true
+    },
+    {
+        "title": "마지막 항해",
+        "genre": "어드벤처",
+        "rating": 9,
+        "img": "https://picsum.photos/seed/movie4/300/400",
+        "isNew": false
+    },
+    {
+        "title": "여름의 문",
+        "genre": "드라마",
+        "rating": 8.7,
+        "img": "https://picsum.photos/seed/movie5/300/400",
+        "isNew": false
+    },
+    {
+        "title": "은하수 특급",
+        "genre": "SF",
+        "rating": null,
+        "img": "https://picsum.photos/seed/movie6/300/400",
+        "isNew": true
+    }
+]

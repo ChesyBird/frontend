@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/basic.css">
+    <link rel="stylesheet" href="/css/component.css">
+    <script>
+        try{
+            //예외(오류)가 발생할 소지가 있는 코드는 try-catch로 묶어준다!
+            //예외가 발생하면 catch 문장으로 이동함
+            let box = document.querySelector('.box')
+            box.innerHTML = '환영합니다.'
+        }catch(e){
+            console.log(e)
+        }
+        
+        //fetch를 이용해서 외부데이터 받아오기
+        //1.요청 url -> 
+        //fetch('http://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp?collection=kmdb_new2&detail=Y&actor=%EC%9D%B4%EB%8F%99%EC%9A%B1&ServiceKey=W6L8I0UH24S2W5O4JJ49')
+        //.then(res=>res.json())//응답 결과를 문자열->오브젝트로 변환
+        //.then(res=>{
+        //    console.log(res);
+        //})
+
+        //1.키 발급
+        //2.API문서 확인
+        //요청할 때 필요한 데이터를 확인
+        //응답으로 넘어오는 데이터를 확인 - 데이터의 구조
+        fetch('http://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp?collection=kmdb_new2&detail=Y&actor=%EC%9D%B4%EB%8F%99%EC%9A%B1&ServiceKey=W6L8I0UH24S2W5O4JJ49')
+        .then(res=>res.json())
+        .then(res=>{
+            console.log(res);
+        })
+
+        function make_card(movie){
+            console.log("posters", movie.posters);
+            //split: 문자열을 잘라서 배열로 변환하는 함수
+            //split(''):''안의 것을 기준으로 잘라라. [n]: n번째 것을 띄워라.
+            let poster = movie.posters.split('|')[0];
+            //포스터 이미지가 없으면 noimg로 대체
+            //console.log(poster);
+            //삼항연산자
+            //조건?"참일때":"거짓일때";
+            poster = poster?poster:"/html/img/noimage.png";
+
+        return `
+        <article class="card  border rounded-lg overflow-hidden flex-2" data-rating="${movie.rating}">
+        <img class="w-100 h-300px object-cover" src="${poster}" alt="${movie.title} 포스터">
+        <div class="card-body bg-white px-3 py-5 fs-lg">
+          <h3>${movie.title}</h3>
+          <p class="genre text-gray mb-20px">${movie.genre}</p>
+          <span class="badge">NEW</span>
+        </div>
+        </article>` 
+        }
+
+    //1.화면이 load된 이후 실행: 요소가 없으면 오류가 나기 때문에.
+
+    window.addEventListener('load', ()=>{
+        console.log('로그이벤트가 발생했습니다.')
+        
+        //초기화 함수: 데이터를 받아서 화면을 초기화.
+        //데이터를 받아서 요소를 생성함
+        init()
+    })
+
+    function init(){
+        console.log('init() 함수가 호출되었습니다.');
+        //서버로부터 데이터를 받아옴
+        //네트워크 통신은 시간이 오래 걸릴 수 있다
+        let grid = document.querySelector('.grid');
+        fetch('http://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp?collection=kmdb_new2&detail=Y&actor=%EC%9D%B4%EB%8F%99%EC%9A%B1&ServiceKey=W6L8I0UH24S2W5O4JJ49')
+        .then(res=>res.json())
+        .then(res=>{
+            console.log(res);
+            let movies = res.Data[0].Result
+
+            //데이터를 이용해서 화면을 구현
+            //res: 영화목록이 담긴 배열
+            //배열이 가지고 있는 모든 요소를 순회한다.
+            movies.forEach(item => {
+                //item: 배열의 요소를 꺼내어 item에 넣고 함수를 실행
+                //배열이 끝날때까지
+                grid.innerHTML += make_card(item);
+            });
+        })
+    }
+
+    </script>
+</head>
+<body>
+    <div class="box"></div>
+
+    <section class="movie-list max-w-lg mt-7 m-auto bg-light">
+    <h2 class="border-l-2 my-2 pl-4">이번 달 추천작</h2>
+    <div class="grid d-flex flex-wrap gap-5 ml-4 mt-5">
+
+    </div>
+  </section>
+</body>
+</html>
