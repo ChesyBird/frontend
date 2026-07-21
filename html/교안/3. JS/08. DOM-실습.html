@@ -160,7 +160,7 @@ document.querySelector(<span class="s">"tbody"</span>).innerHTML = rows;</pre></
   padding: 4px 10px; border-radius: 999px;
   font-size: 13px; font-weight: 700;
 }</pre>
-    <div class="task"><span class="mini-label">할 일</span><ul><li>index.html의 <article class="card">…</article> 6개를 전부 삭제한다 (grid div는 남긴다!)</li><li>위 CSS를 styles.css에 추가한다</li><li>main.js에 function renderMovies(list) 를 만든다 — forEach + makeCard로 html 문자열을 누적해 .grid의 innerHTML에 대입</li><li>renderMovies(movies) 를 호출해 카드 6장이 그려지는지 확인한다</li><li>rating이 null인 영화만 배지가 안 뜨는지 확인한다 (2장부터 이어온 삼항연산자의 완성!)</li><li>도전: 8-4번 문제를 함수화해 renderRanking(movies)도 만들어 실행한다</li></ul></div>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>index.html의 <code class='i'>&lt;article class="card"&gt;…&lt;/article&gt;</code> 6개를 전부 삭제한다 (grid div는 남긴다!)</li><li>위 CSS를 styles.css에 추가한다</li><li>main.js에 function renderMovies(list) 를 만든다 — forEach + makeCard로 html 문자열을 누적해 .grid의 innerHTML에 대입</li><li>renderMovies(movies) 를 호출해 카드 6장이 그려지는지 확인한다</li><li>rating이 null인 영화만 배지가 안 뜨는지 확인한다 (2장부터 이어온 삼항연산자의 완성!)</li><li>도전: 앞서 푼 "랭킹 테이블 tbody 다시 그리기" 문제를 renderRanking(movies) 함수로 만들어 실행한다</li></ul></div>
     
     <details class="hint"><summary>💡 힌트</summary><div class="hint-box">renderMovies를 '함수'로 만드는 이유: 9장에서 검색 결과 배열로 renderMovies(filtered)를 다시 부르기만 하면 필터링이 완성되기 때문입니다.</div></details>
     <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// main.js (이어서 작성)</span>

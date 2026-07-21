@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10. 비동기통신 — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · CHAPTER 10</span>
+  <h1 class="title">10. 비동기통신</h1>
+  <p class="subtitle">콜백의 한계부터 Promise, fetch, async/await, 공공데이터·GPT 음성까지 — 비동기 통신 전체 그림</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>🎯 학습 목표</h3><ul><li>☐ JSON.stringify / JSON.parse 로 데이터를 변환할 수 있다</li><li>☐ try/catch로 오류를 처리할 수 있다</li><li>☐ 콜백 방식의 한계(콜백 지옥)를 설명하고 Promise가 왜 필요한지 말할 수 있다</li><li>☐ new Promise로 직접 비동기 작업을 만들고, Promise.all로 여러 작업을 동시에 처리할 수 있다</li><li>☐ fetch + async/await로 외부 데이터를 받아 화면에 그릴 수 있다</li><li>☐ HTTP 메서드와 fetch의 옵션(method/headers/body)을 구분해서 쓸 수 있다</li><li>☐ 공공데이터포털 API를 요청 URL로 호출할 수 있다</li><li>☐ OpenAI API로 음성→텍스트(STT), 텍스트→음성(TTS)을 시연할 수 있다</li></ul></div><section class="sec"><div class="sec-head"><span class="sec-no">10-1</span><h2>JSON — 서버와 주고받는 데이터 형식</h2></div><p class="body">JSON(JavaScript Object Notation)은 자바스크립트 객체 표기법을 본뜬 <b>텍스트 데이터 형식</b>입니다. 서버와 데이터를 주고받을 때의 사실상 표준이며, 키를 반드시 <b>큰따옴표</b>로 감쌉니다.</p>
+<table class="ref">
+  <thead><tr><th>메서드</th><th>방향</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">JSON.stringify(객체)</td><td>객체 → JSON 문자열</td><td>저장·전송용으로 변환 (7장 localStorage에서 사용)</td></tr>
+<tr><td class="mono">JSON.parse(문자열)</td><td>JSON 문자열 → 객체</td><td>받은 데이터를 다시 객체로 복원</td></tr></tbody></table>
+<pre class="code">const movie = { title: <span class="s">"도시의 밤"</span>, rating: 9.8 };
+
+const jsonText = JSON.stringify(movie);
+console.log(jsonText);          <span class="c">// <span class="s">'{"title":"도시의 밤","rating":9.8}'</span> (문자열)</span>
+
+const restored = JSON.parse(jsonText);
+console.log(restored.title);    <span class="c">// 도시의 밤 (다시 객체)</span></pre></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">10-2</span><h2>에러 처리 — try / catch / finally / throw</h2></div><p class="body">실행 중 오류가 나면 프로그램은 그 자리에서 멈춥니다. <b>try 블록</b>에서 시도하고, 오류가 나면 <b>catch 블록</b>이 받아서 처리하면 멈추지 않고 이어갈 수 있습니다. <b>finally</b>는 성공하든 실패하든 항상 실행됩니다.</p>
+<pre class="code">try {
+  const data = JSON.parse(<span class="s">"이건 JSON이 아님"</span>);  <span class="c">// 여기서 오류 발생!</span>
+  console.log(<span class="s">"이 줄은 실행되지 않음"</span>);
+} catch (error) {
+  console.log(<span class="s">"오류를 잡았습니다:"</span>, error.message);
+} finally {
+  console.log(<span class="s">"성공하든 실패하든 실행"</span>);
+}
+
+<span class="c">// throw: 직접 오류를 발생시키기</span>
+function setRating(n) {
+  if (n &lt; 0 || n &gt; 10) throw new Error(<span class="s">"평점은 0~10 사이여야 합니다"</span>);
+  return n;
+}</pre>
+<div class="box imp"><div class="box-title">⭐ 네트워크 코드에는 에러 처리가 필수</div><div class="box-body"><p class="body">외부 서버는 언제든 느려지거나 실패할 수 있습니다. fetch를 쓰는 코드는 <b>항상 try/catch로 감싸고</b>, 실패 시 사용자에게 안내 문구를 보여주는 것까지가 한 세트입니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">10-3</span><h2>동기 vs 비동기, 그리고 Promise</h2></div><p class="body"><b>동기(sync)</b>는 한 줄이 끝나야 다음 줄로 넘어가는 방식, <b>비동기(async)</b>는 오래 걸리는 작업을 걸어두고 <b>기다리지 않고 다음 코드를 실행</b>하는 방식입니다.</p>
+<p class="body">비동기로 동작하는 작업은 <b>"시간이 걸리는 일"</b>이라는 공통점이 있습니다. setTimeout은 그중 <b>하나의 예시일 뿐</b>이고, 실제로는 아래처럼 다양한 상황에서 비동기가 등장합니다.</p>
+<table class="ref">
+  <thead><tr><th>종류</th><th>구체적인 예</th><th>왜 비동기인가</th></tr></thead>
+  <tbody><tr><td>타이머</td><td>setTimeout, setInterval (07장)</td><td>정해진 시간이 지나야 실행되므로 그때까지 기다리지 않음</td></tr>
+<tr><td>사용자 이벤트</td><td>addEventListener (09장)</td><td>사용자가 <b>언제</b> 클릭할지 알 수 없어, 클릭이 일어날 때까지 기다리지 않고 등록만 해둠</td></tr>
+<tr><td>네트워크 요청</td><td>fetch (이번 장)</td><td>서버 응답이 <b>얼마나 걸릴지</b> 알 수 없음 — 0.1초일 수도, 5초일 수도</td></tr>
+<tr><td>파일 · 미디어 로딩</td><td>이미지, 오디오/비디오 로딩</td><td>파일 용량과 네트워크 속도에 따라 로딩 시간이 다름</td></tr>
+<tr><td>브라우저 저장소</td><td>localStorage 등 (07장)</td><td>이 과정에서는 사실 동기지만, 실무의 더 큰 저장소(IndexedDB 등)는 비동기로 동작</td></tr></tbody></table>
+<div class="box imp"><div class="box-title">⭐ 공통점: '언제 끝날지 미리 알 수 없는 일'은 비동기로 처리합니다</div><div class="box-body"><p class="body">반대로 <code class='i'>1 + 2</code> 같은 계산은 <b>시간이 예측 가능(사실상 즉시)</b>하므로 동기로 처리해도 문제없습니다. "얼마나 걸릴지 모르는 일 때문에 나머지 코드가 멈춰서는 안 된다"는 것이 비동기가 필요한 이유입니다.</p></div></div>
+<p class="body">아래는 07장에서 이미 다룬 <b>setTimeout</b>으로 비동기의 실행 순서를 다시 확인하는 예제입니다.</p>
+<pre class="code">console.log(<span class="s">"1. 시작"</span>);
+
+setTimeout(function () {
+  console.log(<span class="s">"2. 3초 후 실행 (비동기)"</span>);
+}, 3000);
+
+console.log(<span class="s">"3. 끝"</span>);
+
+<span class="c">// 실행 순서: 1 → 3 → 2   (숫자 순서가 아님!)</span>
+<span class="c">// setTimeout은 <span class="s">"3초 뒤에 실행해줘"</span>라고 예약만 해두고,</span>
+<span class="c">// 기다리지 않고 바로 다음 줄(3)로 넘어가기 때문</span></pre>
+<div class="out"><span class="out-label">실행 결과</span><pre>1. 시작
+3. 끝
+2. 3초 후 실행 (비동기)  ← 3초 뒤에 뒤늦게 출력</pre></div>
+<p class="body"><b>Promise</b>는 「나중에 결과를 주겠다는 약속」 객체로, 세 가지 상태를 가집니다.</p>
+<table class="ref">
+  <thead><tr><th>상태</th><th>의미</th><th>이어지는 처리</th></tr></thead>
+  <tbody><tr><td class="mono">pending</td><td>대기 중 (결과 아직 없음)</td><td>—</td></tr>
+<tr><td class="mono">fulfilled</td><td>성공 (결과 도착)</td><td>.then(콜백) 실행</td></tr>
+<tr><td class="mono">rejected</td><td>실패 (오류 발생)</td><td>.catch(콜백) 실행</td></tr></tbody></table></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">10-4</span><h2>콜백 방식의 한계 — 콜백 지옥</h2></div><p class="body">04장에서 배운 콜백은 비동기 작업 하나를 처리할 땐 편리하지만, <b>순서 있는 여러 비동기 작업(방금 배운 타이머·이벤트·네트워크 요청 등)을 이어 붙이면</b> 코드가 급격히 지저분해집니다. 아래는 타이머(setTimeout)로 예를 들지만, fetch 같은 다른 비동기 작업을 연달아 쓸 때도 <b>똑같은 문제</b>가 생깁니다.</p>
+<pre class="code"><span class="c">// <span class="s">"1단계 끝나면 2단계, 2단계 끝나면 3단계"</span> 를 콜백으로 표현하면...</span>
+function step1(callback) {
+  setTimeout(function () {
+    console.log(<span class="s">"1단계: 회원 정보 조회"</span>);
+    callback();
+  }, 1000);
+}
+
+function step2(callback) {
+  setTimeout(function () {
+    console.log(<span class="s">"2단계: 결제 처리"</span>);
+    callback();
+  }, 1000);
+}
+
+function step3() {
+  setTimeout(function () {
+    console.log(<span class="s">"3단계: 완료 알림"</span>);
+  }, 1000);
+}
+
+<span class="c">// 순서대로 실행하려면 콜백 안에 콜백을 계속 중첩해야 함</span>
+step1(function () {
+  step2(function () {
+    step3();
+  });
+});
+<span class="c">// 4단계, 5단계가 더 늘어나면? 오른쪽으로 계속 밀려나는 <span class="s">"콜백 지옥"</span></span></pre>
+<div class="box imp"><div class="box-title">⭐ 콜백 지옥(Callback Hell)</div><div class="box-body"><p class="body">비동기 작업이 늘어날수록 코드가 <b>오른쪽으로 계속 들여쓰기 되며 피라미드 모양</b>이 되는 현상을 콜백 지옥이라 부릅니다. 에러 처리도 각 단계마다 따로 해야 해서 실수하기 쉽습니다. 바로 위에서 배운 <b>Promise</b>가 이 문제를 해결하고, Promise를 더 읽기 쉽게 쓰는 문법이 <b>async/await</b>입니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">10-5</span><h2>Promise를 직접 만들기</h2></div><p class="body">지금까지는 fetch가 <b>이미 만들어서 리턴해주는</b> Promise를 받기만 했습니다. Promise가 정확히 어떻게 동작하는지 이해하려면 <b>직접 만들어보는 것</b>이 가장 빠릅니다. <code class='i'>new Promise(function(resolve, reject) {...})</code> 형태로 만들고, 성공하면 <code class='i'>resolve(값)</code>, 실패하면 <code class='i'>reject(에러)</code>를 호출합니다.</p>
+<pre class="code">function delay(ms, value) {
+  return new Promise(function (resolve, reject) {
+    if (ms &lt; 0) {
+      reject(new Error(<span class="s">"시간은 음수일 수 없습니다"</span>));
+      return;
+    }
+    setTimeout(function () {
+      resolve(value);   <span class="c">// 이 값이 .then()의 매개변수로 전달됨</span>
+    }, ms);
+  });
+}
+
+delay(1000, <span class="s">"완료!"</span>).then(function (result) {
+  console.log(result);   <span class="c">// 1초 후 <span class="s">"완료!"</span></span>
+});
+
+delay(-1, <span class="s">"x"</span>).catch(function (error) {
+  console.log(<span class="s">"에러:"</span>, error.message);   <span class="c">// 즉시 <span class="s">"에러: 시간은 음수일 수 없습니다"</span></span>
+});</pre>
+<p class="body">이 원리를 알면, <code class='i'>fetch(...)</code>도 결국 내부에서 <b>서버 응답이 오면 resolve, 네트워크가 끊기면 reject</b>를 호출하는 Promise일 뿐이라는 것이 이해됩니다.</p>
+<div class="box imp"><div class="box-title">⭐ resolve/reject는 딱 한 번만 유효합니다</div><div class="box-body"><p class="body">Promise 하나는 <b>성공 또는 실패 중 하나로 딱 한 번만 결정</b>됩니다. resolve를 부른 뒤 reject를 또 불러도 무시됩니다 — 콜백은 실수로 여러 번 호출되는 버그가 생길 수 있는 반면, Promise는 <b>구조적으로 그런 위험이 없다</b>는 것도 장점입니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">10-6</span><h2>fetch — then 체이닝 방식</h2></div><p class="body"><code class='i'>fetch(주소)</code>는 HTTP 요청을 보내고 <b>Promise를 리턴</b>합니다. 응답(response)이 오면 <code class='i'>response.json()</code>으로 본문을 객체로 변환하는데, 이것도 Promise라 then을 한 번 더 씁니다.</p>
+<pre class="code">fetch(<span class="s">"https:<span class="c">//jsonplaceholder.typicode.com/users"</span>)</span>
+  .then(function (response) {
+    if (!response.ok) throw new Error(<span class="s">"HTTP 오류 "</span> + response.status);
+    return response.json();      <span class="c">// 본문 → 객체 (이것도 Promise)</span>
+  })
+  .then(function (data) {
+    console.log(data);            <span class="c">// 드디어 진짜 데이터!</span>
+  })
+  .catch(function (error) {
+    console.log(<span class="s">"요청 실패:"</span>, error.message);
+  });</pre>
+<div class="box warn">
+    <div class="box-title">🙋 학생들이 자주 틀리는 부분 — 404 응답인데도 catch로 안 가서 놓치는 실수</div>
+    <div class="box-body">
+      <span class="mini-label" style="color:var(--warn)">❌ 이렇게 쓰면 안 됩니다</span>
+      <pre class="code">fetch(<span class="s">"https:<span class="c">//jsonplaceholder.typicode.com/users/9999"</span>)   // 존재하지 않는 id</span>
+  .then(function (response) {
+    return response.json();   <span class="c">// response.ok 확인 없이 바로 파싱 시도</span>
+  })
+  .then(function (data) {
+    console.log(data.name);   <span class="c">// 데이터가 없는데 이름을 꺼내려다 undefined 관련 오류</span>
+  })
+  .catch(function (error) {
+    console.log(<span class="s">"실패:"</span>, error.message);  <span class="c">// 여기로 안 옴 — 404도 <span class="s">"응답은 받았음"</span></span>
+  });</pre>
+      <span class="mini-label" style="color:#166534">✅ 이렇게 고칩니다</span>
+      <pre class="code">fetch(<span class="s">"https:<span class="c">//jsonplaceholder.typicode.com/users/9999"</span>)</span>
+  .then(function (response) {
+    if (!response.ok) throw new Error(<span class="s">"HTTP 오류 "</span> + response.status);  <span class="c">// 직접 확인!</span>
+    return response.json();
+  })
+  .then(function (data) {
+    console.log(data.name);
+  })
+  .catch(function (error) {
+    console.log(<span class="s">"실패:"</span>, error.message);   <span class="c">// <span class="s">"실패: HTTP 오류 404"</span> ✅</span>
+  });</pre>
+      <p class="body" style="margin-top:8px">fetch의 Promise는 <b>네트워크 자체가 끊기는 등 요청이 아예 실패했을 때만</b> reject됩니다. 404·500처럼 <b>서버가 응답은 했지만 오류를 알리는 경우</b>는 '성공적으로 응답을 받은 것'으로 취급되어 then으로 들어옵니다. 그래서 <code class='i'>response.ok</code>를 <b>직접 확인해서 throw</b>해줘야만 catch가 제대로 작동합니다.</p>
+    </div>
+  </div>
+<p class="body">연습용 무료 서버: <code class='i'>https://jsonplaceholder.typicode.com</code> — /users(회원 10명), /posts(글 100개) 등을 응답해주는 테스트 전용 API입니다.</p></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">10-7</span><h2>async / await — 비동기를 동기처럼 읽기</h2></div><p class="body"><code class='i'>async</code>를 붙인 함수 안에서는 <code class='i'>await</code>로 Promise의 결과를 <b>기다렸다가</b> 변수에 담을 수 있어, then 체인보다 훨씬 읽기 쉽습니다. 에러는 try/catch로 잡습니다.</p>
+<pre class="code">async function loadUsers() {
+  try {
+    const response = await fetch(<span class="s">"https:<span class="c">//jsonplaceholder.typicode.com/users"</span>);</span>
+    if (!response.ok) throw new Error(<span class="s">"HTTP 오류 "</span> + response.status);
+
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.log(<span class="s">"요청 실패:"</span>, error.message);
+  }
+}
+
+loadUsers();</pre>
+<div class="box imp"><div class="box-title">⭐ await는 async 함수 안에서만</div><div class="box-body"><p class="body">함수 밖(전역)에서 await를 쓰면 일반 script에서는 오류입니다. 「async 함수를 만들고 → 그 안에서 await」 순서를 몸에 붙이세요. 이 과정의 표준 패턴은 <b>async 함수 + await fetch + try/catch + response.ok 확인</b> 4종 세트입니다.</p></div></div>
+<div class="box link"><div class="box-title">🔗 index.html 연결 포인트</div><div class="box-body"><p class="body">받은 데이터가 <b>객체 배열</b>이기만 하면, 8장의 renderMovies 파이프라인에 그대로 흘려보낼 수 있습니다. 「fetch → 배열 → render」 — 데이터의 출처만 바뀔 뿐 그리는 방법은 동일합니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">10-8</span><h2>여러 비동기 작업을 동시에 처리하기 — Promise.all</h2></div><p class="body">await를 여러 번 <b>순서대로</b> 쓰면, 앞의 요청이 끝나야 다음 요청이 <b>시작</b>됩니다. 서로 관련 없는 요청들이라면 굳이 순서대로 기다릴 필요가 없습니다 — <code class='i'>Promise.all([...])</code>로 <b>한꺼번에 시작</b>해서 <b>전부 끝나면 한 번에</b> 결과를 받을 수 있습니다.</p>
+<pre class="code"><span class="c">// ❌ 순차 처리 — 각 요청이 1초씩 걸린다면 총 3초</span>
+async function loadSequential() {
+  const users = await fetch(<span class="s">"https:<span class="c">//jsonplaceholder.typicode.com/users"</span>).then(r =&gt; r.json());</span>
+  const posts = await fetch(<span class="s">"https:<span class="c">//jsonplaceholder.typicode.com/posts"</span>).then(r =&gt; r.json());</span>
+  const todos = await fetch(<span class="s">"https:<span class="c">//jsonplaceholder.typicode.com/todos"</span>).then(r =&gt; r.json());</span>
+  console.log(users.length, posts.length, todos.length);
+}
+
+<span class="c">// ✅ 동시 처리 — 3개를 한꺼번에 요청, 총 시간은 가장 느린 것 하나만큼(약 1초)</span>
+async function loadParallel() {
+  const [users, posts, todos] = await Promise.all([
+    fetch(<span class="s">"https:<span class="c">//jsonplaceholder.typicode.com/users"</span>).then(r =&gt; r.json()),</span>
+    fetch(<span class="s">"https:<span class="c">//jsonplaceholder.typicode.com/posts"</span>).then(r =&gt; r.json()),</span>
+    fetch(<span class="s">"https:<span class="c">//jsonplaceholder.typicode.com/todos"</span>).then(r =&gt; r.json()),</span>
+  ]);
+  console.log(users.length, posts.length, todos.length);
+}</pre>
+<p class="body"><code class='i'>Promise.all</code>의 결과 배열은 05장에서 배운 <b>배열 구조분해할당</b>으로 바로 이름을 붙여 받을 수 있습니다 — 위 코드의 <code class='i'>const [users, posts, todos] = ...</code> 부분입니다.</p>
+<div class="box warn"><div class="box-title">⚠️ Promise.all은 하나라도 실패하면 전체가 실패합니다</div><div class="box-body"><p class="body">세 요청 중 <b>하나라도 reject되면</b>, 나머지가 성공했어도 <code class='i'>Promise.all</code> 전체가 그 순간 바로 reject되어 catch로 빠집니다. "일부만 성공해도 괜찮은" 상황에는 더 심화된 <code class='i'>Promise.allSettled</code>를 쓰지만, 이 과정에서는 "모두 성공해야만 의미 있는" 상황에만 Promise.all을 사용합니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">10-9</span><h2>HTTP 메서드와 fetch 옵션 정리</h2></div><p class="body">지금까지 fetch로 <b>데이터를 조회(GET)</b>만 했습니다. 서버와 주고받는 작업에는 목적에 따라 다른 <b>HTTP 메서드</b>가 있습니다.</p>
+<table class="ref">
+  <thead><tr><th>메서드</th><th>의미</th><th>이 과정에서</th></tr></thead>
+  <tbody><tr><td class="mono">GET</td><td>데이터 조회 — 지금까지 쓴 fetch가 전부 GET (기본값)</td><td>공공데이터·포켓몬 도감 조회에 사용</td></tr>
+<tr><td class="mono">POST</td><td>새 데이터 생성 — 서버에 정보를 새로 등록할 때</td><td>STT 오디오 전송, TTS 텍스트 전송에 사용</td></tr>
+<tr><td class="mono">PUT</td><td>기존 데이터 전체 수정</td><td>이 과정에서는 다루지 않음(참고만)</td></tr>
+<tr><td class="mono">DELETE</td><td>데이터 삭제</td><td>이 과정에서는 다루지 않음(참고만)</td></tr></tbody></table>
+<p class="body">GET 외의 메서드를 쓰려면 fetch의 <b>두 번째 인자(옵션 객체)</b>에 method, headers, body를 지정합니다. 10-11의 TTS 코드가 이미 이 형태를 쓰고 있었습니다.</p>
+<pre class="code">fetch(<span class="s">"https:<span class="c">//api.example.com/movies"</span>, {</span>
+  method: <span class="s">"POST"</span>,                              <span class="c">// GET이 아닌 POST 사용</span>
+  headers: {
+    <span class="s">"Content-Type"</span>: <span class="s">"application/json"</span>,        <span class="c">// <span class="s">"본문이 JSON 형식"</span>임을 서버에 알림</span>
+  },
+  body: JSON.stringify({ title: <span class="s">"새 영화"</span>, rating: 9.0 }),  <span class="c">// body는 항상 문자열!</span>
+});</pre>
+<div class="box warn">
+    <div class="box-title">🙋 학생들이 자주 틀리는 부분 — Content-Type 헤더를 안 맞춰서 서버가 데이터를 못 읽음</div>
+    <div class="box-body">
+      <span class="mini-label" style="color:var(--warn)">❌ 이렇게 쓰면 안 됩니다</span>
+      <pre class="code"><span class="c">// body는 객체를 JSON 문자열로 바꿔 보냈는데, 헤더 설정을 깜빡함</span>
+fetch(<span class="s">"https:<span class="c">//api.example.com/movies"</span>, {</span>
+  method: <span class="s">"POST"</span>,
+  body: JSON.stringify({ title: <span class="s">"새 영화"</span> }),
+  <span class="c">// headers 없음!</span>
+});
+<span class="c">// 서버가 body를 <span class="s">"일반 텍스트"</span>로 오해해서 JSON으로 못 읽고 오류 응답을 줄 수 있음</span></pre>
+      <span class="mini-label" style="color:#166534">✅ 이렇게 고칩니다</span>
+      <pre class="code">fetch(<span class="s">"https:<span class="c">//api.example.com/movies"</span>, {</span>
+  method: <span class="s">"POST"</span>,
+  headers: { <span class="s">"Content-Type"</span>: <span class="s">"application/json"</span> },   <span class="c">// <span class="s">"이 본문은 JSON입니다"</span> 명시</span>
+  body: JSON.stringify({ title: <span class="s">"새 영화"</span> }),
+});</pre>
+      <p class="body" style="margin-top:8px"><code class='i'>body</code>에 무엇을 담아 보내든, <b>서버는 그것을 어떻게 해석할지 headers의 Content-Type를 보고 판단</b>합니다. JSON 문자열을 보내면서 Content-Type을 빠뜨리면, 서버가 파싱에 실패해 오류를 돌려주는 경우가 많습니다. 예외적으로 10-11의 FormData는 <b>Content-Type을 직접 쓰지 않는다</b>는 것도 함께 기억하세요(브라우저가 자동 설정).</p>
+    </div>
+  </div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">10-10</span><h2>공공데이터포털 API 활용</h2></div><p class="body"><b>공공데이터포털(data.go.kr)</b>은 정부·공공기관 데이터를 API로 제공합니다. 이용 절차: ① 회원가입 → ② 원하는 데이터 검색 → ③ <b>활용신청</b> → ④ 발급된 <b>인증키(serviceKey)</b>로 호출.</p>
+<p class="body">요청 URL은 「기본주소 + ?serviceKey=인증키 + &매개변수들」 형태의 <b>쿼리 스트링</b>으로 구성합니다. (7장 location.search에서 본 ?키=값&키=값 형식)</p>
+<pre class="code"><span class="c">// 예: 박스오피스 순위 조회 (영화진흥위원회 KOBIS 오픈API)</span>
+const KEY = <span class="s">"발급받은_인증키"</span>;
+const date = <span class="s">"20260712"</span>;  <span class="c">// 조회할 날짜 (어제)</span>
+const url = <span class="s">`https:<span class="c">//www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=${KEY}&amp;targetDt=${date}`</span>;</span>
+
+async function loadBoxOffice() {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(<span class="s">"HTTP 오류 "</span> + response.status);
+    const data = await response.json();
+
+    const list = data.boxOfficeResult.dailyBoxOfficeList; <span class="c">// 응답 구조는 문서 확인!</span>
+    list.forEach(function (m) {
+      console.log(<span class="s">`${m.rank}위 ${m.movieNm} (관객 ${m.audiCnt}명)`</span>);
+    });
+  } catch (error) {
+    console.log(<span class="s">"불러오기 실패:"</span>, error.message);
+  }
+}</pre>
+<div class="box warn"><div class="box-title">⚠️ 응답 구조는 반드시 문서/콘솔로 확인</div><div class="box-body"><p class="body">API마다 데이터를 감싸는 구조가 다릅니다. 먼저 <code class='i'>console.log(data)</code>로 전체를 찍어 어디에 배열이 들어있는지 확인한 뒤 꺼내는 습관을 들이세요. 또한 브라우저에서 직접 호출 시 <b>CORS 오류</b>가 나는 API도 있습니다 — 서버가 브라우저의 교차 출처 요청을 허용해야 하며, 막혀 있으면 중간 서버(프록시)가 필요합니다.</p></div></div></section>
+<section class="sec"><div class="sec-head"><span class="sec-no">10-11</span><h2>GPT 음성 API — STT와 TTS</h2></div><p class="body">OpenAI의 오디오 API를 쓰면 <b>STT(Speech-to-Text, 음성→텍스트)</b>와 <b>TTS(Text-to-Speech, 텍스트→음성)</b>를 몇 줄로 구현할 수 있습니다. 요청 시 발급받은 API 키를 Authorization 헤더에 담습니다. (모델명은 변할 수 있으니 공식 문서에서 최신 확인)</p>
+<p class="body"><b>TTS — 텍스트를 음성으로:</b> 응답이 JSON이 아니라 <b>오디오 파일(blob)</b>이라는 점이 핵심입니다.</p>
+<pre class="code">async function speak(text) {
+  const response = await fetch(<span class="s">"https:<span class="c">//api.openai.com/v1/audio/speech"</span>, {</span>
+    method: <span class="s">"POST"</span>,
+    headers: {
+      <span class="s">"Authorization"</span>: <span class="s">"Bearer "</span> + OPENAI_KEY,
+      <span class="s">"Content-Type"</span>: <span class="s">"application/json"</span>,
+    },
+    body: JSON.stringify({
+      model: <span class="s">"tts-1"</span>,
+      voice: <span class="s">"nova"</span>,
+      input: text,
+    }),
+  });
+
+  const audioBlob = await response.blob();          <span class="c">// JSON이 아니라 blob!</span>
+  const audioUrl = URL.createObjectURL(audioBlob);  <span class="c">// blob → 재생 가능한 주소</span>
+  new Audio(audioUrl).play();
+}
+
+speak(<span class="s">"오늘의 추천 영화는 도시의 밤입니다"</span>);</pre>
+<p class="body"><b>STT — 음성을 텍스트로:</b> 지금까지 fetch의 body에는 <code class='i'>JSON.stringify(...)</code>로 만든 <b>문자열</b>을 넣었습니다. 하지만 오디오 파일처럼 <b>텍스트가 아닌 파일 데이터</b>를 보낼 때는 <code class='i'>FormData</code>라는 전용 객체를 씁니다.</p>
+<table class="ref">
+  <thead><tr><th>FormData 메서드</th><th>설명</th></tr></thead>
+  <tbody><tr><td class="mono">new FormData()</td><td>빈 폼 데이터 객체 생성</td></tr>
+<tr><td class="mono">formData.append(이름, 값)</td><td>이름-값 쌍을 추가 (파일도 값으로 넣을 수 있음)</td></tr></tbody></table>
+<pre class="code">const formData = new FormData();
+formData.append(<span class="s">"file"</span>, audioFile);   <span class="c">// 파일 데이터</span>
+formData.append(<span class="s">"model"</span>, <span class="s">"whisper-1"</span>); <span class="c">// 일반 값도 함께 담을 수 있음</span>
+
+console.log(formData);   <span class="c">// 콘솔에는 내용이 잘 안 보이지만, 서버로는 정상 전송됨</span></pre>
+<p class="body">마이크 녹음(MediaRecorder)으로 얻은 오디오 파일을 FormData에 담아 fetch로 전송합니다.</p>
+<pre class="code">async function transcribe(audioFile) {
+  const formData = new FormData();
+  formData.append(<span class="s">"file"</span>, audioFile);      <span class="c">// 녹음된 오디오 파일</span>
+  formData.append(<span class="s">"model"</span>, <span class="s">"whisper-1"</span>);
+
+  const response = await fetch(<span class="s">"https:<span class="c">//api.openai.com/v1/audio/transcriptions"</span>, {</span>
+    method: <span class="s">"POST"</span>,
+    headers: { <span class="s">"Authorization"</span>: <span class="s">"Bearer "</span> + OPENAI_KEY },
+    body: formData,   <span class="c">// FormData는 Content-Type을 직접 쓰지 않음(자동 설정)</span>
+  });
+
+  const data = await response.json();
+  console.log(<span class="s">"인식된 텍스트:"</span>, data.text);
+  return data.text;
+}</pre>
+<div class="box warn"><div class="box-title">⚠️ API 키를 프론트 코드에 넣으면 안 됩니다 (수업용 예외)</div><div class="box-body"><p class="body">브라우저의 자바스크립트는 <b>누구나 소스 보기로 열람</b>할 수 있어, 키를 넣는 순간 도용됩니다(과금 폭탄!). 실제 서비스에서는 키를 <b>서버에 두고</b> 브라우저는 서버를 경유합니다. 이 수업에서는 원리 이해를 위해 예외적으로 키를 직접 넣되, <b>실습 후 즉시 키를 폐기(재발급)</b>하세요. 유료 API이므로 강사가 안내하는 실습용 키만 사용합니다.</p></div></div></section>
+</main>
+<footer class="end">10. 비동기통신 — 교안 · 짝꿍 실습지: 10. 비동기통신-실습.html</footer>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>08. DOM.html — 무비 컬렉션 JS 과정</title>
+<title>08. DOM — 무비 컬렉션 JS 과정</title>
 <style>
   :root{
     --ink:#1B2333; --ink-soft:#4A5568;
@@ -99,7 +99,25 @@
 const header = document.querySelector(<span class="s">"#site-header"</span>); <span class="c">// 아이디</span>
 const cards  = document.querySelectorAll(<span class="s">".card"</span>);   <span class="c">// 전부 (6개)</span>
 console.log(cards.length);</pre>
-<div class="box imp"><div class="box-title">⭐ CSS 시간에 배운 선택자를 그대로 씁니다</div><div class="box-body"><p class="body"><code class='i'>querySelector(".has-submenu &gt; a")</code>처럼 결합자·가상클래스까지 CSS 선택자 문법이 전부 동작합니다. CSS 실력이 곧 DOM 선택 실력입니다.</p></div></div></section>
+<div class="box imp"><div class="box-title">⭐ CSS 시간에 배운 선택자를 그대로 씁니다</div><div class="box-body"><p class="body"><code class='i'>querySelector(".has-submenu &gt; a")</code>처럼 결합자·가상클래스까지 CSS 선택자 문법이 전부 동작합니다. CSS 실력이 곧 DOM 선택 실력입니다.</p></div></div>
+<div class="box warn">
+    <div class="box-title">🙋 학생들이 자주 틀리는 부분 — 존재하지 않는 요소를 선택해서 나는 오류</div>
+    <div class="box-body">
+      <span class="mini-label" style="color:var(--warn)">❌ 이렇게 쓰면 안 됩니다</span>
+      <pre class="code">const banner = document.querySelector(<span class="s">".banner"</span>);  <span class="c">// 그런 클래스 요소가 없음</span>
+banner.textContent = <span class="s">"환영합니다"</span>;
+<span class="c">// TypeError: Cannot set properties of null (setting <span class="s">'textContent'</span>)</span></pre>
+      <span class="mini-label" style="color:#166534">✅ 이렇게 고칩니다</span>
+      <pre class="code">const banner = document.querySelector(<span class="s">".banner"</span>);
+
+if (banner) {                      <span class="c">// 03-3, 03-7과 같은 패턴 — 사용 전 존재 확인</span>
+  banner.textContent = <span class="s">"환영합니다"</span>;
+} else {
+  console.log(<span class="s">".banner 요소를 찾을 수 없습니다"</span>);
+}</pre>
+      <p class="body" style="margin-top:8px">querySelector는 일치하는 요소가 없으면 오류 없이 <b>조용히 null</b>을 리턴합니다. 오타 난 클래스명, 아직 안 만들어진 요소(01장의 script 위치 문제), 오탈자 있는 id 모두 같은 증상을 냅니다 — 콘솔에서 <code class='i'>console.log(banner)</code>로 null인지부터 확인하는 습관을 들이세요.</p>
+    </div>
+  </div></section>
 <section class="sec"><div class="sec-head"><span class="sec-no">08-3</span><h2>내용·속성·스타일 바꾸기</h2></div><table class="ref">
   <thead><tr><th>대상</th><th>방법</th></tr></thead>
   <tbody><tr><td>텍스트</td><td><code class='i'>요소.textContent = "새 글자"</code> — 순수 텍스트로 취급 (안전)</td></tr>
@@ -114,6 +132,21 @@ console.log(card.dataset.rating);        <span class="c">// data-rating=<span cl
 card.style.borderColor = <span class="s">"gold"</span>;         <span class="c">// 스타일 직접 변경</span>
 card.classList.add(<span class="s">"featured"</span>);          <span class="c">// 클래스 추가</span></pre>
 <div class="box warn"><div class="box-title">⚠️ CSS 속성명의 - 는 카멜케이스로</div><div class="box-body"><p class="body">자바스크립트 식별자에는 -를 쓸 수 없어 <code class='i'>background-color → backgroundColor</code>, <code class='i'>font-size → fontSize</code>로 바꿔 씁니다.</p></div></div>
+<div class="box warn">
+    <div class="box-title">🙋 학생들이 자주 틀리는 부분 — textContent에 HTML 태그를 넣었는데 안 예뻐짐</div>
+    <div class="box-body">
+      <span class="mini-label" style="color:var(--warn)">❌ 이렇게 쓰면 안 됩니다</span>
+      <pre class="code">const notice = document.querySelector(<span class="s">"#notice"</span>);
+notice.textContent = <span class="s">"&lt;b&gt;중요&lt;/b&gt; 공지사항입니다"</span>;
+<span class="c">// 화면에 그대로 &lt;b&gt;중요&lt;/b&gt; 공지사항입니다 라는 글자가 보임</span>
+<span class="c">// (굵게 표시되지 않고 &lt;b&gt;, &lt;/b&gt; 글자까지 전부 텍스트로 취급됨)</span></pre>
+      <span class="mini-label" style="color:#166534">✅ 이렇게 고칩니다</span>
+      <pre class="code">const notice = document.querySelector(<span class="s">"#notice"</span>);
+notice.innerHTML = <span class="s">"&lt;b&gt;중요&lt;/b&gt; 공지사항입니다"</span>;   <span class="c">// innerHTML은 태그를 해석함</span>
+<span class="c">// 화면에 <span class="s">"중요"</span>만 굵게, 나머지는 일반 글자로 보임 ✅</span></pre>
+      <p class="body" style="margin-top:8px"><code class='i'>textContent</code>는 넣는 내용을 <b>무조건 순수 텍스트</b>로 취급해서, 태그 글자까지 화면에 그대로 찍어버립니다. <b>태그를 실제로 렌더링하고 싶다면 innerHTML</b>을, <b>사용자 입력처럼 안전하게 글자만 넣고 싶다면 textContent</b>를 씁니다 — 08-5의 XSS 주의사항과 같은 이유로 용도가 반대입니다.</p>
+    </div>
+  </div>
 <p class="body">우리 index.html의 기존 스크립트가 이미 <code class='i'>classList.toggle('open')</code>으로 버거 메뉴를 여닫고 있죠 — 그 코드가 바로 이 절의 내용입니다.</p></section>
 <section class="sec"><div class="sec-head"><span class="sec-no">08-4</span><h2>요소 생성 ① — createElement 방식</h2></div><p class="body"><b>텍스트 노드가 있는</b> 요소: 요소 노드 생성 → 텍스트 노드 생성 → 요소에 텍스트 추가 → body(부모)에 요소 추가</p>
 <pre class="code">const h3 = document.createElement(<span class="s">"h3"</span>);        <span class="c">// 요소 노드 생성</span>

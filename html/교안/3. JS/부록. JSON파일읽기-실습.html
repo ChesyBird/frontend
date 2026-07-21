@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>부록. JSON파일읽기-실습 — 무비 컬렉션 JS 과정</title>
+<style>
+  :root{
+    --ink:#1B2333; --ink-soft:#4A5568;
+    --paper:#FBFAF7; --panel:#fff; --line:#E4E1D9;
+    --accent:#4F46E5; --accent-soft:#EEF0FF;
+    --imp:#B45309; --imp-soft:#FFF7EA; --imp-line:#F3D9A4;
+    --warn:#B91C1C; --warn-soft:#FEF2F2; --warn-line:#F5C6C6;
+    --link:#0E7490; --link-soft:#ECFEFF; --link-line:#A5E3F0;
+    --seed:#0EA5A0; --seed-soft:#E4F7F6;
+    --sprout:#4F46E5; --sprout-soft:#EEF0FF;
+    --tree:#B45309; --tree-soft:#FEF3E2;
+    --code-bg:#101728; --code-ink:#E7ECFB;
+    --mono:"D2Coding","JetBrains Mono",Consolas,"Malgun Gothic",monospace;
+    --sans:-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0; font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.75;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{background:radial-gradient(1200px 400px at 20% -10%, #6D5EF0 0%, transparent 60%),linear-gradient(160deg,#1B1F3B 0%,#101228 100%);color:#F4F3FF; padding:52px 24px 44px;}
+  header.hero .wrap{padding:0;}
+  .eyebrow{display:inline-flex; gap:8px; font-family:var(--mono); font-size:13px; color:#B7B2FF;background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1.title{font-size:29px; margin:0 0 8px; letter-spacing:-0.5px;}
+  .subtitle{color:#C7C4EE; font-size:15.5px; margin:0; max-width:640px;}
+  main{padding-top:34px;}
+  .goal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin-bottom:30px;}
+  .goal h3{margin:0 0 8px; font-size:15px;}
+  .goal ul{margin:0; padding:0; list-style:none; display:grid; gap:5px;}
+  .goal li{font-size:14.5px; color:var(--ink-soft);}
+  .sec{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin-bottom:22px;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .sec-no{font-family:var(--mono); font-size:12.5px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:8px;}
+  .sec-head h2{font-size:18.5px; margin:0;}
+  p.body{font-size:15px; color:var(--ink); margin:10px 0;}
+  pre.code{background:var(--code-bg); color:var(--code-ink); font-family:var(--mono); font-size:13.5px;padding:15px 18px; border-radius:10px; overflow-x:auto; margin:12px 0; white-space:pre; line-height:1.6;}
+  .s{color:#7EE787;} .c{color:#7C8AAE;}
+  .out{margin:10px 0 14px;}
+  .out-label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.05em; margin-bottom:4px;}
+  .out pre{background:#F4F3EE; border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:0;font-family:var(--mono); font-size:13px; color:#334155; white-space:pre-wrap;}
+  .box{border-radius:12px; padding:14px 18px; margin:14px 0; border:1px solid;}
+  .box-title{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .box-body{font-size:14.5px;}
+  .box-body p.body{margin:6px 0;}
+  .box.imp{background:var(--imp-soft); border-color:var(--imp-line);} .box.imp .box-title{color:var(--imp);}
+  .box.warn{background:var(--warn-soft); border-color:var(--warn-line);} .box.warn .box-title{color:var(--warn);}
+  .box.link{background:var(--link-soft); border-color:var(--link-line);} .box.link .box-title{color:var(--link);}
+  table.ref{width:100%; border-collapse:collapse; font-size:14px; margin:12px 0;}
+  table.ref caption{text-align:left; font-size:13px; color:var(--ink-soft); margin-bottom:6px;}
+  table.ref th, table.ref td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ref th{color:var(--ink-soft); font-size:12.5px; letter-spacing:.03em; background:#FAF9F5;}
+  table.ref td.mono{font-family:var(--mono); font-size:13px; color:var(--accent); white-space:nowrap;}
+  code.i{font-family:var(--mono); font-size:0.92em; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px;}
+  .problem{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+  .p-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .p-no{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;}
+  .p-title{font-size:17px; margin:0; flex:1; min-width:150px;}
+  .badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .badge.seed{color:var(--seed); background:var(--seed-soft);}
+  .badge.sprout{color:var(--sprout); background:var(--sprout-soft);}
+  .badge.tree{color:var(--tree); background:var(--tree-soft);}
+  .badge.mission{color:#fff; background:linear-gradient(120deg,#4F46E5,#7C3AED);}
+  .p-desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .task ul{margin:0 0 14px; padding-left:18px; font-size:14.5px;}
+  .task li{margin-bottom:4px;}
+  .mini-label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; margin:12px 0 4px;}
+  details{margin-top:10px;}
+  details summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--accent); list-style:none;padding:8px 12px; background:var(--accent-soft); border-radius:8px; display:inline-block;}
+  details.hint summary{color:var(--imp); background:var(--imp-soft);}
+  details summary::-webkit-details-marker{display:none;}
+  .hint-box{font-size:14px; color:var(--ink-soft); padding:10px 4px 0;}
+  footer.end{text-align:center; font-size:13px; color:#9AA0AE; margin-top:52px; font-family:var(--mono);}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 22px; margin-bottom:26px; font-size:14px;}
+  nav.toc b{font-size:13px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">MOVIE COLLECTION JS · WORKSHEET 부록</span>
+  <h1 class="title">부록. JSON파일읽기 — 실습</h1>
+  <p class="subtitle">JSON 문법 오류 찾기 + movies.json을 fetch로 읽어 카드까지 그리는 실습</p>
+</div></header>
+<main class="wrap">
+<div class="goal"><h3>📝 실습 안내</h3><ul>
+    <li>교안 「부록. JSON파일읽기」을 참고하며 순서대로 풉니다.</li>
+    <li>🌱기초 → 🌿응용 → 🌳도전 순서로 어려워지고, 마지막 🎬미션은 index.html/main.js에 실제 기능을 쌓는 누적 과제입니다.</li>
+    <li>막히면 힌트 → 그래도 막히면 정답을 보고, 정답을 덮고 다시 한 번 직접 작성해보세요.</li></ul></div><article class="problem">
+    <div class="p-head"><span class="p-no">Q1</span><h3 class="p-title">JSON 문법 오류 찾아 고치기</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">아래 텍스트를 movies.json 파일에 저장하려고 합니다. 부록-2의 규칙표를 참고해 오류를 전부 찾아내세요.</p>
+    <span class="mini-label">주어진 코드/데이터</span><pre class="code">{
+  title: <span class="s">'스텔라 오디세이'</span>,
+  rating: 9.2,
+  genres: [<span class="s">'SF'</span>, <span class="s">'액션'</span>],
+}</pre>
+    <div class="task"><span class="mini-label">할 일</span><ul><li>이 텍스트에서 JSON 문법에 어긋나는 부분을 전부 찾아 표시한다 (최소 3곳)</li><li>올바른 JSON으로 고쳐 쓴다</li><li>고친 결과를 JSON.parse()로 실제 파싱해봐서 오류 없이 성공하는지 확인한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">JSON은 자바스크립트 객체 리터럴의 '편의 문법'을 하나도 허용하지 않는다고 생각하면 쉽습니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code"><span class="c">// 오류 3가지:</span>
+<span class="c">// ① title, rating, genres — 키에 큰따옴표가 없음</span>
+<span class="c">// ② <span class="s">'stella...'</span>, <span class="s">'SF'</span>, <span class="s">'액션'</span> — 작은따옴표 사용 (JSON은 큰따옴표만)</span>
+<span class="c">// ③ 마지막 속성(genres) 뒤에 불필요한 콤마</span>
+
+<span class="c">// 고친 버전</span>
+{
+  <span class="s">"title"</span>: <span class="s">"스텔라 오디세이"</span>,
+  <span class="s">"rating"</span>: 9.2,
+  <span class="s">"genres"</span>: [<span class="s">"SF"</span>, <span class="s">"액션"</span>]
+}
+
+<span class="c">// 검증</span>
+const text = <span class="s">'{"title":"스텔라 오디세이","rating":9.2,"genres":["SF","액션"]}'</span>;
+console.log(JSON.parse(text));   <span class="c">// 오류 없이 객체로 파싱됨 ✅</span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q2</span><h3 class="p-title">stringify ↔ parse 왕복 연습</h3><span class="badge seed">🌱 기초</span></div>
+    <p class="p-desc">부록-4를 참고해 객체와 JSON 문자열을 오가며 변환하세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>title, rating, genres(배열) 속성을 가진 movie 객체를 만든다</li><li>JSON.stringify로 문자열로 바꾸고 typeof로 정말 문자열인지 확인한다</li><li>그 문자열을 다시 JSON.parse로 객체로 되돌리고 movie.title이 잘 나오는지 확인한다</li></ul></div>
+    
+    
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">const movie = { title: <span class="s">"겨울 왕좌"</span>, rating: 9.6, genres: [<span class="s">"판타지"</span>, <span class="s">"어드벤처"</span>] };
+
+const text = JSON.stringify(movie);
+console.log(typeof text);   <span class="c">// <span class="s">"string"</span></span>
+
+const restored = JSON.parse(text);
+console.log(restored.title);       <span class="c">// <span class="s">"겨울 왕좌"</span></span>
+console.log(restored.genres[0]);   <span class="c">// <span class="s">"판타지"</span></span></pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q3</span><h3 class="p-title">movies.json 파일 읽어서 제목만 출력하기</h3><span class="badge sprout">🌿 응용</span></div>
+    <p class="p-desc">제공된 movies.json 파일을 index.html과 같은 폴더에 두고, fetch로 읽어보세요.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>async function loadMovies() 함수를 부록-5 코드를 참고해 작성한다</li><li>fetch("movies.json")으로 파일을 요청하고 response.json()으로 배열을 얻는다</li><li>받은 배열을 forEach로 순회하며 제목만 콘솔에 출력한다</li><li>받은 배열의 length가 10인지 확인한다</li><li>Live Server 없이(파일 더블클릭으로) 열어서 무슨 오류가 나는지도 한 번 확인해본다 (부록-6)</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">Live Server 확장 프로그램으로 index.html을 열어야 fetch가 정상 동작합니다 — 파일 더블클릭(file://)이면 CORS 오류가 납니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">async function loadMovies() {
+  try {
+    const response = await fetch(<span class="s">"movies.json"</span>);
+    if (!response.ok) throw new Error(<span class="s">"HTTP "</span> + response.status);
+
+    const movies = await response.json();
+    movies.forEach(function (m) {
+      console.log(m.title);
+    });
+    console.log(<span class="s">`총 ${movies.length}편`</span>);   <span class="c">// 10편</span>
+  } catch (error) {
+    console.log(<span class="s">"로드 실패:"</span>, error.message);
+  }
+}
+
+loadMovies();</pre></div></details>
+  </article>
+<article class="problem">
+    <div class="p-head"><span class="p-no">Q4</span><h3 class="p-title">movies.json으로 카드 렌더링까지</h3><span class="badge mission">🎬 index.html 미션</span></div>
+    <p class="p-desc">파일에서 읽은 데이터를 08장의 renderMovies() 파이프라인에 그대로 연결해서, 하드코딩 없이 화면을 완성합니다.</p>
+    
+    <div class="task"><span class="mini-label">할 일</span><ul><li>loadMovies()가 fetch한 movies 배열을 return 하도록 만든다 (문제3의 함수를 이어서 사용)</li><li>loadMovies().then(function(movies){ renderMovies(movies); }) 형태로 연결한다 (또는 async 함수 안에서 await 후 바로 renderMovies 호출)</li><li>화면에 10장의 카드가 movies.json 데이터로 그려지는지 확인한다</li><li>movies.json 파일의 아무 영화나 title을 직접 수정해 저장한 뒤 새로고침해서, 코드 수정 없이 화면 내용이 바뀌는지 확인한다</li></ul></div>
+    
+    <details class="hint"><summary>💡 힌트</summary><div class="hint-box">코드는 그대로 두고 movies.json 파일의 데이터만 바꿔도 화면이 바뀐다는 것 — 이것이 '데이터와 화면을 분리해서 설계'하는 이유입니다.</div></details>
+    <details><summary>✅ 정답 보기</summary><div style="margin-top:10px"><pre class="code">async function loadMovies() {
+  try {
+    const response = await fetch(<span class="s">"movies.json"</span>);
+    if (!response.ok) throw new Error(<span class="s">"HTTP "</span> + response.status);
+    return await response.json();
+  } catch (error) {
+    console.log(<span class="s">"로드 실패:"</span>, error.message);
+    return [];   <span class="c">// 실패 시 빈 배열 — renderMovies가 오류 없이 <span class="s">"카드 0개"</span>로 처리됨</span>
+  }
+}
+
+<span class="c">// 8장에서 만든 renderMovies와 연결</span>
+loadMovies().then(function (movies) {
+  renderMovies(movies);
+  renderRanking(movies);
+});</pre></div></details>
+  </article>
+</main>
+<footer class="end">부록. JSON파일읽기 — 실습지 · 교안: 부록. JSON파일읽기.html</footer>
+</body>
+</html>
