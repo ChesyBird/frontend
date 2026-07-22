@@ -16,6 +16,9 @@
             console.log(e)
         }
         
+        //finally: 자원의 반납. 오류가 나든 안나든 
+
+
         //fetch를 이용해서 외부데이터 받아오기
         //1.요청 url -> 
         //fetch('http://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp?collection=kmdb_new2&detail=Y&actor=%EC%9D%B4%EB%8F%99%EC%9A%B1&ServiceKey=W6L8I0UH24S2W5O4JJ49')
@@ -85,6 +88,10 @@
                 //배열이 끝날때까지
                 grid.innerHTML += make_card(item);
             });
+        })
+        .catch(e=>{
+            console.log(e)
+            console.log('fetch요청 실패')
         })
     }
 
