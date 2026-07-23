@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- 버튼이 클릭되면 박스에 고생하셨습니다 출력 -->
+    <script>
+        window.addEventListener('load', ()=>{
+            let btn = document.querySelector('.btn')
+            btn.addEventListener('click',()=>{
+                let box = document.querySelector('.box')
+                box.innerHTML = '시험보느라 고생하셨습니다';
+            })
+        })
+
+    </script>
+
+</head>
+<body>
+    <button class="btn">click</button>
+    <div class="box"></div>
+</body>
+</html>
