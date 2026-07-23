@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML 실습 테스트지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F7FA;
+    --grid:#E4E9F0;
+    --ink:#1E2530;
+    --ink-soft:#5B6472;
+    --card:#FFFFFF;
+    --line:#E0E4EA;
+    --accent:#2F6690;
+    --accent-soft:#E5EEF4;
+    --todo:#C9762A;
+    --todo-bg:#FBEEDD;
+    --warn:#B23A3A;
+    --warn-bg:#FBE7E5;
+    --font-display:'Space Grotesk','Noto Sans KR',sans-serif;
+    --font-body:'Noto Sans KR',-apple-system,sans-serif;
+    --font-mono:'JetBrains Mono','D2Coding',monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 100%,
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    padding:44px 18px 100px;
+    line-height:1.65;
+  }
+  .wrap{max-width:820px; margin:0 auto;}
+
+  .titlebar{margin-bottom:28px;}
+  .titlebar .eyebrow{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:.24em;
+    color:var(--accent); text-transform:uppercase; margin-bottom:10px;
+  }
+  .titlebar h1{
+    font-family:var(--font-display); font-weight:700; font-size:clamp(26px,4vw,36px);
+    margin:0 0 14px;
+  }
+  .name-row{
+    display:flex; align-items:center; gap:10px; font-family:var(--font-mono); font-size:14px;
+  }
+  .name-row input{
+    font-family:var(--font-mono); font-size:14px; border:none; border-bottom:2px solid var(--ink);
+    background:transparent; padding:4px 2px; width:200px; outline:none;
+  }
+
+  .submit-box{
+    background:var(--warn-bg); border:1.5px solid #E6B4AE; border-radius:10px;
+    padding:18px 20px; margin:22px 0 34px;
+  }
+  .submit-box .h{
+    font-family:var(--font-display); font-weight:700; font-size:15px; color:var(--warn);
+    margin:0 0 8px;
+  }
+  .submit-box ol{margin:0 0 10px 20px; padding:0; font-size:14px;}
+  .submit-box li{margin-bottom:4px;}
+  .submit-box li strong{color:var(--warn);}
+  .submit-box .emails{
+    font-family:var(--font-mono); font-size:13.5px; background:#fff; border:1px dashed #E6B4AE;
+    border-radius:6px; padding:10px 12px; margin-top:6px;
+  }
+  .submit-box .emails span{display:block;}
+
+  .score-box{
+    background:var(--accent-soft); border:1.5px solid #B9D2E0; border-radius:10px;
+    padding:16px 20px; margin:0 0 34px;
+  }
+  .score-box .h{
+    font-family:var(--font-display); font-weight:700; font-size:15px; color:var(--accent);
+    margin:0 0 10px;
+  }
+  .score-table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  .score-table th, .score-table td{padding:7px 10px; text-align:left; border-bottom:1px solid #C9DCE7;}
+  .score-table th{font-family:var(--font-mono); font-size:11.5px; text-transform:uppercase; color:var(--ink-soft);}
+  .score-table tr.total td{font-weight:700; border-top:2px solid var(--accent); border-bottom:none;}
+  .score-table tr.bonus td{color:var(--todo); font-weight:600; border-bottom:none;}
+
+  .problem{
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:26px 26px 24px; margin-bottom:28px;
+    box-shadow:0 10px 24px -18px rgba(30,37,48,.35);
+  }
+  .problem .no{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:30px; height:30px; border-radius:8px; background:var(--accent); color:#fff;
+    font-family:var(--font-mono); font-weight:700; font-size:14px; margin-right:10px;
+    vertical-align:middle;
+  }
+  .problem h2{
+    font-family:var(--font-display); font-size:19px; margin:0 0 12px; display:flex; align-items:center;
+  }
+  .problem p.desc{margin:0 0 12px; font-size:14.5px; color:var(--ink-soft);}
+  .problem ol.sub{margin:0 0 14px 46px; padding:0; font-size:14px;}
+  .problem ol.sub li{margin-bottom:4px;}
+  .problem ol.sub code{background:var(--accent-soft); padding:1px 6px; border-radius:4px; font-family:var(--font-mono); font-size:12.5px;}
+  .problem code{background:var(--accent-soft); padding:1px 6px; border-radius:4px; font-family:var(--font-mono); font-size:12.5px;}
+
+  .answer-area{
+    border:2px dashed #C7CEDA; border-radius:8px; padding:16px 18px;
+    margin-top:12px; min-height:64px; background:#FAFBFD;
+  }
+  .answer-area .hint{
+    font-family:var(--font-mono); font-size:11px; color:var(--ink-soft);
+    text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px;
+  }
+  .answer-area table{border-collapse:collapse; width:100%;}
+  .answer-area th, .answer-area td{border:1px solid #C7CEDA; padding:6px 10px; text-align:left;}
+
+  footer{
+    text-align:center; font-family:var(--font-mono); font-size:11.5px; color:var(--ink-soft); margin-top:36px;
+  }
+
+  @media(max-width:560px){
+    .problem{padding:20px 16px;}
+    .submit-box{padding:16px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="titlebar">
+    <div class="eyebrow">HTML · CSS · JS Practice Sheet</div>
+    <h1>HTML 실습 테스트지</h1>
+    <div class="name-row">
+      이름: <input type="text" id="studentName" placeholder="여기에 이름을 입력하세요">
+    </div>
+  </div>
+
+  <div class="submit-box">
+    <p class="h">⚠ 제출 방법 (필수 — 반드시 확인!)</p>
+    <ol>
+      <li><strong>완성된 화면을 캡처한 이미지 파일</strong> (4개 문제 결과가 모두 보이도록)</li>
+      <li><strong>완성한 이 HTML 파일 (.html)</strong> — 코드를 직접 수정한 파일</li>
+    </ol>
+    <p style="margin:0 0 8px; font-size:13.5px;">
+      <strong>위 2가지를 모두</strong> 아래 두 이메일 주소로 함께 제출하세요.
+      캡처 이미지만 보내거나 HTML 파일만 보내는 것은 <strong>제출로 인정되지 않습니다.</strong>
+    </p>
+    <div class="emails">
+      <span>📧 spacecl_ad@naver.com</span>
+      <span>📧 momo.class5@gmail.com</span>
+    </div>
+  </div>
+
+  <div class="score-box">
+    <p class="h">📝 배점 (실기 총 46점)</p>
+    <table class="score-table">
+      <tr><th>문제</th><th>배점</th></tr>
+      <tr><td>1. 목록 태그</td><td>8점</td></tr>
+      <tr><td>2. 테이블 태그</td><td>8점</td></tr>
+      <tr><td>3. 회원가입 페이지 (요소 구성 8 + 플레이스홀더 4 + 필수체크 4 + 이벤트 제거 4)</td><td>20점</td></tr>
+      <tr><td>4. 버튼 클릭 → 이미지 출력</td><td>10점</td></tr>
+      <tr class="total"><td>합계</td><td>46점</td></tr>
+      <tr class="bonus"><td>5. 공공데이터 활용 (가산점, fetch)</td><td>+10점</td></tr>
+    </table>
+  </div>
+
+  <!-- ===================== 문제 1 ===================== -->
+  <section class="problem">
+    <h2><span class="no">1</span>목록 태그</h2>
+    <p class="desc">
+      원하는 주제로 <strong>순서 없는 목록(&lt;ul&gt;)</strong>과
+      <strong>순서 있는 목록(&lt;ol&gt;)</strong>을 각각 하나씩 만드세요.
+      각 목록은 최소 3개 이상의 항목(&lt;li&gt;)을 포함해야 합니다.
+    </p>
+    <div class="answer-area" id="q1-answer">
+      <div class="hint">주석 아래 코드를 작성하세요</div>
+      <!-- TODO 1-1: 순서 없는 목록(ul/li)을 작성하세요. 최소 3개 항목 -->
+        좋아하는 과일(ul)
+        <ul>
+          <li>복숭아</li>
+          <li>망고</li>
+          <li>딸기</li>
+        </ul>
+
+      <!-- TODO 1-2: 순서 있는 목록(ol/li)을 작성하세요. 최소 3개 항목 -->
+        아침 루틴 순서(ol)
+        <ol>
+          <li>기상</li>
+          <li>샤워</li>
+          <li>머리말리기</li>
+          <li>화장</li>
+        </ol>
+    </div>
+  </section>
+
+  <!-- ===================== 문제 2 ===================== -->
+  <section class="problem">
+    <h2><span class="no">2</span>테이블 태그</h2>
+    <p class="desc">
+      <strong>3행 4열</strong> 표를 만드세요. 첫 번째 행은 제목 셀(&lt;th&gt;)로 구성하고,
+      나머지 행은 내용 셀(&lt;td&gt;)로 채우세요. &lt;table&gt;, &lt;tr&gt;, &lt;th&gt;, &lt;td&gt; 태그를 사용합니다.
+    </p>
+    <div class="answer-area" id="q2-answer">
+      <div class="hint">주석 아래 코드를 작성하세요</div>
+      <!-- TODO 2: 3행 4열 표를 작성하세요 (첫 행은 th, 총 3행 x 4열) -->
+        <table>
+          <thead>
+            <th>이름</th>
+            <th>나이</th>
+            <th>이메일</th>
+            <th>취미</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td>홍길동</td>
+              <td>25</td>
+              <td>hong@test.com</td>
+              <td>독서</td>
+            </tr>
+            <tr>
+              <td>김철수</td>
+              <td>30</td>
+              <td>kim@test.com</td>
+              <td>운동</td>
+            </tr>
+          </tbody>
+        </table>
+
+    </div>
+  </section>
+
+  <!-- ===================== 문제 3 ===================== -->
+  <section class="problem">
+    <h2><span class="no">3</span>회원가입 페이지 만들기</h2>
+    <p class="desc">
+      텍스트 필드, 셀렉트(select), 라디오(radio), 체크박스(checkbox) 등
+      다양한 input 요소를 사용해 회원가입 폼을 만드세요.
+    </p>
+    <ol class="sub">
+      <li><strong>3-1. 플레이스홀더</strong> — 텍스트 입력 필드에 <code>placeholder</code> 속성으로 안내 문구를 넣으세요.</li>
+      <li><strong>3-2. 필수 체크</strong> — 반드시 입력해야 하는 항목에 <code>required</code> 속성을 추가하세요.</li>
+    </ol>
+    <div class="answer-area" id="q3-answer">
+      <div class="hint">form 태그 안쪽에 직접 코드를 작성하세요</div>
+      <form id="signupForm">
+        <!-- TODO 3-a: 이름/아이디 등 텍스트 필드 (placeholder, required 포함) -->
+        이름<br>
+        <input type="name" placeholder="이름을 입력하세요" required><br>
+        아이디<br>
+        <input type="id" placeholder="아이디를 입력하세요" required><br>
+        <!-- TODO 3-b: select (예: 지역, 관심분야 등 선택 옵션 3개 이상) -->
+        관심사<br> 
+        <select name="like" id="like">
+          <option value="jurney">여행</option>
+          <option value="read">독서</option>
+          <option value="game">게임</option>
+        </select>
+        <br>
+        <!-- TODO 3-c: radio 버튼 (예: 성별, 회원 유형 등, 2개 이상) -->
+        성별 <br>
+        <input type="radio" name="gender" id="">남
+        <input type="radio" name="gender" id="">여
+        <br>
+
+        <!-- TODO 3-d: checkbox (예: 약관 동의, 관심사 등, 2개 이상) -->
+        가입약관 <br>
+        <input type="checkbox" name="agree" id="">약관동의
+        <input type="checkbox" name="agree" id="">선택사항동의
+        <input type="checkbox" name="agree" id="">광고수신동의
+        <br>
+
+        <button type="submit">가입하기</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===================== 문제 4 ===================== -->
+  <section class="problem">
+    <h2><span class="no">4</span>버튼 클릭 → 이미지 출력</h2>
+    <p class="desc">
+      아래 버튼을 클릭하면, <strong>클래스가 <code>box</code>인 요소를 선택</strong>해서
+      그 안에 <strong>좋아하는 이미지</strong>가 나타나도록 자바스크립트를 작성하세요.
+      (예: <code>document.querySelector('.box')</code>) 처음에는 이미지가 보이지 않아야 하고,
+      버튼을 눌렀을 때만 이미지가 만들어지거나 나타나야 합니다.
+      <br><strong>이미지의 최대 width 값은 200px을 넘지 않도록</strong> 제한하세요.
+      <br>이미지의 위치는 /html/img/폴더를 이용하세요
+    </p>
+    <div class="answer-area" id="q4-answer">
+      <button id="showImgBtn">이미지 보기</button>
+      <div class="box" id="imgBox" style="border:1px solid #C7CEDA; padding:12px; margin-top:10px; border-radius:6px; min-height:40px;">
+        <!-- TODO 4: 버튼 클릭 시 이 .box 요소 안에 좋아하는 이미지가 출력되도록
+             아래 스크립트를 작성하세요. (이미지 최대 width: 200px) -->
+      </div>
+      <script>
+        let btn = document.querySelector('#showImgBtn')
+        btn.addEventListener('click',()=>{
+          let box = document.querySelector('#imgBox');
+          box.innerHTML = '<img src="/html/img/tangerined.jpg" alt="인물사진" max-width = 200px>';
+        })
+      </script>
+    </div>
+  </section>
+
+  <!-- ===================== 문제 5 (가산점) ===================== -->
+  <section class="problem" style="border:1.5px solid #E0B84A;">
+    <h2><span class="no" style="background:#C9862A;">5</span>공공데이터 활용 <span style="font-family:'JetBrains Mono',monospace; font-size:12px; background:#FBEEDD; color:#C9762A; padding:3px 8px; border-radius:5px; margin-left:8px;">가산점 +10점</span></h2>
+    <p class="desc">
+      "영화목록 가져오기" 버튼을 클릭하면, <strong>fetch 함수</strong>를 이용해
+      좋아하는 배우가 출연한 영화 목록을 (공공데이터포털 / 영화진흥위원회 Open API 등)
+      가져오세요. 받아온 데이터에서 <strong>클래스가 <code>movie</code>인 요소를 선택</strong>해서
+      영화 제목들을 화면에 출력하세요.
+    </p>
+    <p class="desc" style="font-size:13px;">
+      ※ API 인증키(key)는 각자 공공데이터포털 등에서 발급받아 사용하세요.
+      네트워크 요청이므로 <code>fetch(...).then(...)</code> 또는 <code>async/await</code> 중
+      편한 방식을 사용하면 됩니다.
+    </p>
+    <div class="answer-area" id="q5-answer">
+      <button id="fetchMovieBtn">영화목록 가져오기</button>
+      <div class="movie-list" style="margin-top:10px;">
+        <!-- TODO 5: fetch로 받아온 영화 목록을 .movie 요소로 만들어 여기에 출력하세요 -->
+      </div>
+      <script>
+        let btnMovie = document.querySelector('#fetchMovieBtn')
+        let movieList = document.querySelector('.movie-list')
+        
+        fetch('http://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp?collection=kmdb_new2&detail=Y&actor=%EA%B9%80%EA%B3%A0%EC%9D%80&ServiceKey=W6L8I0UH24S2W5O4JJ49')
+        .then(res=>res.json())
+        .then(res=>{
+          console.log(res);
+
+          let movie = res.Data[0].Result;
+          function movieTitle(){
+            for(let i=0; i<movie.length; i++){
+              console.log(movie[i].title)
+              movieList.innerHTML += `${movie[i].title}<br>`
+            }
+          }
+          btnMovie.addEventListener('click', movieTitle)
+        })
+
+
+      </script>
+    </div>
+  </section>
+
+  <footer>HTML 실습 테스트지 · 완성 후 캡처 이미지 + html 파일 2가지를 꼭 함께 제출하세요</footer>
+</div>
+
+<script>
+  // ===== TODO 3-e: 회원가입 폼 제출 시 새로고침 막기 =====
+  document.getElementById('signupForm').addEventListener('submit', function (e) {
+    // 여기에 e.preventDefault()를 호출하는 코드를 작성하세요
+
+
+  });
+
+  // ===== TODO 4: 버튼 클릭 시 .box 요소에 좋아하는 이미지 출력하기 =====
+  document.getElementById('showImgBtn').addEventListener('click', function () {
+    // 1) document.querySelector('.box')로 박스 요소를 선택하세요
+    // 2) 좋아하는 이미지의 <img>를 만들어 그 안에 추가하세요
+    // 3) 이미지의 최대 width는 200px을 넘지 않도록 하세요 (예: img.style.maxWidth = '200px')
+
+
+  });
+
+  // ===== TODO 5 (가산점): fetch로 영화 목록 가져와서 .movie로 출력하기 =====
+  document.getElementById('fetchMovieBtn').addEventListener('click', function () {
+    // 1) fetch()로 공공데이터(영화진흥위원회 Open API 등)에서
+    //    좋아하는 배우가 출연한 영화 목록을 가져오세요
+    // 2) 받아온 데이터를 순회하며 .movie 클래스를 가진 요소를 만들고
+    //    영화 제목을 담아 화면에 출력하세요
+
+
+  });
+</script>
+</body>
+</html>
